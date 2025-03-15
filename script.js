@@ -197,6 +197,68 @@ document.addEventListener('DOMContentLoaded', () => {
     resetBtn.addEventListener('click', resetMatch);
     restartBtn.addEventListener('click', restartApp);
     newMatchBtn.addEventListener('click', restartApp);
+
+    // Add file input change listener
+    document.getElementById('load-file').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsedState = JSON.parse(e.target.result);
+                    
+                    // Restore the main parts of the state
+                    appState.teams = parsedState.teams;
+                    appState.currentSet = parsedState.currentSet;
+                    appState.currentRally = parsedState.currentRally;
+                    appState.pointsPerSet = parsedState.pointsPerSet;
+                    appState.currentState = parsedState.currentState;
+                    appState.history = parsedState.history || [];
+                    
+                    // Initialize the state history with the current state
+                    appState.stateHistory = [parsedState.stateHistory[0] || {
+                        teams: {
+                            a: { ...appState.teams.a },
+                            b: { ...appState.teams.b }
+                        },
+                        currentSet: appState.currentSet,
+                        currentRally: appState.currentRally,
+                        pointsPerSet: [...appState.pointsPerSet],
+                        currentState: appState.currentState
+                    }];
+                    
+                    // Reset the history display
+                    historyListEl.innerHTML = '';
+                    
+                    // Populate history display
+                    // Limit to the last 50 entries to avoid browser slowdowns
+                    const historyToShow = appState.history.slice(-50);
+                    historyToShow.forEach(item => {
+                        const historyItem = document.createElement('div');
+                        historyItem.classList.add('history-item');
+                        historyItem.textContent = `Rally ${item.rally}: ${item.state} → ${item.action} → ${item.nextState}`;
+                        historyListEl.appendChild(historyItem);
+                    });
+                    
+                    // Update UI
+                    updateScoreboard();
+                    updateActionButtons();
+                    
+                    // Show match screen
+                    setupScreen.classList.add('hidden');
+                    matchScreen.classList.remove('hidden');
+                    summaryScreen.classList.add('hidden');
+                    
+                    // Reset file input
+                    event.target.value = '';
+                } catch (e) {
+                    console.error('Error loading match:', e);
+                    alert('Failed to load match file. The file might be corrupted or in wrong format.');
+                }
+            };
+            reader.readAsText(file);
+        }
+    });
 });
 
 // Start a new match with the entered player data
@@ -429,7 +491,7 @@ function undoLastAction() {
     }
 }
 
-// Save the match state to local storage
+// Save the match state to a file
 function saveMatch() {
     try {
         // Create a streamlined version of the state to save
@@ -440,74 +502,35 @@ function saveMatch() {
             pointsPerSet: appState.pointsPerSet,
             currentState: appState.currentState,
             history: appState.history,
-            // We don't need to save the whole state history for persistence
-            // Just save the current state
             stateHistory: [appState.stateHistory[appState.stateHistory.length - 1] || null]
         };
-        
-        localStorage.setItem('sandScoreMatch', JSON.stringify(stateToSave));
-        alert('Match saved successfully!');
+
+        // Create file name with current date and player names
+        const currentDate = new Date().toISOString().split('T')[0];
+        const teamA = `${appState.teams.a.players[0]}-${appState.teams.a.players[1]}`;
+        const teamB = `${appState.teams.b.players[0]}-${appState.teams.b.players[1]}`;
+        const fileName = `${currentDate} ${teamA} vs ${teamB}.json`;
+
+        // Create blob and download
+        const blob = new Blob([JSON.stringify(stateToSave, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     } catch (e) {
         console.error('Error saving match:', e);
-        alert('Failed to save match. The data might be too large for local storage.');
+        alert('Failed to save match file.');
     }
 }
 
-// Load the match state from local storage
+// Load the match state from a file
 function loadMatch() {
-    try {
-        const savedState = localStorage.getItem('sandScoreMatch');
-        if (savedState) {
-            const parsedState = JSON.parse(savedState);
-            
-            // Restore the main parts of the state
-            appState.teams = parsedState.teams;
-            appState.currentSet = parsedState.currentSet;
-            appState.currentRally = parsedState.currentRally;
-            appState.pointsPerSet = parsedState.pointsPerSet;
-            appState.currentState = parsedState.currentState;
-            appState.history = parsedState.history || [];
-            
-            // Initialize the state history with the current state
-            appState.stateHistory = [parsedState.stateHistory[0] || {
-                teams: {
-                    a: { ...appState.teams.a },
-                    b: { ...appState.teams.b }
-                },
-                currentSet: appState.currentSet,
-                currentRally: appState.currentRally,
-                pointsPerSet: [...appState.pointsPerSet],
-                currentState: appState.currentState
-            }];
-            
-            // Reset the history display
-            historyListEl.innerHTML = '';
-            
-            // Populate history display
-            // Limit to the last 50 entries to avoid browser slowdowns
-            const historyToShow = appState.history.slice(-50);
-            historyToShow.forEach(item => {
-                const historyItem = document.createElement('div');
-                historyItem.classList.add('history-item');
-                historyItem.textContent = `Rally ${item.rally}: ${item.state} → ${item.action} → ${item.nextState}`;
-                historyListEl.appendChild(historyItem);
-            });
-            
-            // Update UI
-            updateScoreboard();
-            updateActionButtons();
-            
-            // Show match screen
-            setupScreen.classList.add('hidden');
-            matchScreen.classList.remove('hidden');
-            summaryScreen.classList.add('hidden');
-            
-            alert('Match loaded successfully!');
-        }
-    } catch (e) {
-        console.error('Error loading match:', e);
-        alert('Failed to load match data.');
-    }
+    const fileInput = document.getElementById('load-file');
+    fileInput.click();
 }
 
 // Reset the current match to initial state
