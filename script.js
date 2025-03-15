@@ -463,8 +463,8 @@ function updateScoreboard() {
     // Update rally counter
     rallyCountEl.textContent = appState.currentRally;
     
-    // Update current state
-    currentStateEl.textContent = appState.currentState;
+    // Update current state with dynamic team names
+    currentStateEl.textContent = getStateDisplayName(appState.currentState);
 }
 
 // Update action buttons based on current state
@@ -905,4 +905,26 @@ function updateHistoryDisplay() {
     
     // Scroll to the bottom to show the most recent rally
     historyListEl.scrollTop = historyListEl.scrollHeight;
+}
+
+// Helper function to get state display name
+function getStateDisplayName(state) {
+    const ST = appState.teams.a.isServing ? appState.teams.a.name : appState.teams.b.name;
+    const RT = appState.teams.a.isServing ? appState.teams.b.name : appState.teams.a.name;
+    
+    switch(state) {
+        case 'Serve': return `${ST} Serve`;
+        case 'Reception': return `${RT} Received`;
+        case 'Zone of Attack Rec': return `Attack Zone for ${RT}`;
+        case 'Trajectory Rec': return `Trajectory ${RT}`;
+        case 'Attack by Receiving Team': return `Attack by ${RT}`;
+        case 'Defense By Serving Team': return `Defense by ${ST}`;
+        case 'Zone of Attack Srv': return `Attack Zone for ${ST}`;
+        case 'Trajectory Srv': return `Trajectory ${ST}`;
+        case 'Attack by Serving Team': return `Attack by ${ST}`;
+        case 'Defense By Receiving Team': return `Defense by ${RT}`;
+        case 'Point Server': return `Point ${ST}`;
+        case 'Point Receiver': return `Point ${RT}`;
+        default: return state;
+    }
 }
