@@ -724,6 +724,10 @@ function updateHistoryDisplay() {
     // Get unique rally numbers from history
     const rallyNumbers = [...new Set(appState.history.map(item => item.rally))];
     
+    // Keep track of scores as we display rallies
+    let scoreA = 0;
+    let scoreB = 0;
+    
     // For each rally, create a history item showing all actions for that rally
     rallyNumbers.forEach(rallyNum => {
         const rallySummary = document.createElement('div');
@@ -735,6 +739,24 @@ function updateHistoryDisplay() {
         // If it's a completed rally, use the stored rally history
         if (appState.rallyHistory[rallyNum]) {
             actionsForRally = appState.rallyHistory[rallyNum];
+            
+            // Update scores based on the outcome of completed rallies
+            const lastAction = appState.history.find(h => h.rally === rallyNum && 
+                (h.nextState === 'Point Server' || h.nextState === 'Point Receiver'));
+            
+            if (lastAction) {
+                // Determine who scored based on who was serving and the outcome
+                const wasServingTeamA = appState.history.find(h => h.rally === rallyNum)?.state === 'Serve' ? 
+                    appState.teams.a.isServing : !appState.teams.a.isServing;
+                    
+                if (lastAction.nextState === 'Point Server') {
+                    if (wasServingTeamA) scoreA++;
+                    else scoreB++;
+                } else { // Point Receiver
+                    if (wasServingTeamA) scoreB++;
+                    else scoreA++;
+                }
+            }
         } 
         // If it's the current rally, use the current rally actions
         else if (rallyNum === appState.currentRally) {
@@ -746,8 +768,8 @@ function updateHistoryDisplay() {
             actionsForRally = rallyHistory.map(item => item.action);
         }
         
-        // Display rally number and all actions
-        rallySummary.textContent = `Rally ${rallyNum}: ${actionsForRally.join(' ')}`;
+        // Display score and all actions
+        rallySummary.textContent = `${scoreA}-${scoreB}: ${actionsForRally.join(' ')}`;
         
         // Add to history list
         historyListEl.appendChild(rallySummary);
