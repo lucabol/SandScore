@@ -4,20 +4,20 @@ const stateMachine = {
         "transitions": [
             { "action": "Ace", "nextState": "Point Server" },
             { "action": "Err", "nextState": "Point Receiver" },
-            { "action": "R! Rec1", "nextState": "Point Server" },
-            { "action": "R- Rec1", "nextState": "Reception" },
-            { "action": "R= Rec1", "nextState": "Reception" },
-            { "action": "R+ Rec1", "nextState": "Reception" },
-            { "action": "R! Rec2", "nextState": "Point Server" },
-            { "action": "R- Rec2", "nextState": "Reception" },
-            { "action": "R= Rec2", "nextState": "Reception" },
-            { "action": "R+ Rec2", "nextState": "Reception" }
+            { "action": "R!1", "nextState": "Point Server" },
+            { "action": "R-1", "nextState": "Reception" },
+            { "action": "R=1", "nextState": "Reception" },
+            { "action": "R+1", "nextState": "Reception" },
+            { "action": "R!2", "nextState": "Point Server" },
+            { "action": "R-2", "nextState": "Reception" },
+            { "action": "R=2", "nextState": "Reception" },
+            { "action": "R+2", "nextState": "Reception" }
         ]
     },
     "Reception": {
         "transitions": [
-            { "action": "Atk Rec1", "nextState": "Zone of Attack Rec" },
-            { "action": "Atk Rec2", "nextState": "Zone of Attack Rec" }
+            { "action": "Atk1", "nextState": "Zone of Attack Rec" },
+            { "action": "Atk2", "nextState": "Zone of Attack Rec" }
         ]
     },
     "Zone of Attack Rec": {
@@ -51,18 +51,18 @@ const stateMachine = {
     },
     "Attack by Receiving Team": {
         "transitions": [
-            { "action": "Win Atk", "nextState": "Point Receiver" },
-            { "action": "Err Atk", "nextState": "Point Server" },
-            { "action": "Blk Srv1", "nextState": "Point Server" },
-            { "action": "Blk Srv2", "nextState": "Point Server" },
-            { "action": "Def Srv1", "nextState": "Defense By Serving Team" },
-            { "action": "Def Srv2", "nextState": "Defense By Serving Team" }
+            { "action": "Win", "nextState": "Point Receiver" },
+            { "action": "Err", "nextState": "Point Server" },
+            { "action": "Blk1", "nextState": "Point Server" },
+            { "action": "Blk2", "nextState": "Point Server" },
+            { "action": "Def1", "nextState": "Defense By Serving Team" },
+            { "action": "Def2", "nextState": "Defense By Serving Team" }
         ]
     },
     "Defense By Serving Team": {
         "transitions": [
-            { "action": "Atk Srv1", "nextState": "Zone of Attack Srv" },
-            { "action": "Atk Srv2", "nextState": "Zone of Attack Srv" }
+            { "action": "Atk1", "nextState": "Zone of Attack Srv" },
+            { "action": "Atk2", "nextState": "Zone of Attack Srv" }
         ]
     },
     "Zone of Attack Srv": {
@@ -96,18 +96,18 @@ const stateMachine = {
     },
     "Attack by Serving Team": {
         "transitions": [
-            { "action": "Win Atk", "nextState": "Point Server" },
-            { "action": "Err Atk", "nextState": "Point Receiver" },
-            { "action": "Blk Rec1", "nextState": "Point Receiver" },
-            { "action": "Blk Rec2", "nextState": "Point Receiver" },
-            { "action": "Def Rec1", "nextState": "Defense By Receiving Team" },
-            { "action": "Def Rec2", "nextState": "Defense By Receiving Team" }
+            { "action": "Win", "nextState": "Point Server" },
+            { "action": "Err", "nextState": "Point Receiver" },
+            { "action": "Blk1", "nextState": "Point Receiver" },
+            { "action": "Blk2", "nextState": "Point Receiver" },
+            { "action": "Def1", "nextState": "Defense By Receiving Team" },
+            { "action": "Def2", "nextState": "Defense By Receiving Team" }
         ]
     },
     "Defense By Receiving Team": {
         "transitions": [
-            { "action": "Atk Rec1", "nextState": "Zone of Attack Rec" },
-            { "action": "Atk Rec2", "nextState": "Zone of Attack Rec" }
+            { "action": "Atk1", "nextState": "Zone of Attack Rec" },
+            { "action": "Atk2", "nextState": "Zone of Attack Rec" }
         ]
     }
 };
