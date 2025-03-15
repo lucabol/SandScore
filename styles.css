@@ -289,6 +289,8 @@ button {
     text-overflow: ellipsis;
     position: relative;
     cursor: pointer;
+    display: block; /* Ensure block-level for consistent width calculation */
+    width: 100%;    /* Take full width of grid cell */
 }
 
 .tooltip {

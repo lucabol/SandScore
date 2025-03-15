@@ -824,9 +824,31 @@ function updateHistoryDisplay() {
         // Add event listeners to all history actions after adding to DOM
         const tooltip = document.getElementById('tooltip');
         rallyItem.querySelectorAll('.history-actions').forEach(actionDiv => {
-            // Function to check if content is truncated
+            // Function to check if content is truncated (will show ellipsis)
             const isTextTruncated = (element) => {
-                return element.offsetWidth < element.scrollWidth;
+                const computedStyle = window.getComputedStyle(element);
+                
+                // Create a temporary span to measure text width with exact same styling
+                const span = document.createElement('span');
+                span.style.visibility = 'hidden';
+                span.style.position = 'absolute';
+                span.style.fontSize = computedStyle.fontSize;
+                span.style.fontFamily = computedStyle.fontFamily;
+                span.style.fontWeight = computedStyle.fontWeight;
+                span.style.letterSpacing = computedStyle.letterSpacing;
+                span.style.textTransform = computedStyle.textTransform;
+                span.style.whiteSpace = 'nowrap';
+                span.style.padding = computedStyle.padding;
+                span.textContent = element.textContent;
+                
+                document.body.appendChild(span);
+                const textWidth = span.offsetWidth;
+                document.body.removeChild(span);
+                
+                // Get the container width including any padding
+                const availableWidth = element.clientWidth;
+                
+                return textWidth > availableWidth;
             };
 
             actionDiv.addEventListener('mouseenter', (e) => {
