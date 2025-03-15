@@ -180,15 +180,62 @@ function saveStateForUndo() {
     }
 }
 
+// Save current state to localStorage
+function saveStateToLocalStorage() {
+    try {
+        const stateToSave = {
+            teams: appState.teams,
+            currentSet: appState.currentSet,
+            currentRally: appState.currentRally,
+            pointsPerSet: appState.pointsPerSet,
+            currentState: appState.currentState,
+            history: appState.history,
+            stateHistory: [appState.stateHistory[appState.stateHistory.length - 1] || null]
+        };
+        localStorage.setItem('sandScoreCurrentState', JSON.stringify(stateToSave));
+    } catch (e) {
+        console.error('Error saving state to localStorage:', e);
+    }
+}
+
+// Load state from localStorage
+function loadStateFromLocalStorage() {
+    try {
+        const savedState = localStorage.getItem('sandScoreCurrentState');
+        if (savedState) {
+            const parsedState = JSON.parse(savedState);
+            
+            // Restore the state
+            appState.teams = parsedState.teams;
+            appState.currentSet = parsedState.currentSet;
+            appState.currentRally = parsedState.currentRally;
+            appState.pointsPerSet = parsedState.pointsPerSet;
+            appState.currentState = parsedState.currentState;
+            appState.history = parsedState.history || [];
+            
+            // Initialize the state history with the current state
+            appState.stateHistory = [parsedState.stateHistory[0] || {
+                teams: {
+                    a: { ...appState.teams.a },
+                    b: { ...appState.teams.b }
+                },
+                currentSet: appState.currentSet,
+                currentRally: appState.currentRally,
+                pointsPerSet: [...appState.pointsPerSet],
+                currentState: appState.currentState
+            }];
+            
+            return true;
+        }
+        return false;
+    } catch (e) {
+        console.error('Error loading state from localStorage:', e);
+        return false;
+    }
+}
+
 // Initialize application when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if there's a saved match in local storage
-    if (localStorage.getItem('sandScoreMatch')) {
-        loadBtn.disabled = false;
-    } else {
-        loadBtn.disabled = true;
-    }
-
     // Set up event listeners
     startMatchBtn.addEventListener('click', startMatch);
     undoBtn.addEventListener('click', undoLastAction);
@@ -227,6 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         currentState: appState.currentState
                     }];
                     
+                    // Save the loaded state to localStorage
+                    saveStateToLocalStorage();
+                    
                     // Reset the history display
                     historyListEl.innerHTML = '';
                     
@@ -259,6 +309,30 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.readAsText(file);
         }
     });
+
+    // Try to load saved state
+    if (loadStateFromLocalStorage()) {
+        // Reset the history display
+        historyListEl.innerHTML = '';
+        
+        // Populate history display
+        const historyToShow = appState.history.slice(-50);
+        historyToShow.forEach(item => {
+            const historyItem = document.createElement('div');
+            historyItem.classList.add('history-item');
+            historyItem.textContent = `Rally ${item.rally}: ${item.state} → ${item.action} → ${item.nextState}`;
+            historyListEl.appendChild(historyItem);
+        });
+        
+        // Update UI
+        updateScoreboard();
+        updateActionButtons();
+        
+        // Show match screen
+        setupScreen.classList.add('hidden');
+        matchScreen.classList.remove('hidden');
+        summaryScreen.classList.add('hidden');
+    }
 });
 
 // Start a new match with the entered player data
@@ -308,6 +382,9 @@ function startMatch() {
     
     // Instead of saving the full state history, just save the initial state
     saveStateForUndo();
+    
+    // Save initial state to localStorage
+    saveStateToLocalStorage();
     
     // Show match screen
     setupScreen.classList.add('hidden');
@@ -455,6 +532,9 @@ function handleAction(action, nextState) {
     // Update UI
     updateScoreboard();
     updateActionButtons();
+    
+    // Save state to localStorage
+    saveStateToLocalStorage();
 }
 
 // Undo the last action
@@ -488,6 +568,9 @@ function undoLastAction() {
         if (historyListEl.lastChild) {
             historyListEl.removeChild(historyListEl.lastChild);
         }
+        
+        // Save state to localStorage after undo
+        saveStateToLocalStorage();
     }
 }
 
@@ -572,6 +655,9 @@ function resetMatch() {
         // Save initial state for undo
         saveStateForUndo();
         
+        // Clear the saved state from localStorage
+        localStorage.removeItem('sandScoreCurrentState');
+        
         // Clear history display
         historyListEl.innerHTML = '';
         
@@ -584,6 +670,9 @@ function resetMatch() {
 // Restart the app (go back to setup screen)
 function restartApp() {
     if (confirm('Are you sure you want to start a new match? All current progress will be lost.')) {
+        // Clear the saved state from localStorage
+        localStorage.removeItem('sandScoreCurrentState');
+        
         // Clear input fields
         document.getElementById('team-a-player1').value = '';
         document.getElementById('team-a-player2').value = '';
