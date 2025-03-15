@@ -522,6 +522,39 @@ button {
     color: #0d47a1;
 }
 
+/* Summary Screen - New Compact Design */
+.compact-scoreboard.final {
+    margin-bottom: 25px;
+    background-color: #f8f9fa;
+    border: 2px solid #1976d2;
+}
+
+.summary-sets {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.summary-sets span {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #0d47a1;
+    min-width: 30px;
+    text-align: center;
+}
+
+.winner-announcement {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1976d2;
+    text-align: center;
+    margin: 10px 0;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background-color: rgba(25, 118, 210, 0.1);
+}
+
 /* Responsive adjustments for mobile */
 @media (max-width: 480px) {
     body {
@@ -594,5 +627,14 @@ button {
     .control-btn {
         font-size: 0.8rem;
         padding: 5px 10px;
+    }
+
+    .summary-sets span {
+        font-size: 1.6rem;
+        min-width: 25px;
+    }
+    
+    .winner-announcement {
+        font-size: 1rem;
     }
 }

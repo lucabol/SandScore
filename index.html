@@ -86,29 +86,32 @@
 
     <!-- Match Summary Screen -->
     <div id="summary-screen" class="screen hidden">
-        <h1>Match Summary</h1>
-        <div class="summary-container">
-            <div class="final-score">
-                <div class="team-summary" id="summary-team-a">
-                    <div class="team-name" id="summary-team-a-name">Team A</div>
-                    <div class="set-scores">
-                        <span id="summary-team-a-set1" class="set-score">0</span>
-                        <span id="summary-team-a-set2" class="set-score">0</span>
-                        <span id="summary-team-a-set3" class="set-score">0</span>
-                    </div>
+        <div class="compact-scoreboard final">
+            <div class="team team-a">
+                <div class="team-info">
+                    <span class="team-name" id="summary-team-a-name">Team A</span>
                 </div>
-                <div class="team-summary" id="summary-team-b">
-                    <div class="team-name" id="summary-team-b-name">Team B</div>
-                    <div class="set-scores">
-                        <span id="summary-team-b-set1" class="set-score">0</span>
-                        <span id="summary-team-b-set2" class="set-score">0</span>
-                        <span id="summary-team-b-set3" class="set-score">0</span>
-                    </div>
+                <div class="set-scores summary-sets">
+                    <span id="summary-team-a-set1">0</span>
+                    <span id="summary-team-a-set2">0</span>
+                    <span id="summary-team-a-set3">0</span>
                 </div>
             </div>
-            <div id="winner-announcement" class="winner-announcement"></div>
-            <button id="new-match-btn" class="primary-btn">New Match</button>
+            <div class="score-divider">
+                <div id="winner-announcement" class="winner-announcement"></div>
+            </div>
+            <div class="team team-b">
+                <div class="team-info">
+                    <span class="team-name" id="summary-team-b-name">Team B</span>
+                </div>
+                <div class="set-scores summary-sets">
+                    <span id="summary-team-b-set1">0</span>
+                    <span id="summary-team-b-set2">0</span>
+                    <span id="summary-team-b-set3">0</span>
+                </div>
+            </div>
         </div>
+        <button id="new-match-btn" class="primary-btn">New Match</button>
     </div>
 
     <div id="tooltip" class="tooltip"></div>
