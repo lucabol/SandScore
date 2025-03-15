@@ -297,6 +297,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // Save preferences when starting a new match
         savePlayerPreferences();
     });
+
+    // Add serving checkbox handlers
+    const serveCheckboxes = document.querySelectorAll('input[name="serving"]');
+    serveCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            // Uncheck the other checkbox
+            serveCheckboxes.forEach(cb => {
+                if (cb !== e.target) {
+                    cb.checked = false;
+                }
+            });
+            // Ensure at least one checkbox is always checked
+            if (!e.target.checked) {
+                e.target.checked = true;
+            }
+        });
+    });
+
     undoBtn.addEventListener('click', undoLastAction);
     saveBtn.addEventListener('click', saveMatch);
     loadBtn.addEventListener('click', loadMatch);

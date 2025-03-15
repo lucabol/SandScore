@@ -12,12 +12,24 @@
         <h1>SandScore</h1>
         <div class="setup-container">
             <div class="team-setup">
-                <h2>Team A</h2>
+                <div class="team-header">
+                    <h2>Team A</h2>
+                    <label class="serve-checkbox">
+                        <input type="checkbox" name="serving" value="team-a" checked> 
+                        Serves First
+                    </label>
+                </div>
                 <input type="text" id="team-a-player1" placeholder="Player 1" class="player-input">
                 <input type="text" id="team-a-player2" placeholder="Player 2" class="player-input">
             </div>
             <div class="team-setup">
-                <h2>Team B</h2>
+                <div class="team-header">
+                    <h2>Team B</h2>
+                    <label class="serve-checkbox">
+                        <input type="checkbox" name="serving" value="team-b"> 
+                        Serves First
+                    </label>
+                </div>
                 <input type="text" id="team-b-player1" placeholder="Player 1" class="player-input">
                 <input type="text" id="team-b-player2" placeholder="Player 2" class="player-input">
             </div>
@@ -31,19 +43,6 @@
                     <label>
                         <input type="radio" name="scoring" value="standard"> 
                         Standard (21-21-15)
-                    </label>
-                </div>
-            </div>
-            <div class="serving-setup">
-                <h2>Starting Service</h2>
-                <div class="serving-options">
-                    <label>
-                        <input type="radio" name="serving" value="team-a" checked> 
-                        Team A Serves First
-                    </label>
-                    <label>
-                        <input type="radio" name="serving" value="team-b"> 
-                        Team B Serves First
                     </label>
                 </div>
             </div>
