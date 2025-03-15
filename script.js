@@ -151,6 +151,9 @@ let appState = {
     pointsPerSet: [3, 3, 3], // Default points per set (short game)
     currentState: 'Serve',
     history: [],
+    // To track rally history by rally number and actions
+    rallyActions: [], // Actions for current rally
+    rallyHistory: {}, // Object with rally numbers as keys and action arrays as values
     // Instead of storing full state history, we'll store a limited number of snapshots
     stateHistory: [],
     maxHistorySize: 20 // Limit the number of state snapshots to avoid memory issues
@@ -190,6 +193,8 @@ function saveStateToLocalStorage() {
             pointsPerSet: appState.pointsPerSet,
             currentState: appState.currentState,
             history: appState.history,
+            rallyActions: appState.rallyActions,
+            rallyHistory: appState.rallyHistory,
             stateHistory: [appState.stateHistory[appState.stateHistory.length - 1] || null]
         };
         localStorage.setItem('sandScoreCurrentState', JSON.stringify(stateToSave));
@@ -212,6 +217,8 @@ function loadStateFromLocalStorage() {
             appState.pointsPerSet = parsedState.pointsPerSet;
             appState.currentState = parsedState.currentState;
             appState.history = parsedState.history || [];
+            appState.rallyActions = parsedState.rallyActions || [];
+            appState.rallyHistory = parsedState.rallyHistory || {};
             
             // Initialize the state history with the current state
             appState.stateHistory = [parsedState.stateHistory[0] || {
@@ -303,6 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     appState.pointsPerSet = parsedState.pointsPerSet;
                     appState.currentState = parsedState.currentState;
                     appState.history = parsedState.history || [];
+                    appState.rallyActions = parsedState.rallyActions || [];
+                    appState.rallyHistory = parsedState.rallyHistory || {};
                     
                     // Initialize the state history with the current state
                     appState.stateHistory = [parsedState.stateHistory[0] || {
@@ -319,18 +328,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Save the loaded state to localStorage
                     saveStateToLocalStorage();
                     
-                    // Reset the history display
-                    historyListEl.innerHTML = '';
-                    
-                    // Populate history display
-                    // Limit to the last 50 entries to avoid browser slowdowns
-                    const historyToShow = appState.history.slice(-50);
-                    historyToShow.forEach(item => {
-                        const historyItem = document.createElement('div');
-                        historyItem.classList.add('history-item');
-                        historyItem.textContent = `Rally ${item.rally}: ${item.state} → ${item.action} → ${item.nextState}`;
-                        historyListEl.appendChild(historyItem);
-                    });
+                    // Update the history display with the rally history
+                    updateHistoryDisplay();
                     
                     // Update UI
                     updateScoreboard();
@@ -354,17 +353,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Try to load saved state
     if (loadStateFromLocalStorage()) {
-        // Reset the history display
-        historyListEl.innerHTML = '';
-        
-        // Populate history display
-        const historyToShow = appState.history.slice(-50);
-        historyToShow.forEach(item => {
-            const historyItem = document.createElement('div');
-            historyItem.classList.add('history-item');
-            historyItem.textContent = `Rally ${item.rally}: ${item.state} → ${item.action} → ${item.nextState}`;
-            historyListEl.appendChild(historyItem);
-        });
+        // Update history display using the new format
+        updateHistoryDisplay();
         
         // Update UI
         updateScoreboard();
@@ -415,6 +405,8 @@ function startMatch() {
         pointsPerSet: scoringFormat === 'short' ? [3, 3, 3] : [21, 21, 15],
         currentState: 'Serve',
         history: [],
+        rallyActions: [], // Actions for current rally
+        rallyHistory: {}, // Object with rally numbers as keys and action arrays as values
         stateHistory: [],
         maxHistorySize: 20
     };
@@ -496,6 +488,9 @@ function handleAction(action, nextState) {
     // Save current state for undo
     saveStateForUndo();
     
+    // Add action to the current rally actions
+    appState.rallyActions.push(action);
+    
     // Add to history
     appState.history.push({
         rally: appState.currentRally,
@@ -514,12 +509,8 @@ function handleAction(action, nextState) {
         }
     }
     
-    // Update UI history
-    const historyItem = document.createElement('div');
-    historyItem.classList.add('history-item');
-    historyItem.textContent = `Rally ${appState.currentRally}: ${appState.currentState} → ${action} → ${nextState}`;
-    historyListEl.appendChild(historyItem);
-    historyListEl.scrollTop = historyListEl.scrollHeight;
+    // Update UI history with full rally action sequence
+    updateHistoryDisplay();
     
     // Update current state
     appState.currentState = nextState;
@@ -529,6 +520,9 @@ function handleAction(action, nextState) {
         const scoringTeam = nextState === 'Point Server' ? 
             (appState.teams.a.isServing ? 'a' : 'b') : 
             (appState.teams.a.isServing ? 'b' : 'a');
+        
+        // Store the completed rally actions in the rally history
+        appState.rallyHistory[appState.currentRally] = [...appState.rallyActions];
         
         // Award a point
         appState.teams[scoringTeam].currentScore++;
@@ -569,6 +563,9 @@ function handleAction(action, nextState) {
         // Automatically start next rally
         appState.currentRally++;
         appState.currentState = 'Serve';
+        
+        // Reset rally actions for the new rally
+        appState.rallyActions = [];
     }
     
     // Update UI
@@ -598,18 +595,35 @@ function undoLastAction() {
         
         // Also remove the last history item if it exists
         if (appState.history.length > 0) {
-            appState.history.pop();
+            const lastHistoryItem = appState.history.pop();
+            
+            // If we're in the same rally, remove the last action
+            if (appState.rallyActions.length > 0 && lastHistoryItem.rally === appState.currentRally) {
+                appState.rallyActions.pop();
+            } 
+            // If we're going back to a previous rally, restore the rally actions
+            else if (lastHistoryItem.rally !== appState.currentRally) {
+                // Reset current rally actions
+                appState.rallyActions = [];
+                
+                // If there's rally history for the current rally, restore it
+                if (appState.rallyHistory[appState.currentRally]) {
+                    appState.rallyActions = [...appState.rallyHistory[appState.currentRally]];
+                }
+                // Otherwise reconstruct from remaining history
+                else {
+                    const rallyHistory = appState.history.filter(item => item.rally === appState.currentRally);
+                    appState.rallyActions = rallyHistory.map(item => item.action);
+                }
+            }
         }
         
         // Update UI
         updateScoreboard();
         updateActionButtons();
         
-        // Update history list
-        // Remove the last history item from DOM
-        if (historyListEl.lastChild) {
-            historyListEl.removeChild(historyListEl.lastChild);
-        }
+        // Update history display with the new rally actions
+        updateHistoryDisplay();
         
         // Save state to localStorage after undo
         saveStateToLocalStorage();
@@ -627,6 +641,8 @@ function saveMatch() {
             pointsPerSet: appState.pointsPerSet,
             currentState: appState.currentState,
             history: appState.history,
+            rallyActions: appState.rallyActions,
+            rallyHistory: appState.rallyHistory,
             stateHistory: [appState.stateHistory[appState.stateHistory.length - 1] || null]
         };
 
@@ -698,4 +714,45 @@ function showMatchSummary() {
     // Show summary screen
     matchScreen.classList.add('hidden');
     summaryScreen.classList.remove('hidden');
+}
+
+// Update the history display with rally action sequences
+function updateHistoryDisplay() {
+    // Clear existing history list first
+    historyListEl.innerHTML = '';
+    
+    // Get unique rally numbers from history
+    const rallyNumbers = [...new Set(appState.history.map(item => item.rally))];
+    
+    // For each rally, create a history item showing all actions for that rally
+    rallyNumbers.forEach(rallyNum => {
+        const rallySummary = document.createElement('div');
+        rallySummary.classList.add('history-item');
+        
+        // Get all actions for this rally
+        let actionsForRally = [];
+        
+        // If it's a completed rally, use the stored rally history
+        if (appState.rallyHistory[rallyNum]) {
+            actionsForRally = appState.rallyHistory[rallyNum];
+        } 
+        // If it's the current rally, use the current rally actions
+        else if (rallyNum === appState.currentRally) {
+            actionsForRally = appState.rallyActions;
+        }
+        // Otherwise try to reconstruct from history
+        else {
+            const rallyHistory = appState.history.filter(item => item.rally === rallyNum);
+            actionsForRally = rallyHistory.map(item => item.action);
+        }
+        
+        // Display rally number and all actions
+        rallySummary.textContent = `Rally ${rallyNum}: ${actionsForRally.join(' ')}`;
+        
+        // Add to history list
+        historyListEl.appendChild(rallySummary);
+    });
+    
+    // Scroll to the bottom to show the most recent rally
+    historyListEl.scrollTop = historyListEl.scrollHeight;
 }
