@@ -721,6 +721,10 @@ function updateHistoryDisplay() {
     // Clear existing history list first
     historyListEl.innerHTML = '';
     
+    // Create a container for our history entries
+    const historyContainer = document.createElement('div');
+    historyContainer.classList.add('history-container');
+    
     // Get unique rally numbers from history
     const rallyNumbers = [...new Set(appState.history.map(item => item.rally))];
     
@@ -728,39 +732,49 @@ function updateHistoryDisplay() {
     let scoreA = 0;
     let scoreB = 0;
     
-    // For each rally, create a history item showing all actions for that rally
+    // For each rally, create a history item showing actions and score
     rallyNumbers.forEach(rallyNum => {
-        const rallySummary = document.createElement('div');
-        rallySummary.classList.add('history-item');
-        
         // Get all actions for this rally
         let actionsForRally = [];
+        let scoringTeam = null; // 'a' for home, 'b' for away
         
         // If it's a completed rally, use the stored rally history
         if (appState.rallyHistory[rallyNum]) {
             actionsForRally = appState.rallyHistory[rallyNum];
             
-            // Update scores based on the outcome of completed rallies
+            // Determine who scored based on the last action's outcome
             const lastAction = appState.history.find(h => h.rally === rallyNum && 
                 (h.nextState === 'Point Server' || h.nextState === 'Point Receiver'));
             
             if (lastAction) {
-                // Determine who scored based on who was serving and the outcome
-                const wasServingTeamA = appState.history.find(h => h.rally === rallyNum)?.state === 'Serve' ? 
+                // Determine who was serving for this rally
+                const rallyStartItem = appState.history.find(h => h.rally === rallyNum);
+                const wasServingTeamA = rallyStartItem?.state === 'Serve' ? 
                     appState.teams.a.isServing : !appState.teams.a.isServing;
                     
                 if (lastAction.nextState === 'Point Server') {
-                    if (wasServingTeamA) scoreA++;
-                    else scoreB++;
+                    if (wasServingTeamA) {
+                        scoringTeam = 'a';
+                        scoreA++;
+                    } else {
+                        scoringTeam = 'b';
+                        scoreB++;
+                    }
                 } else { // Point Receiver
-                    if (wasServingTeamA) scoreB++;
-                    else scoreA++;
+                    if (wasServingTeamA) {
+                        scoringTeam = 'b';
+                        scoreB++;
+                    } else {
+                        scoringTeam = 'a';
+                        scoreA++;
+                    }
                 }
             }
         } 
         // If it's the current rally, use the current rally actions
         else if (rallyNum === appState.currentRally) {
             actionsForRally = appState.rallyActions;
+            // Current rally doesn't have a scoring team yet
         }
         // Otherwise try to reconstruct from history
         else {
@@ -768,12 +782,45 @@ function updateHistoryDisplay() {
             actionsForRally = rallyHistory.map(item => item.action);
         }
         
-        // Display score and all actions
-        rallySummary.textContent = `${scoreA}-${scoreB}: ${actionsForRally.join(' ')}`;
+        // Skip rallies that don't have a scoring team (incomplete)
+        if (scoringTeam === null && rallyNum !== appState.currentRally) {
+            return;
+        }
         
-        // Add to history list
-        historyListEl.appendChild(rallySummary);
+        // Create a history item with the appropriate layout
+        const rallyItem = document.createElement('div');
+        rallyItem.classList.add('history-item');
+        
+        const actionsText = actionsForRally.join(' ');
+        const scoreText = `${scoreA}-${scoreB}`;
+        
+        // Structure depends on who scored
+        if (rallyNum === appState.currentRally) {
+            // Current rally - show actions only
+            rallyItem.innerHTML = `
+                <div class="history-actions current-rally">${actionsText}</div>
+                <div class="history-score current-rally">—</div>
+            `;
+        } else if (scoringTeam === 'a') {
+            // Home team scored
+            rallyItem.innerHTML = `
+                <div class="history-actions home-scored">${actionsText}</div>
+                <div class="history-score">${scoreText}</div>
+            `;
+        } else {
+            // Away team scored
+            rallyItem.innerHTML = `
+                <div class="history-score">${scoreText}</div>
+                <div class="history-actions away-scored">${actionsText}</div>
+            `;
+        }
+        
+        // Add to history container
+        historyContainer.appendChild(rallyItem);
     });
+    
+    // Add the container to the history list
+    historyListEl.appendChild(historyContainer);
     
     // Scroll to the bottom to show the most recent rally
     historyListEl.scrollTop = historyListEl.scrollHeight;
