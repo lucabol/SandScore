@@ -454,6 +454,10 @@ function updateActionButtons() {
     // Clear existing buttons
     actionButtonsEl.innerHTML = '';
     
+    // Update the state display
+    const currentStateEl = document.getElementById('current-state');
+    currentStateEl.textContent = getStateDisplayName(appState.currentState);
+    
     // Show action buttons for the current state
     const transitions = stateMachine[appState.currentState]?.transitions || [];
     
