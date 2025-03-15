@@ -234,14 +234,56 @@ function loadStateFromLocalStorage() {
     }
 }
 
+// Save player preferences to localStorage
+function savePlayerPreferences() {
+    const preferences = {
+        teamA: {
+            player1: document.getElementById('team-a-player1').value,
+            player2: document.getElementById('team-a-player2').value
+        },
+        teamB: {
+            player1: document.getElementById('team-b-player1').value,
+            player2: document.getElementById('team-b-player2').value
+        },
+        scoringFormat: document.querySelector('input[name="scoring"]:checked').value
+    };
+    localStorage.setItem('sandScorePreferences', JSON.stringify(preferences));
+}
+
+// Load player preferences from localStorage
+function loadPlayerPreferences() {
+    const savedPreferences = localStorage.getItem('sandScorePreferences');
+    if (savedPreferences) {
+        const preferences = JSON.parse(savedPreferences);
+        document.getElementById('team-a-player1').value = preferences.teamA.player1 || '';
+        document.getElementById('team-a-player2').value = preferences.teamA.player2 || '';
+        document.getElementById('team-b-player1').value = preferences.teamB.player1 || '';
+        document.getElementById('team-b-player2').value = preferences.teamB.player2 || '';
+        
+        // Set scoring format
+        const scoringInputs = document.querySelectorAll('input[name="scoring"]');
+        scoringInputs.forEach(input => {
+            if (input.value === preferences.scoringFormat) {
+                input.checked = true;
+            }
+        });
+    }
+}
+
 // Initialize application when the page loads
 document.addEventListener('DOMContentLoaded', () => {
+    // Load player preferences first
+    loadPlayerPreferences();
+
     // Set up event listeners
-    startMatchBtn.addEventListener('click', startMatch);
+    startMatchBtn.addEventListener('click', () => {
+        startMatch();
+        // Save preferences when starting a new match
+        savePlayerPreferences();
+    });
     undoBtn.addEventListener('click', undoLastAction);
     saveBtn.addEventListener('click', saveMatch);
     loadBtn.addEventListener('click', loadMatch);
-    resetBtn.addEventListener('click', resetMatch);
     restartBtn.addEventListener('click', restartApp);
     newMatchBtn.addEventListener('click', restartApp);
 
@@ -616,68 +658,14 @@ function loadMatch() {
     fileInput.click();
 }
 
-// Reset the current match to initial state
-function resetMatch() {
-    if (confirm('Are you sure you want to reset the match? All progress will be lost.')) {
-        // Keep player names and scoring format, but reset everything else
-        const teamAName = appState.teams.a.name;
-        const teamAPlayers = [...appState.teams.a.players];
-        const teamBName = appState.teams.b.name;
-        const teamBPlayers = [...appState.teams.b.players];
-        const pointsPerSet = [...appState.pointsPerSet];
-        
-        appState = {
-            teams: {
-                a: {
-                    name: teamAName,
-                    players: teamAPlayers,
-                    setScores: [0, 0, 0],
-                    currentScore: 0,
-                    isServing: true
-                },
-                b: {
-                    name: teamBName,
-                    players: teamBPlayers,
-                    setScores: [0, 0, 0],
-                    currentScore: 0,
-                    isServing: false
-                }
-            },
-            currentSet: 0,
-            currentRally: 1,
-            pointsPerSet: pointsPerSet,
-            currentState: 'Serve',
-            history: [],
-            stateHistory: [],
-            maxHistorySize: 20
-        };
-        
-        // Save initial state for undo
-        saveStateForUndo();
-        
-        // Clear the saved state from localStorage
-        localStorage.removeItem('sandScoreCurrentState');
-        
-        // Clear history display
-        historyListEl.innerHTML = '';
-        
-        // Update UI
-        updateScoreboard();
-        updateActionButtons();
-    }
-}
-
 // Restart the app (go back to setup screen)
 function restartApp() {
     if (confirm('Are you sure you want to start a new match? All current progress will be lost.')) {
         // Clear the saved state from localStorage
         localStorage.removeItem('sandScoreCurrentState');
         
-        // Clear input fields
-        document.getElementById('team-a-player1').value = '';
-        document.getElementById('team-a-player2').value = '';
-        document.getElementById('team-b-player1').value = '';
-        document.getElementById('team-b-player2').value = '';
+        // Load saved preferences
+        loadPlayerPreferences();
         
         // Show setup screen
         setupScreen.classList.remove('hidden');
