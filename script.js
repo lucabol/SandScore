@@ -821,6 +821,57 @@ function updateHistoryDisplay() {
             `;
         }
         
+        // Add event listeners to all history actions after adding to DOM
+        const tooltip = document.getElementById('tooltip');
+        rallyItem.querySelectorAll('.history-actions').forEach(actionDiv => {
+            // Function to check if content is truncated
+            const isTextTruncated = (element) => {
+                return element.offsetWidth < element.scrollWidth;
+            };
+
+            actionDiv.addEventListener('mouseenter', (e) => {
+                if (isTextTruncated(actionDiv)) {
+                    tooltip.textContent = actionsText;
+                    tooltip.classList.add('show');
+                    
+                    // Position the tooltip
+                    const rect = actionDiv.getBoundingClientRect();
+                    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 5}px`;
+                    tooltip.style.left = `${rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2)}px`;
+                }
+            });
+            
+            actionDiv.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('show');
+            });
+            
+            actionDiv.addEventListener('click', (e) => {
+                if (isTextTruncated(actionDiv)) {
+                    e.stopPropagation();
+                    tooltip.textContent = actionsText;
+                    tooltip.classList.add('show');
+                    
+                    // Position the tooltip
+                    const rect = actionDiv.getBoundingClientRect();
+                    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 5}px`;
+                    tooltip.style.left = `${rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2)}px`;
+                    
+                    // Add click outside listener
+                    const closeTooltip = (event) => {
+                        if (!actionDiv.contains(event.target)) {
+                            tooltip.classList.remove('show');
+                            document.removeEventListener('click', closeTooltip);
+                        }
+                    };
+                    
+                    // Small delay to avoid immediate closure
+                    setTimeout(() => {
+                        document.addEventListener('click', closeTooltip);
+                    }, 0);
+                }
+            });
+        });
+        
         // Only add the rally item if we have actions
         if (actionsForRally.length > 0) {
             historyContainer.appendChild(rallyItem);

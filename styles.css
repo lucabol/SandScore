@@ -287,6 +287,49 @@ button {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    position: relative;
+    cursor: pointer;
+}
+
+.tooltip {
+    display: none;
+    position: fixed;
+    background: rgba(51, 51, 51, 0.95);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    max-width: 90vw;
+    white-space: normal;
+    word-wrap: break-word;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    line-height: 1.4;
+    pointer-events: none;
+}
+
+.tooltip.show {
+    display: block;
+}
+
+.history-actions:hover::after,
+.history-actions.show-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    background: rgba(51, 51, 51, 0.95);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    max-width: 90vw;
+    white-space: normal;
+    word-wrap: break-word;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    line-height: 1.4;
 }
 
 .history-actions.home-scored {
