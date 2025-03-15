@@ -153,7 +153,8 @@ let appState = {
     rallyHistory: {}, // Object with rally numbers as keys and action arrays as values
     // Instead of storing full state history, we'll store a limited number of snapshots
     stateHistory: [],
-    maxHistorySize: 20 // Limit the number of state snapshots to avoid memory issues
+    maxHistorySize: 20, // Limit the number of state snapshots to avoid memory issues
+    firstServingTeam: 'a', // Track who served first in the match
 };
 
 // Save the current state for undo functionality with memory optimization
@@ -249,7 +250,8 @@ function savePlayerPreferences() {
             player1: document.getElementById('team-b-player1').value,
             player2: document.getElementById('team-b-player2').value
         },
-        scoringFormat: document.querySelector('input[name="scoring"]:checked').value
+        scoringFormat: document.querySelector('input[name="scoring"]:checked').value,
+        servingTeam: document.querySelector('input[name="serving"]:checked').value
     };
     localStorage.setItem('sandScorePreferences', JSON.stringify(preferences));
 }
@@ -271,6 +273,16 @@ function loadPlayerPreferences() {
                 input.checked = true;
             }
         });
+
+        // Set serving team
+        if (preferences.servingTeam) {
+            const servingInputs = document.querySelectorAll('input[name="serving"]');
+            servingInputs.forEach(input => {
+                if (input.value === preferences.servingTeam) {
+                    input.checked = true;
+                }
+            });
+        }
     }
 }
 
@@ -376,8 +388,9 @@ function startMatch() {
     const teamAName = `${teamAPlayer1}/${teamAPlayer2}`;
     const teamBName = `${teamBPlayer1}/${teamBPlayer2}`;
     
-    // Get scoring format
+    // Get scoring format and serving team
     const scoringFormat = document.querySelector('input[name="scoring"]:checked').value;
+    const servingTeam = document.querySelector('input[name="serving"]:checked').value;
     
     // Initialize app state
     appState = {
@@ -387,14 +400,14 @@ function startMatch() {
                 players: [teamAPlayer1, teamAPlayer2],
                 setScores: [0, 0, 0],
                 currentScore: 0,
-                isServing: true
+                isServing: servingTeam === 'team-a'
             },
             b: {
                 name: teamBName,
                 players: [teamBPlayer1, teamBPlayer2],
                 setScores: [0, 0, 0],
                 currentScore: 0,
-                isServing: false
+                isServing: servingTeam === 'team-b'
             }
         },
         currentSet: 0,
@@ -405,7 +418,8 @@ function startMatch() {
         rallyActions: [], // Reset actions for current rally
         rallyHistory: {}, // Reset rally history
         stateHistory: [],
-        maxHistorySize: 20
+        maxHistorySize: 20,
+        firstServingTeam: servingTeam === 'team-a' ? 'a' : 'b'
     };
 
     // Update the scoreboard with initial values
@@ -473,7 +487,7 @@ function updateActionButtons() {
 }
 
 // Handle action button click
-function handleAction(action, nextState) {
+async function handleAction(action, nextState) {
     // Save current state for undo
     saveStateForUndo();
     
@@ -537,7 +551,40 @@ function handleAction(action, nextState) {
             
             // Move to next set or end the match
             appState.currentSet++;
-            appState.currentRally = 1;
+            
+            if (appState.currentSet < 3) {
+                appState.currentRally = 1;
+                
+                // For set 2, swap serving from first set
+                if (appState.currentSet === 1) {
+                    // Use firstServingTeam to determine who serves in set 2
+                    const secondSetServer = appState.firstServingTeam === 'a' ? 'b' : 'a';
+                    appState.teams.a.isServing = secondSetServer === 'a';
+                    appState.teams.b.isServing = secondSetServer === 'b';
+                }
+                // For set 3, prompt for serving team only if match is tied 1-1
+                else if (appState.currentSet === 2) {
+                    // Count sets won by each team
+                    const setsWonA = appState.teams.a.setScores.filter(score => score > 0).length;
+                    const setsWonB = appState.teams.b.setScores.filter(score => score > 0).length;
+                    
+                    // Only show serving choice dialog if match is tied 1-1
+                    if (setsWonA === 1 && setsWonB === 1) {
+                        promptThirdSetService().then(servingTeam => {
+                            appState.teams.a.isServing = servingTeam === 'a';
+                            appState.teams.b.isServing = servingTeam === 'b';
+                            // Update UI after serving team is chosen
+                            updateScoreboard();
+                            updateActionButtons();
+                            saveStateToLocalStorage();
+                        });
+                    } else {
+                        // If not tied, keep current server
+                        appState.teams.a.isServing = scoringTeam === 'a';
+                        appState.teams.b.isServing = scoringTeam === 'b';
+                    }
+                }
+            }
             
             // Check if match is over
             let setsWonA = appState.teams.a.setScores.filter(score => score > 0).length;
@@ -547,11 +594,11 @@ function handleAction(action, nextState) {
                 showMatchSummary();
                 return;
             }
+        } else {
+            // Server changes when point is scored (within the same set)
+            appState.teams.a.isServing = scoringTeam === 'a';
+            appState.teams.b.isServing = scoringTeam === 'b';
         }
-        
-        // Server changes when point is scored
-        appState.teams.a.isServing = scoringTeam === 'a';
-        appState.teams.b.isServing = scoringTeam === 'b';
         
         // Automatically start next rally
         appState.currentRally++;
@@ -568,6 +615,58 @@ function handleAction(action, nextState) {
     
     // Save state to localStorage
     saveStateToLocalStorage();
+}
+
+// Function to prompt for third set service
+function promptThirdSetService() {
+    return new Promise((resolve) => {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        `;
+
+        const content = document.createElement('div');
+        content.style.cssText = `
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        `;
+
+        content.innerHTML = `
+            <h3>Choose Serving Team for Set 3</h3>
+            <div style="margin: 20px 0;">
+                <button id="team-a-serve" style="margin: 5px;">${appState.teams.a.name}</button>
+                <button id="team-b-serve" style="margin: 5px;">${appState.teams.b.name}</button>
+            </div>
+        `;
+
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+
+        const teamABtn = content.querySelector('#team-a-serve');
+        const teamBBtn = content.querySelector('#team-b-serve');
+
+        teamABtn.onclick = () => {
+            document.body.removeChild(modal);
+            resolve('a');
+        };
+
+        teamBBtn.onclick = () => {
+            document.body.removeChild(modal);
+            resolve('b');
+        };
+    });
 }
 
 // Undo the last action
@@ -702,7 +801,8 @@ function restartApp() {
             history: [],
             rallyActions: [],
             rallyHistory: {},
-            stateHistory: []
+            stateHistory: [],
+            firstServingTeam: 'a'
         };
         
         // Load saved preferences

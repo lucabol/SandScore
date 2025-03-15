@@ -106,7 +106,7 @@ button {
     gap: 15px;
 }
 
-.team-setup, .scoring-setup {
+.team-setup, .scoring-setup, .serving-setup {
     background-color: #e3f2fd;
     padding: 12px;
     border-radius: 6px;
@@ -121,7 +121,7 @@ button {
     border-radius: 4px;
 }
 
-.scoring-options {
+.scoring-options, .serving-options {
     display: flex;
     flex-direction: column;
     gap: 10px;
