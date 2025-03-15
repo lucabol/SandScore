@@ -404,9 +404,9 @@ function startMatch() {
         currentRally: 1,
         pointsPerSet: scoringFormat === 'short' ? [3, 3, 3] : [21, 21, 15],
         currentState: 'Serve',
-        history: [],
-        rallyActions: [], // Actions for current rally
-        rallyHistory: {}, // Object with rally numbers as keys and action arrays as values
+        history: [], // Reset history
+        rallyActions: [], // Reset actions for current rally
+        rallyHistory: {}, // Reset rally history
         stateHistory: [],
         maxHistorySize: 20
     };
@@ -419,6 +419,9 @@ function startMatch() {
     
     // Save initial state to localStorage
     saveStateToLocalStorage();
+    
+    // Clear the history display
+    updateHistoryDisplay();
     
     // Show match screen
     setupScreen.classList.add('hidden');
@@ -679,6 +682,37 @@ function restartApp() {
     if (confirm('Are you sure you want to start a new match? All current progress will be lost.')) {
         // Clear the saved state from localStorage
         localStorage.removeItem('sandScoreCurrentState');
+        
+        // Clear the rally history display
+        historyListEl.innerHTML = '';
+        
+        // Reset the app state
+        appState = {
+            teams: {
+                a: {
+                    name: 'Team A',
+                    players: ['Player 1', 'Player 2'],
+                    setScores: [0, 0, 0],
+                    currentScore: 0,
+                    isServing: true
+                },
+                b: {
+                    name: 'Team B',
+                    players: ['Player 1', 'Player 2'],
+                    setScores: [0, 0, 0],
+                    currentScore: 0,
+                    isServing: false
+                }
+            },
+            currentSet: 0,
+            currentRally: 1,
+            pointsPerSet: [3, 3, 3],
+            currentState: 'Serve',
+            history: [],
+            rallyActions: [],
+            rallyHistory: {},
+            stateHistory: []
+        };
         
         // Load saved preferences
         loadPlayerPreferences();
