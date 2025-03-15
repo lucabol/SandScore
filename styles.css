@@ -531,17 +531,22 @@ button {
 
 .summary-sets {
     display: flex;
-    gap: 15px;
+    flex-direction: column;
+    gap: 10px;
     margin-top: 15px;
     justify-content: center;
 }
 
-.summary-sets span {
+.set-pair {
     font-size: 2rem;
     font-weight: bold;
     color: #0d47a1;
-    min-width: 30px;
     text-align: center;
+}
+
+.set-pair span {
+    min-width: 30px;
+    display: inline-block;
 }
 
 .winner-announcement {
@@ -631,6 +636,18 @@ button {
 
     .summary-sets span {
         font-size: 1.6rem;
+        min-width: 25px;
+    }
+    
+    .winner-announcement {
+        font-size: 1rem;
+    }
+
+    .set-pair {
+        font-size: 1.6rem;
+    }
+    
+    .set-pair span {
         min-width: 25px;
     }
     
