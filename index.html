@@ -40,43 +40,32 @@
 
     <!-- Match Screen -->
     <div id="match-screen" class="screen hidden">
-        <div class="scoreboard">
+        <div class="compact-scoreboard">
             <div class="team team-a">
-                <div class="team-name" id="display-team-a-name">Team A</div>
-                <div class="player-names">
-                    <span id="display-team-a-player1">Player 1</span>,
-                    <span id="display-team-a-player2">Player 2</span>
+                <div class="team-info">
+                    <span class="service-dot" id="team-a-serving"></span>
+                    <span class="team-name" id="display-team-a-name">Team A</span>
+                </div>
+                <div class="score" id="team-a-score">0</div>
+            </div>
+            <div class="score-divider">
+                <div class="set-scores">
+                    <span id="team-a-set1">0</span>-<span id="team-b-set1">0</span>
                 </div>
                 <div class="set-scores">
-                    <span id="team-a-set1" class="set-score">0</span>
-                    <span id="team-a-set2" class="set-score">0</span>
-                    <span id="team-a-set3" class="set-score">0</span>
+                    <span id="team-a-set2">0</span>-<span id="team-b-set2">0</span>
                 </div>
-                <div class="current-score" id="team-a-score">0</div>
-                <div class="service-indicator" id="team-a-serving"></div>
-            </div>
-            <div class="set-indicator">
-                <span id="current-set">Set 1</span>
+                <div class="set-scores">
+                    <span id="team-a-set3">0</span>-<span id="team-b-set3">0</span>
+                </div>
             </div>
             <div class="team team-b">
-                <div class="team-name" id="display-team-b-name">Team B</div>
-                <div class="player-names">
-                    <span id="display-team-b-player1">Player 1</span>,
-                    <span id="display-team-b-player2">Player 2</span>
+                <div class="team-info">
+                    <span class="team-name" id="display-team-b-name">Team B</span>
+                    <span class="service-dot" id="team-b-serving"></span>
                 </div>
-                <div class="set-scores">
-                    <span id="team-b-set1" class="set-score">0</span>
-                    <span id="team-b-set2" class="set-score">0</span>
-                    <span id="team-b-set3" class="set-score">0</span>
-                </div>
-                <div class="current-score" id="team-b-score">0</div>
-                <div class="service-indicator" id="team-b-serving"></div>
+                <div class="score" id="team-b-score">0</div>
             </div>
-        </div>
-
-        <div id="rally-header">
-            <h2 id="current-state">Ready to Start</h2>
-            <div class="rally-counter">Rally: <span id="rally-count">1</span></div>
         </div>
 
         <div id="action-buttons" class="action-buttons"></div>
@@ -89,14 +78,10 @@
             <input type="file" id="load-file" accept=".json" style="display: none">
         </div>
 
-        <!-- Match History Panel -->
+        <!-- History Panel -->
         <div id="history-panel" class="history-panel">
-            <h3>Rally History</h3>
             <div id="history-list" class="history-list"></div>
         </div>
-
-        <!-- Tooltip container -->
-        <div id="tooltip" class="tooltip"></div>
     </div>
 
     <!-- Match Summary Screen -->
@@ -126,6 +111,7 @@
         </div>
     </div>
 
+    <div id="tooltip" class="tooltip"></div>
     <script src="script.js"></script>
 </body>
 </html>

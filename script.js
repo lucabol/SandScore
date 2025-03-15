@@ -117,15 +117,12 @@ const setupScreen = document.getElementById('setup-screen');
 const matchScreen = document.getElementById('match-screen');
 const summaryScreen = document.getElementById('summary-screen');
 const startMatchBtn = document.getElementById('start-match');
-const currentStateEl = document.getElementById('current-state');
 const actionButtonsEl = document.getElementById('action-buttons');
 const undoBtn = document.getElementById('undo-btn');
 const saveBtn = document.getElementById('save-btn');
 const loadBtn = document.getElementById('load-btn');
-const resetBtn = document.getElementById('reset-btn');
 const restartBtn = document.getElementById('restart-btn');
 const newMatchBtn = document.getElementById('new-match-btn');
-const rallyCountEl = document.getElementById('rally-count');
 const historyListEl = document.getElementById('history-list');
 
 // Application State
@@ -437,18 +434,6 @@ function updateScoreboard() {
     document.getElementById('display-team-a-name').textContent = appState.teams.a.name;
     document.getElementById('display-team-b-name').textContent = appState.teams.b.name;
     
-    // Update player names
-    document.getElementById('display-team-a-player1').textContent = appState.teams.a.players[0];
-    document.getElementById('display-team-a-player2').textContent = appState.teams.a.players[1];
-    document.getElementById('display-team-b-player1').textContent = appState.teams.b.players[0];
-    document.getElementById('display-team-b-player2').textContent = appState.teams.b.players[1];
-    
-    // Update set scores
-    for (let i = 0; i < 3; i++) {
-        document.getElementById(`team-a-set${i+1}`).textContent = appState.teams.a.setScores[i];
-        document.getElementById(`team-b-set${i+1}`).textContent = appState.teams.b.setScores[i];
-    }
-    
     // Update current scores
     document.getElementById('team-a-score').textContent = appState.teams.a.currentScore;
     document.getElementById('team-b-score').textContent = appState.teams.b.currentScore;
@@ -457,14 +442,11 @@ function updateScoreboard() {
     document.getElementById('team-a-serving').classList.toggle('serving', appState.teams.a.isServing);
     document.getElementById('team-b-serving').classList.toggle('serving', appState.teams.b.isServing);
     
-    // Update current set indicator
-    document.getElementById('current-set').textContent = `Set ${appState.currentSet + 1}`;
-    
-    // Update rally counter
-    rallyCountEl.textContent = appState.currentRally;
-    
-    // Update current state with dynamic team names
-    currentStateEl.textContent = getStateDisplayName(appState.currentState);
+    // Update set scores
+    for (let i = 0; i < 3; i++) {
+        document.getElementById(`team-a-set${i+1}`).textContent = appState.teams.a.setScores[i];
+        document.getElementById(`team-b-set${i+1}`).textContent = appState.teams.b.setScores[i];
+    }
 }
 
 // Update action buttons based on current state
