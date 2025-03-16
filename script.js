@@ -729,7 +729,13 @@ function promptThirdSetService() {
 function undoLastAction() {
     // Check if we have history to go back to
     if (appState.stateHistory.length > 1) {
-        // Remove current state
+        // Store original values before updating them for logging
+        const originalRally = appState.currentRally;
+        const originalState = appState.currentState;
+        const originalScoreA = appState.teams.a.currentScore;
+        const originalScoreB = appState.teams.b.currentScore;
+        
+        // Remove current state from history
         appState.stateHistory.pop();
         
         // Go back to previous state
@@ -760,10 +766,7 @@ function undoLastAction() {
         appState.pointsPerSet = [...previousState.pointsPerSet];
         appState.currentState = previousState.currentState;
         
-        // We need to handle rally history and current actions more carefully
-        
-        // First, identify completed rallies that should be removed
-        // These are rallies with numbers greater than the currentRally we're going back to
+        // Find all rallies greater than or equal to the current rally
         const ralliesToRemove = Object.keys(appState.rallyHistory)
             .map(Number)
             .filter(rallyNum => rallyNum >= appState.currentRally);
@@ -773,12 +776,15 @@ function undoLastAction() {
             delete appState.rallyHistory[rallyNum];
         });
         
-        // Remove history items for future rallies
+        // Remove history items for future rallies and current rally's unfinished actions
         appState.history = appState.history.filter(item => item.rally < appState.currentRally);
         
         // Restore rally actions for the current rally based on history
         const currentRallyHistory = appState.history.filter(item => item.rally === appState.currentRally);
         appState.rallyActions = currentRallyHistory.map(item => item.action);
+        
+        // Detailed logging to help debugging
+        console.log(`Undo: Rally ${originalRally} → ${appState.currentRally}, Score ${originalScoreA}-${originalScoreB} → ${appState.teams.a.currentScore}-${appState.teams.b.currentScore}, State ${originalState} → ${appState.currentState}`);
         
         // Update UI
         updateScoreboard();
