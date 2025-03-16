@@ -335,6 +335,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Start a new match with the entered player data
 function startMatch() {
+    // Clear previous state
+    localStorage.removeItem('sandscoreStates');
+    state.states = [];
+
     // Get player names from input fields
     const teamAPlayer1 = document.getElementById('team-a-player1').value || 'Player 1';
     const teamAPlayer2 = document.getElementById('team-a-player2').value || 'Player 2';
@@ -625,7 +629,13 @@ function promptThirdSetService() {
 // Undo the last action
 function undoLastAction() {
     if (state.states.length > 1) {
-        undo();
+        // Remove current state
+        state.states.pop();
+        // Get previous state
+        const previousState = JSON.parse(state.states[state.states.length - 1]);
+        loadState(previousState);
+        // Save updated stack to localStorage
+        localStorage.setItem('sandscoreStates', JSON.stringify(state));
         updateScoreboard();
         updateActionButtons();
         updateHistoryDisplay();
@@ -679,8 +689,8 @@ function loadMatch() {
 // Restart the app (go back to setup screen)
 function restartApp() {
     if (confirm('Are you sure you want to start a new match? All current progress will be lost.')) {
-        // Clear the saved state from localStorage
-        localStorage.removeItem('sandScoreCurrentState');
+        // Clear the saved states from localStorage
+        localStorage.removeItem('sandscoreStates');
         
         // Clear the rally history display
         historyListEl.innerHTML = '';
@@ -712,6 +722,9 @@ function restartApp() {
             rallyHistory: {},
             firstServingTeam: 'a'
         };
+
+        // Reset the state stack
+        state.states = [];
         
         // Load saved preferences
         loadPlayerPreferences();
