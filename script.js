@@ -570,8 +570,20 @@ async function handleAction(action, nextState) {
             // Move to next set or end the match
             appState.currentSet++;
             
+            // Check if match is over (after completing a set)
+            let setsWonA = appState.teams.a.setScores.filter(score => score > 0).length;
+            let setsWonB = appState.teams.b.setScores.filter(score => score > 0).length;
+            
+            if (setsWonA >= 2 || setsWonB >= 2) {
+                showMatchSummary();
+                return;
+            }
+            
+            // If match isn't over, continue to next set
             if (appState.currentSet < 3) {
-                appState.currentRally = 1;
+                // Keep the current rally number incrementing instead of resetting
+                // This ensures unique rally numbers across all sets
+                appState.currentRally++;
                 
                 // For set 2, swap serving from first set
                 if (appState.currentSet === 1) {
@@ -582,10 +594,6 @@ async function handleAction(action, nextState) {
                 }
                 // For set 3, prompt for serving team only if match is tied 1-1
                 else if (appState.currentSet === 2) {
-                    // Count sets won by each team
-                    const setsWonA = appState.teams.a.setScores.filter(score => score > 0).length;
-                    const setsWonB = appState.teams.b.setScores.filter(score => score > 0).length;
-                    
                     // Only show serving choice dialog if match is tied 1-1
                     if (setsWonA === 1 && setsWonB === 1) {
                         promptThirdSetService().then(servingTeam => {
@@ -602,15 +610,6 @@ async function handleAction(action, nextState) {
                         appState.teams.b.isServing = scoringTeam === 'b';
                     }
                 }
-            }
-            
-            // Check if match is over
-            let setsWonA = appState.teams.a.setScores.filter(score => score > 0).length;
-            let setsWonB = appState.teams.b.setScores.filter(score => score > 0).length;
-            
-            if (appState.currentSet >= 3 || setsWonA >= 2 || setsWonB >= 2) {
-                showMatchSummary();
-                return;
             }
         } else {
             // Server changes when point is scored (within the same set)
@@ -859,7 +858,7 @@ function showMatchSummary() {
     summaryScreen.classList.remove('hidden');
 }
 
-// Update the history display with rally action sequences
+// Update the history display function to handle sets properly
 function updateHistoryDisplay() {
     // Clear existing history list first
     historyListEl.innerHTML = '';
@@ -868,8 +867,14 @@ function updateHistoryDisplay() {
     const historyContainer = document.createElement('div');
     historyContainer.classList.add('history-container');
     
-    // Get unique rally numbers from history
-    const rallyNumbers = [...new Set(appState.history.map(item => item.rally))];
+    // Get all rally numbers from history and sort them
+    const rallyNumbers = [...new Set(Object.keys(appState.rallyHistory).map(Number))];
+    rallyNumbers.sort((a, b) => a - b);
+    
+    // Add current rally if it has actions but isn't in history yet
+    if (appState.rallyActions.length > 0 && !rallyNumbers.includes(appState.currentRally)) {
+        rallyNumbers.push(appState.currentRally);
+    }
     
     // For each rally, create a history item showing actions and score
     rallyNumbers.forEach(rallyNum => {
@@ -885,11 +890,6 @@ function updateHistoryDisplay() {
         // For the current rally, use current actions
         else if (rallyNum === appState.currentRally) {
             actionsForRally = appState.rallyActions;
-        }
-        // Otherwise use the stored history
-        else {
-            const rallyHistory = appState.history.filter(item => item.rally === rallyNum);
-            actionsForRally = rallyHistory.map(item => item.action);
         }
         
         // Create a history item with the appropriate layout
