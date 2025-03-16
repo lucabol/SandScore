@@ -151,43 +151,30 @@ let appState = {
     // To track rally history by rally number and actions
     rallyActions: [], // Actions for current rally
     rallyHistory: {}, // Object with rally numbers as keys and action arrays as values
-    // Instead of storing full state history, we'll store a limited number of snapshots
-    stateHistory: [],
-    maxHistorySize: 20, // Limit the number of state snapshots to avoid memory issues
     firstServingTeam: 'a', // Track who served first in the match
 };
 
-// Save the current state for undo functionality with memory optimization
+// Save the current state for undo functionality
 function saveStateForUndo() {
-    // Create a lightweight copy of the state
-    const stateSnapshot = {
+    // Save the current state in rallyHistory with special marker
+    // This allows us to restore to this specific state if needed
+    appState.rallyHistory[`undo_${appState.currentRally}`] = {
         teams: {
             a: { 
-                ...appState.teams.a,
-                players: [...appState.teams.a.players],
                 setScores: [...appState.teams.a.setScores],
                 currentScore: appState.teams.a.currentScore,
                 isServing: appState.teams.a.isServing
             },
             b: { 
-                ...appState.teams.b,
-                players: [...appState.teams.b.players],
                 setScores: [...appState.teams.b.setScores],
                 currentScore: appState.teams.b.currentScore,
                 isServing: appState.teams.b.isServing
             }
         },
         currentSet: appState.currentSet,
-        currentRally: appState.currentRally,
-        pointsPerSet: [...appState.pointsPerSet],
         currentState: appState.currentState,
+        actions: [...appState.rallyActions]
     };
-    
-    appState.stateHistory.push(stateSnapshot);
-    
-    if (appState.stateHistory.length > appState.maxHistorySize) {
-        appState.stateHistory.shift();
-    }
 }
 
 // Save current state to localStorage
@@ -202,8 +189,7 @@ function saveStateToLocalStorage() {
             history: appState.history,
             rallyActions: appState.rallyActions,
             rallyHistory: appState.rallyHistory,
-            firstServingTeam: appState.firstServingTeam,
-            stateHistory: appState.stateHistory // Save the full state history
+            firstServingTeam: appState.firstServingTeam
         };
         localStorage.setItem('sandScoreCurrentState', JSON.stringify(stateToSave));
     } catch (e) {
@@ -228,32 +214,6 @@ function loadStateFromLocalStorage() {
             appState.rallyActions = parsedState.rallyActions || [];
             appState.rallyHistory = parsedState.rallyHistory || {};
             appState.firstServingTeam = parsedState.firstServingTeam || 'a';
-            
-            // Restore the state history properly for undo functionality
-            if (parsedState.stateHistory && Array.isArray(parsedState.stateHistory) && parsedState.stateHistory.length > 0) {
-                appState.stateHistory = parsedState.stateHistory;
-            } else {
-                // If no history, initialize with current state
-                const currentState = {
-                    teams: {
-                        a: { 
-                            ...appState.teams.a,
-                            players: [...appState.teams.a.players],
-                            setScores: [...appState.teams.a.setScores] 
-                        },
-                        b: { 
-                            ...appState.teams.b,
-                            players: [...appState.teams.b.players],
-                            setScores: [...appState.teams.b.setScores] 
-                        }
-                    },
-                    currentSet: appState.currentSet,
-                    currentRally: appState.currentRally,
-                    pointsPerSet: [...appState.pointsPerSet],
-                    currentState: appState.currentState
-                };
-                appState.stateHistory = [currentState];
-            }
             
             return true;
         }
@@ -365,24 +325,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     appState.rallyActions = parsedState.rallyActions || [];
                     appState.rallyHistory = parsedState.rallyHistory || {};
                     
-                    // Initialize the state history properly for undo functionality
-                    if (parsedState.stateHistory && Array.isArray(parsedState.stateHistory)) {
-                        appState.stateHistory = parsedState.stateHistory;
-                    } else {
-                        // If no state history, initialize with current state
-                        const currentState = {
-                            teams: {
-                                a: { ...appState.teams.a },
-                                b: { ...appState.teams.b }
-                            },
-                            currentSet: appState.currentSet,
-                            currentRally: appState.currentRally,
-                            pointsPerSet: [...appState.pointsPerSet],
-                            currentState: appState.currentState
-                        };
-                        appState.stateHistory = [currentState];
-                    }
-                    
                     // Save the loaded state to localStorage
                     saveStateToLocalStorage();
                     
@@ -466,8 +408,6 @@ function startMatch() {
         history: [], // Reset history
         rallyActions: [], // Reset actions for current rally
         rallyHistory: {}, // Reset rally history
-        stateHistory: [],
-        maxHistorySize: 20,
         firstServingTeam: servingTeam === 'team-a' ? 'a' : 'b'
     };
 
@@ -575,6 +515,12 @@ async function handleAction(action, nextState) {
         // Award a point
         appState.teams[scoringTeam].currentScore++;
         
+        const oppositeTeam = scoringTeam === 'a' ? 'b' : 'a';
+        const pointsToWin = appState.pointsPerSet[appState.currentSet];
+        const hasEnoughPoints = appState.teams[scoringTeam].currentScore >= pointsToWin;
+        const hasTwoPointLead = appState.teams[scoringTeam].currentScore - appState.teams[oppositeTeam].currentScore >= 2;
+        const setIsOver = hasEnoughPoints && hasTwoPointLead;
+        
         // Store the completed rally actions in the rally history with final score
         appState.rallyHistory[appState.currentRally] = {
             actions: [...appState.rallyActions],
@@ -584,12 +530,7 @@ async function handleAction(action, nextState) {
         };
         
         // Check if the set is over
-        const pointsToWin = appState.pointsPerSet[appState.currentSet];
-        const oppositeTeam = scoringTeam === 'a' ? 'b' : 'a';
-        
-        if (appState.teams[scoringTeam].currentScore >= pointsToWin && 
-            (appState.teams[scoringTeam].currentScore - appState.teams[oppositeTeam].currentScore) >= 2) {
-            
+        if (setIsOver) {
             // Update set score
             appState.teams[scoringTeam].setScores[appState.currentSet] = appState.teams[scoringTeam].currentScore;
             appState.teams[oppositeTeam].setScores[appState.currentSet] = appState.teams[oppositeTeam].currentScore;
@@ -598,19 +539,28 @@ async function handleAction(action, nextState) {
             appState.teams.a.currentScore = 0;
             appState.teams.b.currentScore = 0;
             
-            // Move to next set or end the match
+            // Move to next set
             appState.currentSet++;
             
-            // Check if match is over (after completing a set)
-            let setsWonA = appState.teams.a.setScores.filter(score => score > 0).length;
-            let setsWonB = appState.teams.b.setScores.filter(score => score > 0).length;
+            // Count how many sets each team has won so far
+            let setsWonA = 0;
+            let setsWonB = 0;
             
+            for (let i = 0; i < appState.currentSet; i++) {
+                if (appState.teams.a.setScores[i] > appState.teams.b.setScores[i]) {
+                    setsWonA++;
+                } else if (appState.teams.b.setScores[i] > appState.teams.a.setScores[i]) {
+                    setsWonB++;
+                }
+            }
+            
+            // End match ONLY if either team has won 2 sets
             if (setsWonA >= 2 || setsWonB >= 2) {
                 showMatchSummary();
                 return;
             }
             
-            // If match isn't over, continue to next set
+            // If match isn't over (no team has 2 sets yet), continue to next set
             if (appState.currentSet < 3) {
                 // Keep the current rally number incrementing instead of resetting
                 // This ensures unique rally numbers across all sets
@@ -643,6 +593,14 @@ async function handleAction(action, nextState) {
                         appState.teams.b.isServing = scoringTeam === 'b';
                     }
                 }
+                
+                // Reset to Serve state to start the new set
+                appState.currentState = 'Serve';
+                appState.rallyActions = [];
+                
+                // Update UI immediately
+                updateScoreboard();
+                updateActionButtons();
             }
             
             // Save another state after set change
@@ -727,61 +685,74 @@ function promptThirdSetService() {
 
 // Undo the last action
 function undoLastAction() {
-    // Check if we have history to go back to
-    if (appState.stateHistory.length > 1) {
+    // Find the most recent undo marker
+    const undoKeys = Object.keys(appState.rallyHistory)
+                      .filter(key => key.startsWith('undo_'))
+                      .sort((a, b) => {
+                          // Extract rally numbers and compare
+                          const rallyA = parseInt(a.replace('undo_', ''));
+                          const rallyB = parseInt(b.replace('undo_', ''));
+                          return rallyB - rallyA; // Sort descending (most recent first)
+                      });
+    
+    if (undoKeys.length > 0) {
         // Store original values before updating them for logging
         const originalRally = appState.currentRally;
         const originalState = appState.currentState;
         const originalScoreA = appState.teams.a.currentScore;
         const originalScoreB = appState.teams.b.currentScore;
         
-        // Remove current state from history
-        appState.stateHistory.pop();
+        // Get the most recent undo state
+        const undoKey = undoKeys[0];
+        const previousState = appState.rallyHistory[undoKey];
         
-        // Go back to previous state
-        const previousState = appState.stateHistory[appState.stateHistory.length - 1];
+        // Extract the rally number from the undo key
+        const rallyNumber = parseInt(undoKey.replace('undo_', ''));
         
-        // Properly restore the team states including scores and set scores
+        // Restore the teams state
         appState.teams.a = {
-            ...previousState.teams.a,
-            name: appState.teams.a.name, // Keep current name
-            players: [...appState.teams.a.players], // Keep current players
-            setScores: [...previousState.teams.a.setScores], // Explicitly restore set scores
-            currentScore: previousState.teams.a.currentScore, // Explicitly restore current score
-            isServing: previousState.teams.a.isServing // Explicitly restore serving state
+            ...appState.teams.a,
+            setScores: [...previousState.teams.a.setScores],
+            currentScore: previousState.teams.a.currentScore,
+            isServing: previousState.teams.a.isServing
         };
         
         appState.teams.b = {
-            ...previousState.teams.b,
-            name: appState.teams.b.name, // Keep current name
-            players: [...appState.teams.b.players], // Keep current players
-            setScores: [...previousState.teams.b.setScores], // Explicitly restore set scores
-            currentScore: previousState.teams.b.currentScore, // Explicitly restore current score
-            isServing: previousState.teams.b.isServing // Explicitly restore serving state
+            ...appState.teams.b,
+            setScores: [...previousState.teams.b.setScores],
+            currentScore: previousState.teams.b.currentScore,
+            isServing: previousState.teams.b.isServing
         };
         
         // Restore other state properties
         appState.currentSet = previousState.currentSet;
-        appState.currentRally = previousState.currentRally;
-        appState.pointsPerSet = [...previousState.pointsPerSet];
         appState.currentState = previousState.currentState;
+        appState.rallyActions = [...previousState.actions];
+        appState.currentRally = rallyNumber;
         
-        // Find all rallies greater than or equal to the current rally
-        const ralliesToRemove = Object.keys(appState.rallyHistory)
-            .map(Number)
-            .filter(rallyNum => rallyNum >= appState.currentRally);
+        // Find all rallies greater than the restored rally 
+        // and all undo markers that are no longer needed
+        const keysToRemove = Object.keys(appState.rallyHistory)
+            .filter(key => {
+                if (key.startsWith('undo_')) {
+                    const undoRally = parseInt(key.replace('undo_', ''));
+                    return undoRally > rallyNumber;
+                } else {
+                    const rallyNum = parseInt(key);
+                    return !isNaN(rallyNum) && rallyNum >= rallyNumber;
+                }
+            });
         
-        // Remove those rallies from history
-        ralliesToRemove.forEach(rallyNum => {
-            delete appState.rallyHistory[rallyNum];
+        // Remove those entries from history
+        keysToRemove.forEach(key => {
+            delete appState.rallyHistory[key];
         });
         
-        // Remove history items for future rallies and current rally's unfinished actions
-        appState.history = appState.history.filter(item => item.rally < appState.currentRally);
+        // Also remove the undo state we just used
+        delete appState.rallyHistory[undoKey];
         
-        // Restore rally actions for the current rally based on history
-        const currentRallyHistory = appState.history.filter(item => item.rally === appState.currentRally);
-        appState.rallyActions = currentRallyHistory.map(item => item.action);
+        // Remove history items for future rallies
+        appState.history = appState.history.filter(item => item.rally < rallyNumber);
         
         // Detailed logging to help debugging
         console.log(`Undo: Rally ${originalRally} → ${appState.currentRally}, Score ${originalScoreA}-${originalScoreB} → ${appState.teams.a.currentScore}-${appState.teams.b.currentScore}, State ${originalState} → ${appState.currentState}`);
@@ -793,6 +764,8 @@ function undoLastAction() {
         
         // Save state to localStorage after undo
         saveStateToLocalStorage();
+    } else {
+        console.log('Nothing to undo');
     }
 }
 
@@ -809,9 +782,7 @@ function saveMatch() {
             history: appState.history,
             rallyActions: appState.rallyActions,
             rallyHistory: appState.rallyHistory,
-            firstServingTeam: appState.firstServingTeam,
-            // Save the full state history for proper undo functionality
-            stateHistory: appState.stateHistory
+            firstServingTeam: appState.firstServingTeam
         };
 
         // Create file name with current date and player names
@@ -876,7 +847,6 @@ function restartApp() {
             history: [],
             rallyActions: [],
             rallyHistory: {},
-            stateHistory: [],
             firstServingTeam: 'a'
         };
         
@@ -902,9 +872,17 @@ function showMatchSummary() {
     document.getElementById('summary-team-a-name').textContent = appState.teams.a.name;
     document.getElementById('summary-team-b-name').textContent = appState.teams.b.name;
     
-    // Determine the winner
-    let setsWonA = appState.teams.a.setScores.filter(score => score > 0).length;
-    let setsWonB = appState.teams.b.setScores.filter(score => score > 0).length;
+    // Correctly count sets won by each team
+    let setsWonA = 0;
+    let setsWonB = 0;
+    
+    for (let i = 0; i < appState.currentSet; i++) {
+        if (appState.teams.a.setScores[i] > appState.teams.b.setScores[i]) {
+            setsWonA++;
+        } else if (appState.teams.b.setScores[i] > appState.teams.a.setScores[i]) {
+            setsWonB++;
+        }
+    }
     
     let winner = setsWonA > setsWonB ? appState.teams.a.name : appState.teams.b.name;
     let score = `${setsWonA}-${setsWonB}`;
