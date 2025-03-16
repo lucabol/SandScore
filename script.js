@@ -180,18 +180,7 @@ function saveStateForUndo() {
 // Save current state to localStorage
 function saveStateToLocalStorage() {
     try {
-        const stateToSave = {
-            teams: appState.teams,
-            currentSet: appState.currentSet,
-            currentRally: appState.currentRally,
-            pointsPerSet: appState.pointsPerSet,
-            currentState: appState.currentState,
-            history: appState.history,
-            rallyActions: appState.rallyActions,
-            rallyHistory: appState.rallyHistory,
-            firstServingTeam: appState.firstServingTeam
-        };
-        localStorage.setItem('sandScoreCurrentState', JSON.stringify(stateToSave));
+        localStorage.setItem('sandScoreCurrentState', JSON.stringify(appState));
     } catch (e) {
         console.error('Error saving state to localStorage:', e);
     }
@@ -205,15 +194,7 @@ function loadStateFromLocalStorage() {
             const parsedState = JSON.parse(savedState);
             
             // Restore the state
-            appState.teams = parsedState.teams;
-            appState.currentSet = parsedState.currentSet;
-            appState.currentRally = parsedState.currentRally;
-            appState.pointsPerSet = parsedState.pointsPerSet;
-            appState.currentState = parsedState.currentState;
-            appState.history = parsedState.history || [];
-            appState.rallyActions = parsedState.rallyActions || [];
-            appState.rallyHistory = parsedState.rallyHistory || {};
-            appState.firstServingTeam = parsedState.firstServingTeam || 'a';
+            Object.assign(appState, parsedState);
             
             return true;
         }
