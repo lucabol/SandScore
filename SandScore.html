@@ -528,8 +528,8 @@ button {
 .match-controls {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    margin: 15px 0;
+    gap: 12px;  /* Increased from 6px */
+    margin: 15px 0;  /* Increased from 10px */
     flex-wrap: wrap;
 }
 
@@ -545,9 +545,9 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 40px;    /* Reduced min-width since we're using icons */
-    width: 40px;        /* Fixed width for square buttons */
-    height: 40px;       /* Fixed height for square buttons */
+    min-width: 44px;    /* Increased from 40px for better touch target */
+    width: 44px;        /* Increased from 40px for better touch target */
+    height: 44px;       /* Increased from 40px for better touch target */
     line-height: 1;     /* Ensure proper vertical alignment of icons */
 }
 
@@ -561,52 +561,9 @@ button {
 @media (max-width: 480px) {
     .control-btn {
         font-size: 1.1rem;
-        min-width: 36px;
-        width: 36px;
-        height: 36px;
-    }
-}
-
-/* Match Controls - Enhanced Utility Buttons */
-.match-controls {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin: 10px 0;
-    flex-wrap: wrap;
-}
-
-.control-btn {
-    background-color: #f5f5f5;
-    color: #1976d2;
-    border: 1px solid #1976d2;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 1.2rem;  /* Increased font size for icons */
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 40px;    /* Reduced min-width since we're using icons */
-    width: 40px;        /* Fixed width for square buttons */
-    height: 40px;       /* Fixed height for square buttons */
-    line-height: 1;     /* Ensure proper vertical alignment of icons */
-}
-
-.control-btn:hover {
-    background-color: #1976d2;
-    color: white;
-    transform: translateY(-1px);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-@media (max-width: 480px) {
-    .control-btn {
-        font-size: 1.1rem;
-        min-width: 36px;
-        width: 36px;
-        height: 36px;
+        min-width: 44px;  /* Increased from 36px */
+        width: 44px;      /* Increased from 36px */
+        height: 44px;     /* Increased from 36px */
     }
 }
 
@@ -753,6 +710,19 @@ button {
     display: none;
 }
 
+/* Rally History Tags */
+.history-actions .tag-err,
+.history-actions .tag-re1,
+.history-actions .tag-re2 {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+.history-actions .tag-point {
+    color: #008000;
+    font-weight: bold;
+}
+
 /* Summary Screen */
 .summary-container {
     display: flex;
@@ -891,9 +861,9 @@ button {
 
     .control-btn {
         font-size: 1.1rem;
-        min-width: 36px;
-        width: 36px;
-        height: 36px;
+        min-width: 44px;  /* Increased from 36px */
+        width: 44px;      /* Increased from 36px */
+        height: 44px;     /* Increased from 36px */
     }
 
     .summary-sets span {
@@ -1913,17 +1883,13 @@ function updateHistoryDisplay() {
     
     // For each rally, create a history item showing actions and score
     rallyNumbers.forEach(rallyNum => {
-        // Get all actions for this rally
         let actionsForRally = [];
         let rallyData = null;
         
-        // If it's a completed rally, use the stored rally history
         if (appState.rallyHistory[rallyNum]) {
             rallyData = appState.rallyHistory[rallyNum];
             actionsForRally = rallyData.actions;
-        }
-        // For the current rally, use current actions
-        else if (rallyNum === appState.currentRally) {
+        } else if (rallyNum === appState.currentRally) {
             actionsForRally = appState.rallyActions;
         }
         
@@ -1931,31 +1897,35 @@ function updateHistoryDisplay() {
         const rallyItem = document.createElement('div');
         rallyItem.classList.add('history-item');
         
-        const actionsText = actionsForRally.join(' ');
+        // Format actions with proper tag classes
+        const formattedActions = actionsForRally.map(action => {
+            if (['Err', 'RE1', 'RE2'].includes(action)) {
+                return `<span class="tag-${action.toLowerCase()}">${action}</span>`;
+            } else if (['Point', 'Ace', 'Win'].includes(action)) {
+                return `<span class="tag-point">${action}</span>`;
+            }
+            return action;
+        }).join(' ');
         
         // For completed rallies, use the stored scores
         if (rallyData) {
             const scoreText = `${rallyData.scoreA}-${rallyData.scoreB}`;
             
             if (rallyData.scoringTeam === 'a') {
-                // Home team scored
                 rallyItem.innerHTML = `
-                    <div class="history-actions home-scored">${actionsText}</div>
+                    <div class="history-actions home-scored">${formattedActions}</div>
                     <div class="history-score">${scoreText}</div>
                 `;
             } else {
-                // Away team scored
                 rallyItem.innerHTML = `
                     <div class="history-score">${scoreText}</div>
-                    <div class="history-actions away-scored">${actionsText}</div>
+                    <div class="history-actions away-scored">${formattedActions}</div>
                 `;
             }
-        }
-        // For current rally, show current score
-        else if (actionsForRally.length > 0) {
+        } else if (actionsForRally.length > 0) {
             const scoreText = `${appState.teams.a.currentScore}-${appState.teams.b.currentScore}`;
             rallyItem.innerHTML = `
-                <div class="history-actions current-rally">${actionsText}</div>
+                <div class="history-actions current-rally">${formattedActions}</div>
                 <div class="history-score current-rally">${scoreText}</div>
             `;
         }
@@ -1992,7 +1962,7 @@ function updateHistoryDisplay() {
 
             actionDiv.addEventListener('mouseenter', (e) => {
                 if (isTextTruncated(actionDiv)) {
-                    tooltip.textContent = actionsText;
+                    tooltip.textContent = actionsForRally.join(' ');
                     tooltip.classList.add('show');
                     
                     // Position the tooltip
@@ -2009,7 +1979,7 @@ function updateHistoryDisplay() {
             actionDiv.addEventListener('click', (e) => {
                 if (isTextTruncated(actionDiv)) {
                     e.stopPropagation();
-                    tooltip.textContent = actionsText;
+                    tooltip.textContent = actionsForRally.join(' ');
                     tooltip.classList.add('show');
                     
                     // Position the tooltip
