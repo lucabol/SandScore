@@ -432,9 +432,6 @@ function updateActionButtons() {
 
 // Handle action button click
 async function handleAction(action, nextState) {
-    // Save current state for undo before making any changes
-    saveStateForUndo();
-    
     // Add action to the current rally actions
     appState.rallyActions.push(action);
     
@@ -560,6 +557,9 @@ async function handleAction(action, nextState) {
     updateScoreboard();
     updateActionButtons();
     updateHistoryDisplay();
+    
+    // Save current state for undo after all changes are complete
+    saveStateForUndo();
 }
 
 // Function to prompt for third set service
