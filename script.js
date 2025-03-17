@@ -166,18 +166,6 @@ function saveState(newState) {
     localStorage.setItem('sandscoreStates', JSON.stringify(state));
 }
 
-function undo() {
-    if (state.states.length > 1) {
-        // Remove current state
-        state.states.pop();
-        // Get previous state
-        const previousState = JSON.parse(state.states[state.states.length - 1]);
-        loadState(previousState);
-        // Save updated stack to localStorage
-        localStorage.setItem('sandscoreStates', JSON.stringify(state));
-    }
-}
-
 function loadFromStorage() {
     const savedState = localStorage.getItem('sandscoreStates');
     if (savedState) {
