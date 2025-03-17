@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SandScore - Beach Volleyball Rally Tracker</title>
+    
+<style>
+/* Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+    padding: 10px;
+    max-width: 100vw;
+}
+
+/* App Title */
+.app-title {
+    text-align: center;
+    color: #0d47a1;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    padding: 8px 0;
+    position: relative;
+    font-weight: bold;
+    letter-spacing: 1px;
+    display: block; /* Explicitly set display to block */
+}
+
+.app-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: #1976d2;
+    border-radius: 2px;
+}
+
+/* Regular heading styles - removed the display: none */
+h1 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+}
+
+h2, h3 {
+    color: #0d47a1;
+    text-align: center;
+}
+
+h2 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
+
+h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+}
+
+/* Responsive adjustment for app title */
+@media (max-width: 480px) {
+    .app-title {
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+        padding: 6px 0;
+    }
+    
+    .app-title::after {
+        width: 50px;
+        height: 2px;
+    }
+}
+
+/* Button Styles */
+button {
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    transition: background-color 0.2s;
+}
+
+.primary-btn {
+    background-color: #0d47a1;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 10px 16px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.primary-btn:hover {
+    background-color: #1565c0;
+}
+
+.control-btn {
+    background-color: #e0e0e0;
+    color: #333;
+    margin: 5px;
+    width: calc(20% - 10px);
+    min-width: 50px;
+}
+
+.control-btn:hover {
+    background-color: #bdbdbd;
+}
+
+.action-button {
+    background-color: #1976d2;
+    color: white;
+    margin: 5px;
+    padding: 8px;
+    flex: 1 0 auto;
+    font-size: 0.9rem;
+    min-width: 80px;
+    max-width: 120px;
+}
+
+.action-button:hover {
+    background-color: #1565c0;
+}
+
+/* Screen Styles */
+.screen {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 15px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.hidden {
+    display: none;
+}
+
+/* Setup Screen */
+.setup-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.team-setup, .scoring-setup, .serving-setup {
+    background-color: #e3f2fd;
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.player-input {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.scoring-options, .serving-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px 0;
+}
+
+/* Match Screen */
+.scoreboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #e3f2fd;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.team {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+}
+
+.team-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.player-names {
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+}
+
+.set-scores {
+    display: flex;
+    justify-content: center;
+    margin: 5px 0;
+}
+
+.set-score {
+    width: 25px;
+    height: 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    margin: 0 2px;
+    font-size: 0.9rem;
+}
+
+.current-score {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #0d47a1;
+}
+
+.set-indicator {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #0d47a1;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.service-indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #f44336;
+    border-radius: 50%;
+    margin: 0 auto;
+    opacity: 0;
+}
+
+.serving {
+    opacity: 1;
+}
+
+.rally-counter {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+#rally-header {
+    position: relative;
+    margin-bottom: 10px;
+    background-color: #f5f5f5;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+#current-state {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.match-controls {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 15px 0;
+}
+
+/* Match Screen - New Compact Design */
+.compact-scoreboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+.team {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.team-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.team-a .team-info {
+    flex-direction: row;
+}
+
+.team-b .team-info {
+    flex-direction: row-reverse;
+}
+
+.team-name {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #333;
+}
+
+.score {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #0d47a1;
+}
+
+.service-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: transparent;
+}
+
+.serving {
+    background-color: #f44336;
+}
+
+.score-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 0 15px;
+}
+
+.set-scores {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.set-scores span {
+    font-weight: bold;
+    padding: 0 2px;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.action-button {
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    min-width: 80px;
+    max-width: 120px;
+    flex: 1;
+}
+
+.action-button:hover {
+    background-color: #1565c0;
+}
+
+/* Match Controls */
+.match-controls {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: #333;
+}
+
+.control-btn:hover {
+    background-color: #bdbdbd;
+}
+
+/* Match Controls - Enhanced Utility Buttons */
+.match-controls {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    background-color: #f5f5f5;
+    color: #1976d2;
+    border: 1px solid #1976d2;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+}
+
+.control-btn:hover {
+    background-color: #1976d2;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.control-btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+@media (max-width: 480px) {
+    .control-btn {
+        font-size: 0.75rem;
+        padding: 4px 6px;
+        min-width: 50px;
+    }
+}
+
+/* History Panel */
+.history-panel {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 15px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.history-list {
+    padding: 8px;
+}
+
+/* History Panel */
+.history-panel {
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 15px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.history-list {
+    font-size: 0.9rem;
+}
+
+.history-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.history-item {
+    display: grid;
+    /* Define fixed column widths to ensure center alignment */
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 3px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.history-score {
+    text-align: center;
+    font-weight: bold;
+    color: #0d47a1;
+    padding: 0 6px;
+    min-width: 40px;
+    /* Ensure the score is always in the center column */
+    grid-column: 2;
+    justify-self: center;
+}
+
+.history-actions {
+    font-size: 0.85rem;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    cursor: pointer;
+    display: block; /* Ensure block-level for consistent width calculation */
+    width: 100%;    /* Take full width of grid cell */
+}
+
+.tooltip {
+    display: none;
+    position: fixed;
+    background: rgba(51, 51, 51, 0.95);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    max-width: 90vw;
+    white-space: normal;
+    word-wrap: break-word;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    line-height: 1.4;
+    pointer-events: none;
+}
+
+.tooltip.show {
+    display: block;
+}
+
+.history-actions:hover::after,
+.history-actions.show-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    background: rgba(51, 51, 51, 0.95);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    max-width: 90vw;
+    white-space: normal;
+    word-wrap: break-word;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    line-height: 1.4;
+}
+
+.history-actions.home-scored {
+    text-align: right;
+    padding-right: 8px;
+    grid-column: 1;
+}
+
+.history-actions.away-scored {
+    text-align: left;
+    padding-left: 8px;
+    grid-column: 3;
+}
+
+.current-rally {
+    font-style: italic;
+    color: #666;
+}
+
+/* Remove these selectors as they can interfere with the grid layout */
+.history-item:has(.away-scored) .history-actions:first-child,
+.history-item:has(.home-scored) .history-actions:last-child {
+    display: none;
+}
+
+/* Summary Screen */
+.summary-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.final-score {
+    display: flex;
+    justify-content: space-around;
+    background-color: #e3f2fd;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.team-summary {
+    text-align: center;
+}
+
+.winner-announcement {
+    text-align: center;
+    font-size: 1.2rem;
+    margin: 10px 0;
+    font-weight: bold;
+    color: #0d47a1;
+}
+
+/* Summary Screen - New Compact Design */
+.compact-scoreboard.final {
+    margin-bottom: 25px;
+    background-color: #f8f9fa;
+    border: 2px solid #1976d2;
+}
+
+.summary-sets {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.set-pair {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #0d47a1;
+    text-align: center;
+}
+
+.set-pair span {
+    min-width: 30px;
+    display: inline-block;
+}
+
+.winner-announcement {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1976d2;
+    text-align: center;
+    margin: 10px 0;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background-color: rgba(25, 118, 210, 0.1);
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+    
+    .screen {
+        padding: 10px;
+    }
+    
+    h1 {
+        font-size: 1.6rem;
+    }
+    
+    h2 {
+        font-size: 1.2rem;
+    }
+    
+    .action-button {
+        font-size: 0.8rem;
+        padding: 6px;
+        min-width: 70px;
+    }
+    
+    .control-btn {
+        font-size: 0.8rem;
+        padding: 6px;
+    }
+    
+    .team-name {
+        font-size: 1rem;
+    }
+    
+    .player-names {
+        font-size: 0.7rem;
+    }
+    
+    .current-score {
+        font-size: 1.5rem;
+    }
+    
+    .set-score {
+        width: 20px;
+        height: 20px;
+        font-size: 0.8rem;
+    }
+
+    .compact-scoreboard {
+        padding: 8px;
+    }
+
+    .team-name {
+        font-size: 0.9rem;
+    }
+
+    .score {
+        font-size: 1.8rem;
+    }
+
+    .set-scores {
+        font-size: 0.8rem;
+    }
+
+    .action-button {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        min-width: 70px;
+    }
+
+    .control-btn {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+
+    .summary-sets span {
+        font-size: 1.6rem;
+        min-width: 25px;
+    }
+    
+    .winner-announcement {
+        font-size: 1rem;
+    }
+
+    .set-pair {
+        font-size: 1.6rem;
+    }
+    
+    .set-pair span {
+        min-width: 25px;
+    }
+    
+    .winner-announcement {
+        font-size: 1rem;
+    }
+}
+
+.team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.team-header h2 {
+    margin: 0;
+}
+
+.serve-checkbox {
+    font-size: 0.9rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.serve-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+    <!-- Setup Screen -->
+    <div id="setup-screen" class="screen">
+        <div class="app-title">SandScore</div>
+        <div class="setup-container">
+            <div class="team-setup">
+                <div class="team-header">
+                    <h2>Team A</h2>
+                    <label class="serve-checkbox">
+                        <input type="checkbox" name="serving" value="team-a" checked> 
+                        Serves First
+                    </label>
+                </div>
+                <input type="text" id="team-a-player1" placeholder="Player 1" class="player-input">
+                <input type="text" id="team-a-player2" placeholder="Player 2" class="player-input">
+            </div>
+            <div class="team-setup">
+                <div class="team-header">
+                    <h2>Team B</h2>
+                    <label class="serve-checkbox">
+                        <input type="checkbox" name="serving" value="team-b"> 
+                        Serves First
+                    </label>
+                </div>
+                <input type="text" id="team-b-player1" placeholder="Player 1" class="player-input">
+                <input type="text" id="team-b-player2" placeholder="Player 2" class="player-input">
+            </div>
+            <div class="scoring-setup">
+                <h2>Scoring Format</h2>
+                <div class="scoring-options">
+                    <label>
+                        <input type="radio" name="scoring" value="short" checked> 
+                        Short Game (3-3-3)
+                    </label>
+                    <label>
+                        <input type="radio" name="scoring" value="standard"> 
+                        Standard (21-21-15)
+                    </label>
+                </div>
+            </div>
+            <button id="start-match" class="primary-btn">Start Match</button>
+        </div>
+    </div>
+
+    <!-- Match Screen -->
+    <div id="match-screen" class="screen hidden">
+        <div class="app-title">SandScore</div>
+        <div class="compact-scoreboard">
+            <div class="team team-a">
+                <div class="team-info">
+                    <span class="service-dot" id="team-a-serving"></span>
+                    <span class="team-name" id="display-team-a-name">Team A</span>
+                </div>
+                <div class="score" id="team-a-score">0</div>
+            </div>
+            <div class="score-divider">
+                <div class="set-scores">
+                    <span id="team-a-set1">0</span>-<span id="team-b-set1">0</span>
+                </div>
+                <div class="set-scores">
+                    <span id="team-a-set2">0</span>-<span id="team-b-set2">0</span>
+                </div>
+                <div class="set-scores">
+                    <span id="team-a-set3">0</span>-<span id="team-b-set3">0</span>
+                </div>
+            </div>
+            <div class="team team-b">
+                <div class="team-info">
+                    <span class="team-name" id="display-team-b-name">Team B</span>
+                    <span class="service-dot" id="team-b-serving"></span>
+                </div>
+                <div class="score" id="team-b-score">0</div>
+            </div>
+        </div>
+
+        <div id="rally-header">
+            <h3 id="current-state"></h3>
+        </div>
+
+        <div id="action-buttons" class="action-buttons"></div>
+
+        <div class="match-controls">
+            <button id="undo-btn" class="control-btn">Undo</button>
+            <button id="save-btn" class="control-btn">Save</button>
+            <button id="load-btn" class="control-btn">Load</button>
+            <button id="restart-btn" class="control-btn">New Match</button>
+            <input type="file" id="load-file" accept=".json" style="display: none">
+        </div>
+
+        <!-- History Panel -->
+        <div id="history-panel" class="history-panel">
+            <div id="history-list" class="history-list"></div>
+        </div>
+    </div>
+
+    <!-- Match Summary Screen -->
+    <div id="summary-screen" class="screen hidden">
+        <div class="app-title">SandScore</div>
+        <div class="compact-scoreboard final">
+            <div class="team team-a">
+                <div class="team-info">
+                    <span class="team-name" id="summary-team-a-name">Team A</span>
+                </div>
+            </div>
+            <div class="score-divider">
+                <div id="winner-announcement" class="winner-announcement"></div>
+                <div class="summary-sets">
+                    <div class="set-pair">
+                        <span id="summary-team-a-set1">0</span>-<span id="summary-team-b-set1">0</span>
+                    </div>
+                    <div class="set-pair">
+                        <span id="summary-team-a-set2">0</span>-<span id="summary-team-b-set2">0</span>
+                    </div>
+                    <div class="set-pair">
+                        <span id="summary-team-a-set3">0</span>-<span id="summary-team-b-set3">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="team team-b">
+                <div class="team-info">
+                    <span class="team-name" id="summary-team-b-name">Team B</span>
+                </div>
+            </div>
+        </div>
+        <button id="new-match-btn" class="primary-btn">New Match</button>
+    </div>
+
+    <div id="tooltip" class="tooltip"></div>
+    
+<script>
+// State Machine Definition
+const stateMachine = {
+    "Serve": {
+        "transitions": [
+            { "action": "Ace", "nextState": "Point Server" },
+            { "action": "Err", "nextState": "Point Receiver" },
+            { "action": "RE1", "nextState": "Point Server" },
+            { "action": "RE2", "nextState": "Point Server" },
+            { "action": "R-1", "nextState": "Reception" },
+            { "action": "R-2", "nextState": "Reception" },
+            { "action": "R=1", "nextState": "Reception" },
+            { "action": "R=2", "nextState": "Reception" },
+            { "action": "R+1", "nextState": "Reception" },
+            { "action": "R+2", "nextState": "Reception" }
+        ]
+    },
+    "Reception": {
+        "transitions": [
+            { "action": "Atk1", "nextState": "Zone of Attack Rec" },
+            { "action": "Atk2", "nextState": "Zone of Attack Rec" }
+        ]
+    },
+    "Zone of Attack Rec": {
+        "transitions": [
+            { "action": "V1", "nextState": "Trajectory Rec" },
+            { "action": "V2", "nextState": "Trajectory Rec" },
+            { "action": "V3", "nextState": "Trajectory Rec" },
+            { "action": "V4", "nextState": "Trajectory Rec" },
+            { "action": "V5", "nextState": "Trajectory Rec" },
+            { "action": "X1", "nextState": "Trajectory Rec" },
+            { "action": "X2", "nextState": "Trajectory Rec" },
+            { "action": "X3", "nextState": "Trajectory Rec" },
+            { "action": "X4", "nextState": "Trajectory Rec" },
+            { "action": "X5", "nextState": "Trajectory Rec" },
+            { "action": "I1", "nextState": "Trajectory Rec" },
+            { "action": "I2", "nextState": "Trajectory Rec" },
+            { "action": "I3", "nextState": "Trajectory Rec" },
+            { "action": "I4", "nextState": "Trajectory Rec" },
+            { "action": "I5", "nextState": "Trajectory Rec" }
+        ]
+    },
+    "Trajectory Rec": {
+        "transitions": [
+            { "action": "Diag", "nextState": "Attack by Receiving Team" },
+            { "action": "DiagL", "nextState": "Attack by Receiving Team" },
+            { "action": "DiagS", "nextState": "Attack by Receiving Team" },
+            { "action": "Line", "nextState": "Attack by Receiving Team" },
+            { "action": "LineS", "nextState": "Attack by Receiving Team" },
+            { "action": "Cut", "nextState": "Attack by Receiving Team" }
+        ]
+    },
+    "Attack by Receiving Team": {
+        "transitions": [
+            { "action": "Win", "nextState": "Point Receiver" },
+            { "action": "Err", "nextState": "Point Server" },
+            { "action": "Blk1", "nextState": "Point Server" },
+            { "action": "Blk2", "nextState": "Point Server" },
+            { "action": "Def1", "nextState": "Defense By Serving Team" },
+            { "action": "Def2", "nextState": "Defense By Serving Team" }
+        ]
+    },
+    "Defense By Serving Team": {
+        "transitions": [
+            { "action": "Atk1", "nextState": "Zone of Attack Srv" },
+            { "action": "Atk2", "nextState": "Zone of Attack Srv" }
+        ]
+    },
+    "Zone of Attack Srv": {
+        "transitions": [
+            { "action": "V1", "nextState": "Trajectory Srv" },
+            { "action": "V2", "nextState": "Trajectory Srv" },
+            { "action": "V3", "nextState": "Trajectory Srv" },
+            { "action": "V4", "nextState": "Trajectory Srv" },
+            { "action": "V5", "nextState": "Trajectory Srv" },
+            { "action": "X1", "nextState": "Trajectory Srv" },
+            { "action": "X2", "nextState": "Trajectory Srv" },
+            { "action": "X3", "nextState": "Trajectory Srv" },
+            { "action": "X4", "nextState": "Trajectory Srv" },
+            { "action": "X5", "nextState": "Trajectory Srv" },
+            { "action": "I1", "nextState": "Trajectory Srv" },
+            { "action": "I2", "nextState": "Trajectory Srv" },
+            { "action": "I3", "nextState": "Trajectory Srv" },
+            { "action": "I4", "nextState": "Trajectory Srv" },
+            { "action": "I5", "nextState": "Trajectory Srv" }
+        ]
+    },
+    "Trajectory Srv": {
+        "transitions": [
+            { "action": "Diag", "nextState": "Attack by Serving Team" },
+            { "action": "DiagL", "nextState": "Attack by Serving Team" },
+            { "action": "DiagS", "nextState": "Attack by Serving Team" },
+            { "action": "Line", "nextState": "Attack by Serving Team" },
+            { "action": "LineS", "nextState": "Attack by Serving Team" },
+            { "action": "Cut", "nextState": "Attack by Serving Team" }
+        ]
+    },
+    "Attack by Serving Team": {
+        "transitions": [
+            { "action": "Win", "nextState": "Point Server" },
+            { "action": "Err", "nextState": "Point Receiver" },
+            { "action": "Blk1", "nextState": "Point Receiver" },
+            { "action": "Blk2", "nextState": "Point Receiver" },
+            { "action": "Def1", "nextState": "Defense By Receiving Team" },
+            { "action": "Def2", "nextState": "Defense By Receiving Team" }
+        ]
+    },
+    "Defense By Receiving Team": {
+        "transitions": [
+            { "action": "Atk1", "nextState": "Zone of Attack Rec" },
+            { "action": "Atk2", "nextState": "Zone of Attack Rec" }
+        ]
+    }
+};
+
+// DOM Elements
+const setupScreen = document.getElementById('setup-screen');
+const matchScreen = document.getElementById('match-screen');
+const summaryScreen = document.getElementById('summary-screen');
+const startMatchBtn = document.getElementById('start-match');
+const actionButtonsEl = document.getElementById('action-buttons');
+const undoBtn = document.getElementById('undo-btn');
+const saveBtn = document.getElementById('save-btn');
+const loadBtn = document.getElementById('load-btn');
+const restartBtn = document.getElementById('restart-btn');
+const newMatchBtn = document.getElementById('new-match-btn');
+const historyListEl = document.getElementById('history-list');
+
+// Application State
+let appState = {
+    teams: {
+        a: {
+            name: 'Team A',
+            players: ['Player 1', 'Player 2'],
+            setScores: [0, 0, 0],
+            currentScore: 0,
+            isServing: true
+        },
+        b: {
+            name: 'Team B',
+            players: ['Player 1', 'Player 2'],
+            setScores: [0, 0, 0],
+            currentScore: 0,
+            isServing: false
+        }
+    },
+    currentSet: 0,
+    currentRally: 1,
+    pointsPerSet: [3, 3, 3], // Default points per set (short game)
+    currentState: 'Serve',
+    history: [],
+    // To track rally history by rally number and actions
+    rallyActions: [], // Actions for current rally
+    rallyHistory: {}, // Object with rally numbers as keys and action arrays as values
+    firstServingTeam: 'a', // Track who served first in the match
+};
+
+// Simplified state management
+const state = {
+    states: [], // Stack of states
+};
+
+function saveState(newState) {
+    // Push new state to stack
+    state.states.push(JSON.stringify(newState));
+    // Save to localStorage
+    localStorage.setItem('sandscoreStates', JSON.stringify(state));
+}
+
+function loadFromStorage() {
+    const savedState = localStorage.getItem('sandscoreStates');
+    if (savedState) {
+        const loadedState = JSON.parse(savedState);
+        state.states = loadedState.states;
+        if (state.states.length > 0) {
+            loadState(JSON.parse(state.states[state.states.length - 1]));
+            return true;
+        }
+    }
+    return false;
+}
+
+// Save player preferences to localStorage
+function savePlayerPreferences() {
+    const preferences = {
+        teamA: {
+            player1: document.getElementById('team-a-player1').value,
+            player2: document.getElementById('team-a-player2').value
+        },
+        teamB: {
+            player1: document.getElementById('team-b-player1').value,
+            player2: document.getElementById('team-b-player2').value
+        },
+        scoringFormat: document.querySelector('input[name="scoring"]:checked').value,
+        servingTeam: document.querySelector('input[name="serving"]:checked').value
+    };
+    localStorage.setItem('sandScorePreferences', JSON.stringify(preferences));
+}
+
+// Load player preferences from localStorage
+function loadPlayerPreferences() {
+    const savedPreferences = localStorage.getItem('sandScorePreferences');
+    if (savedPreferences) {
+        const preferences = JSON.parse(savedPreferences);
+        document.getElementById('team-a-player1').value = preferences.teamA.player1 || '';
+        document.getElementById('team-a-player2').value = preferences.teamA.player2 || '';
+        document.getElementById('team-b-player1').value = preferences.teamB.player1 || '';
+        document.getElementById('team-b-player2').value = preferences.teamB.player2 || '';
+        
+        // Set scoring format
+        const scoringInputs = document.querySelectorAll('input[name="scoring"]');
+        scoringInputs.forEach(input => {
+            if (input.value === preferences.scoringFormat) {
+                input.checked = true;
+            }
+        });
+
+        // Set serving team
+        if (preferences.servingTeam) {
+            const servingInputs = document.querySelectorAll('input[name="serving"]');
+            servingInputs.forEach(input => {
+                if (input.value === preferences.servingTeam) {
+                    input.checked = true;
+                }
+            });
+        }
+    }
+}
+
+// Initialize application when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Load player preferences first
+    loadPlayerPreferences();
+
+    // Set up event listeners
+    startMatchBtn.addEventListener('click', () => {
+        startMatch();
+        // Save preferences when starting a new match
+        savePlayerPreferences();
+    });
+
+    // Add serving checkbox handlers
+    const serveCheckboxes = document.querySelectorAll('input[name="serving"]');
+    serveCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            // Uncheck the other checkbox
+            serveCheckboxes.forEach(cb => {
+                if (cb !== e.target) {
+                    cb.checked = false;
+                }
+            });
+            // Ensure at least one checkbox is always checked
+            if (!e.target.checked) {
+                e.target.checked = true;
+            }
+        });
+    });
+
+    undoBtn.addEventListener('click', undoLastAction);
+    saveBtn.addEventListener('click', saveMatch);
+    loadBtn.addEventListener('click', loadMatch);
+    restartBtn.addEventListener('click', restartApp);
+    newMatchBtn.addEventListener('click', restartApp);
+
+    // Add file input change listener
+    document.getElementById('load-file').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsedState = JSON.parse(e.target.result);
+                    
+                    // Restore the main parts of the state
+                    appState.teams = parsedState.teams;
+                    appState.currentSet = parsedState.currentSet;
+                    appState.currentRally = parsedState.currentRally;
+                    appState.pointsPerSet = parsedState.pointsPerSet;
+                    appState.currentState = parsedState.currentState;
+                    appState.history = parsedState.history || [];
+                    appState.rallyActions = parsedState.rallyActions || [];
+                    appState.rallyHistory = parsedState.rallyHistory || {};
+                    appState.firstServingTeam = parsedState.firstServingTeam;
+                    
+                    // Save the loaded state once
+                    saveStateForUndo();
+                    
+                    // Update UI
+                    updateHistoryDisplay();
+                    updateScoreboard();
+                    updateActionButtons();
+                    
+                    // Show match screen
+                    setupScreen.classList.add('hidden');
+                    matchScreen.classList.remove('hidden');
+                    summaryScreen.classList.add('hidden');
+                    
+                    // Reset file input
+                    event.target.value = '';
+                } catch (e) {
+                    console.error('Error loading match:', e);
+                    alert('Failed to load match file. The file might be corrupted or in wrong format.');
+                }
+            };
+            reader.readAsText(file);
+        }
+    });
+
+    // Try to load saved state
+    if (loadFromStorage()) {
+        // Update history display using the new format
+        updateHistoryDisplay();
+        
+        // Update UI
+        updateScoreboard();
+        updateActionButtons();
+        
+        // Show match screen
+        setupScreen.classList.add('hidden');
+        matchScreen.classList.remove('hidden');
+        summaryScreen.classList.add('hidden');
+    }
+});
+
+// Start a new match with the entered player data
+function startMatch() {
+    // Clear previous state
+    localStorage.removeItem('sandscoreStates');
+    state.states = [];
+
+    // Get player names from input fields
+    const teamAPlayer1 = document.getElementById('team-a-player1').value || 'Player 1';
+    const teamAPlayer2 = document.getElementById('team-a-player2').value || 'Player 2';
+    const teamBPlayer1 = document.getElementById('team-b-player1').value || 'Player 1';
+    const teamBPlayer2 = document.getElementById('team-b-player2').value || 'Player 2';
+
+    // Set team names based on player names
+    const teamAName = `${teamAPlayer1}/${teamAPlayer2}`;
+    const teamBName = `${teamBPlayer1}/${teamBPlayer2}`;
+    
+    // Get scoring format and serving team
+    const scoringFormat = document.querySelector('input[name="scoring"]:checked').value;
+    const servingTeam = document.querySelector('input[name="serving"]:checked').value;
+    
+    // Initialize app state
+    appState = {
+        teams: {
+            a: {
+                name: teamAName,
+                players: [teamAPlayer1, teamAPlayer2],
+                setScores: [0, 0, 0],
+                currentScore: 0,
+                isServing: servingTeam === 'team-a'
+            },
+            b: {
+                name: teamBName,
+                players: [teamBPlayer1, teamBPlayer2],
+                setScores: [0, 0, 0],
+                currentScore: 0,
+                isServing: servingTeam === 'team-b'
+            }
+        },
+        currentSet: 0,
+        currentRally: 1,
+        pointsPerSet: scoringFormat === 'short' ? [3, 3, 3] : [21, 21, 15],
+        currentState: 'Serve',
+        history: [], // Reset history
+        rallyActions: [], // Reset actions for current rally
+        rallyHistory: {}, // Reset rally history
+        firstServingTeam: servingTeam === 'team-a' ? 'a' : 'b'
+    };
+
+    // Update the scoreboard with initial values
+    updateScoreboard();
+    
+    // Save initial state
+    saveStateForUndo();
+    
+    // Clear the history display
+    updateHistoryDisplay();
+    
+    // Show match screen
+    setupScreen.classList.add('hidden');
+    matchScreen.classList.remove('hidden');
+    
+    // Set up action buttons for initial state
+    updateActionButtons();
+}
+
+// Update the scoreboard with current state
+function updateScoreboard() {
+    // Update team names
+    document.getElementById('display-team-a-name').textContent = appState.teams.a.name;
+    document.getElementById('display-team-b-name').textContent = appState.teams.b.name;
+    
+    // Update current scores
+    document.getElementById('team-a-score').textContent = appState.teams.a.currentScore;
+    document.getElementById('team-b-score').textContent = appState.teams.b.currentScore;
+    
+    // Update serving indicator
+    document.getElementById('team-a-serving').classList.toggle('serving', appState.teams.a.isServing);
+    document.getElementById('team-b-serving').classList.toggle('serving', appState.teams.b.isServing);
+    
+    // Update set scores
+    for (let i = 0; i < 3; i++) {
+        document.getElementById(`team-a-set${i+1}`).textContent = appState.teams.a.setScores[i];
+        document.getElementById(`team-b-set${i+1}`).textContent = appState.teams.b.setScores[i];
+    }
+}
+
+// Update action buttons based on current state
+function updateActionButtons() {
+    // Clear existing buttons
+    actionButtonsEl.innerHTML = '';
+    
+    // Update the state display
+    const currentStateEl = document.getElementById('current-state');
+    currentStateEl.textContent = getStateDisplayName(appState.currentState);
+    
+    // Show action buttons for the current state
+    const transitions = stateMachine[appState.currentState]?.transitions || [];
+    
+    transitions.forEach(transition => {
+        const button = document.createElement('button');
+        button.textContent = transition.action;
+        button.classList.add('action-button');
+        button.addEventListener('click', () => {
+            handleAction(transition.action, transition.nextState);
+        });
+        actionButtonsEl.appendChild(button);
+    });
+}
+
+// Handle action button click
+async function handleAction(action, nextState) {
+    // Add action to the current rally actions
+    appState.rallyActions.push(action);
+    
+    // Add to history
+    appState.history.push({
+        rally: appState.currentRally,
+        state: appState.currentState,
+        action: action,
+        nextState: nextState,
+        scoreA: appState.teams.a.currentScore,
+        scoreB: appState.teams.b.currentScore
+    });
+    
+    // Update current state
+    appState.currentState = nextState;
+    
+    // Handle point scoring if we've reached a terminal state
+    if (nextState === 'Point Server' || nextState === 'Point Receiver') {
+        const scoringTeam = nextState === 'Point Server' ? 
+            (appState.teams.a.isServing ? 'a' : 'b') : 
+            (appState.teams.a.isServing ? 'b' : 'a');
+        
+        // Award a point
+        appState.teams[scoringTeam].currentScore++;
+        
+        const oppositeTeam = scoringTeam === 'a' ? 'b' : 'a';
+        const pointsToWin = appState.pointsPerSet[appState.currentSet];
+        const hasEnoughPoints = appState.teams[scoringTeam].currentScore >= pointsToWin;
+        const hasTwoPointLead = appState.teams[scoringTeam].currentScore - appState.teams[oppositeTeam].currentScore >= 2;
+        const setIsOver = hasEnoughPoints && hasTwoPointLead;
+        
+        // Store the completed rally actions in the rally history
+        appState.rallyHistory[appState.currentRally] = {
+            actions: [...appState.rallyActions],
+            scoreA: appState.teams.a.currentScore,
+            scoreB: appState.teams.b.currentScore,
+            scoringTeam: scoringTeam
+        };
+        
+        // Check if the set is over
+        if (setIsOver) {
+            // Update set score
+            appState.teams[scoringTeam].setScores[appState.currentSet] = appState.teams[scoringTeam].currentScore;
+            appState.teams[oppositeTeam].setScores[appState.currentSet] = appState.teams[oppositeTeam].currentScore;
+            
+            // Reset current scores
+            appState.teams.a.currentScore = 0;
+            appState.teams.b.currentScore = 0;
+            
+            // Move to next set
+            appState.currentSet++;
+            
+            // Count sets won
+            let setsWonA = 0;
+            let setsWonB = 0;
+            for (let i = 0; i < appState.currentSet; i++) {
+                if (appState.teams.a.setScores[i] > appState.teams.b.setScores[i]) {
+                    setsWonA++;
+                } else if (appState.teams.b.setScores[i] > appState.teams.a.setScores[i]) {
+                    setsWonB++;
+                }
+            }
+            
+            // End match if a team has won 2 sets
+            if (setsWonA >= 2 || setsWonB >= 2) {
+                showMatchSummary();
+                return;
+            }
+            
+            // Continue to next set if match isn't over
+            if (appState.currentSet < 3) {
+                appState.currentRally++;
+                
+                // For set 2, swap serving from first set
+                if (appState.currentSet === 1) {
+                    const secondSetServer = appState.firstServingTeam === 'a' ? 'b' : 'a';
+                    appState.teams.a.isServing = secondSetServer === 'a';
+                    appState.teams.b.isServing = secondSetServer === 'b';
+                }
+                // For set 3, prompt for serving team if match is tied 1-1
+                else if (appState.currentSet === 2) {
+                    if (setsWonA === 1 && setsWonB === 1) {
+                        promptThirdSetService().then(servingTeam => {
+                            appState.teams.a.isServing = servingTeam === 'a';
+                            appState.teams.b.isServing = servingTeam === 'b';
+                            updateScoreboard();
+                            updateActionButtons();
+                        });
+                    } else {
+                        appState.teams.a.isServing = scoringTeam === 'a';
+                        appState.teams.b.isServing = scoringTeam === 'b';
+                    }
+                }
+                
+                // Reset to Serve state
+                appState.currentState = 'Serve';
+                appState.rallyActions = [];
+                
+                updateScoreboard();
+                updateActionButtons();
+            }
+        } else {
+            // Server changes when point is scored
+            appState.teams.a.isServing = scoringTeam === 'a';
+            appState.teams.b.isServing = scoringTeam === 'b';
+            
+            // Start next rally
+            appState.currentRally++;
+            appState.currentState = 'Serve';
+            appState.rallyActions = [];
+        }
+    }
+    
+    // Update UI
+    updateScoreboard();
+    updateActionButtons();
+    updateHistoryDisplay();
+    
+    // Save current state for undo after all changes are complete
+    saveStateForUndo();
+}
+
+// Function to prompt for third set service
+function promptThirdSetService() {
+    return new Promise((resolve) => {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        `;
+
+        const content = document.createElement('div');
+        content.style.cssText = `
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        `;
+
+        content.innerHTML = `
+            <h3>Choose Serving Team for Set 3</h3>
+            <div style="margin: 20px 0;">
+                <button id="team-a-serve" style="margin: 5px;">${appState.teams.a.name}</button>
+                <button id="team-b-serve" style="margin: 5px;">${appState.teams.b.name}</button>
+            </div>
+        `;
+
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+
+        const teamABtn = content.querySelector('#team-a-serve');
+        const teamBBtn = content.querySelector('#team-b-serve');
+
+        teamABtn.onclick = () => {
+            document.body.removeChild(modal);
+            resolve('a');
+        };
+
+        teamBBtn.onclick = () => {
+            document.body.removeChild(modal);
+            resolve('b');
+        };
+    });
+}
+
+// Undo the last action
+function undoLastAction() {
+    if (state.states.length > 1) {
+        // Remove current state
+        state.states.pop();
+        // Get previous state
+        const previousState = JSON.parse(state.states[state.states.length - 1]);
+        loadState(previousState);
+        // Save updated stack to localStorage
+        localStorage.setItem('sandscoreStates', JSON.stringify(state));
+        updateScoreboard();
+        updateActionButtons();
+        updateHistoryDisplay();
+    }
+}
+
+// Save the match state to a file
+function saveMatch() {
+    try {
+        // Create a streamlined version of the state to save
+        const stateToSave = {
+            teams: appState.teams,
+            currentSet: appState.currentSet,
+            currentRally: appState.currentRally,
+            pointsPerSet: appState.pointsPerSet,
+            currentState: appState.currentState,
+            history: appState.history,
+            rallyActions: appState.rallyActions,
+            rallyHistory: appState.rallyHistory,
+            firstServingTeam: appState.firstServingTeam
+        };
+
+        // Create file name with current date and player names
+        const currentDate = new Date().toISOString().split('T')[0];
+        const teamA = `${appState.teams.a.players[0]}-${appState.teams.a.players[1]}`;
+        const teamB = `${appState.teams.b.players[0]}-${appState.teams.b.players[1]}`;
+        const fileName = `${currentDate} ${teamA} vs ${teamB}.json`;
+
+        // Create blob and download
+        const blob = new Blob([JSON.stringify(stateToSave, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch (e) {
+        console.error('Error saving match:', e);
+        alert('Failed to save match file.');
+    }
+}
+
+// Load the match state from a file
+function loadMatch() {
+    const fileInput = document.getElementById('load-file');
+    fileInput.click();
+}
+
+// Restart the app (go back to setup screen)
+function restartApp() {
+    if (confirm('Are you sure you want to start a new match? All current progress will be lost.')) {
+        // Clear the saved states from localStorage
+        localStorage.removeItem('sandscoreStates');
+        
+        // Clear the rally history display
+        historyListEl.innerHTML = '';
+        
+        // Reset the app state
+        appState = {
+            teams: {
+                a: {
+                    name: 'Team A',
+                    players: ['Player 1', 'Player 2'],
+                    setScores: [0, 0, 0],
+                    currentScore: 0,
+                    isServing: true
+                },
+                b: {
+                    name: 'Team B',
+                    players: ['Player 1', 'Player 2'],
+                    setScores: [0, 0, 0],
+                    currentScore: 0,
+                    isServing: false
+                }
+            },
+            currentSet: 0,
+            currentRally: 1,
+            pointsPerSet: [3, 3, 3],
+            currentState: 'Serve',
+            history: [],
+            rallyActions: [],
+            rallyHistory: {},
+            firstServingTeam: 'a'
+        };
+
+        // Reset the state stack
+        state.states = [];
+        
+        // Load saved preferences
+        loadPlayerPreferences();
+        
+        // Show setup screen
+        setupScreen.classList.remove('hidden');
+        matchScreen.classList.add('hidden');
+        summaryScreen.classList.add('hidden');
+    }
+}
+
+// Show match summary
+function showMatchSummary() {
+    // Update summary screen with final scores
+    for (let i = 0; i < 3; i++) {
+        document.getElementById(`summary-team-a-set${i+1}`).textContent = appState.teams.a.setScores[i];
+        document.getElementById(`summary-team-b-set${i+1}`).textContent = appState.teams.b.setScores[i];
+    }
+    
+    // Set team names
+    document.getElementById('summary-team-a-name').textContent = appState.teams.a.name;
+    document.getElementById('summary-team-b-name').textContent = appState.teams.b.name;
+    
+    // Correctly count sets won by each team
+    let setsWonA = 0;
+    let setsWonB = 0;
+    
+    for (let i = 0; i < appState.currentSet; i++) {
+        if (appState.teams.a.setScores[i] > appState.teams.b.setScores[i]) {
+            setsWonA++;
+        } else if (appState.teams.b.setScores[i] > appState.teams.a.setScores[i]) {
+            setsWonB++;
+        }
+    }
+    
+    let winner = setsWonA > setsWonB ? appState.teams.a.name : appState.teams.b.name;
+    let score = `${setsWonA}-${setsWonB}`;
+    
+    document.getElementById('winner-announcement').textContent = `${winner} wins ${score}!`;
+    
+    // Show summary screen
+    matchScreen.classList.add('hidden');
+    summaryScreen.classList.remove('hidden');
+}
+
+// Update the history display function to handle sets properly
+function updateHistoryDisplay() {
+    // Clear existing history list first
+    historyListEl.innerHTML = '';
+    
+    // Create a container for our history entries
+    const historyContainer = document.createElement('div');
+    historyContainer.classList.add('history-container');
+    
+    // Get all rally numbers from history and sort them
+    const rallyNumbers = [...new Set(Object.keys(appState.rallyHistory).map(Number))];
+    rallyNumbers.sort((a, b) => a - b);
+    
+    // Add current rally if it has actions but isn't in history yet
+    if (appState.rallyActions.length > 0 && !rallyNumbers.includes(appState.currentRally)) {
+        rallyNumbers.push(appState.currentRally);
+    }
+    
+    // For each rally, create a history item showing actions and score
+    rallyNumbers.forEach(rallyNum => {
+        // Get all actions for this rally
+        let actionsForRally = [];
+        let rallyData = null;
+        
+        // If it's a completed rally, use the stored rally history
+        if (appState.rallyHistory[rallyNum]) {
+            rallyData = appState.rallyHistory[rallyNum];
+            actionsForRally = rallyData.actions;
+        }
+        // For the current rally, use current actions
+        else if (rallyNum === appState.currentRally) {
+            actionsForRally = appState.rallyActions;
+        }
+        
+        // Create a history item with the appropriate layout
+        const rallyItem = document.createElement('div');
+        rallyItem.classList.add('history-item');
+        
+        const actionsText = actionsForRally.join(' ');
+        
+        // For completed rallies, use the stored scores
+        if (rallyData) {
+            const scoreText = `${rallyData.scoreA}-${rallyData.scoreB}`;
+            
+            if (rallyData.scoringTeam === 'a') {
+                // Home team scored
+                rallyItem.innerHTML = `
+                    <div class="history-actions home-scored">${actionsText}</div>
+                    <div class="history-score">${scoreText}</div>
+                `;
+            } else {
+                // Away team scored
+                rallyItem.innerHTML = `
+                    <div class="history-score">${scoreText}</div>
+                    <div class="history-actions away-scored">${actionsText}</div>
+                `;
+            }
+        }
+        // For current rally, show current score
+        else if (actionsForRally.length > 0) {
+            const scoreText = `${appState.teams.a.currentScore}-${appState.teams.b.currentScore}`;
+            rallyItem.innerHTML = `
+                <div class="history-actions current-rally">${actionsText}</div>
+                <div class="history-score current-rally">${scoreText}</div>
+            `;
+        }
+        
+        // Add event listeners to all history actions after adding to DOM
+        const tooltip = document.getElementById('tooltip');
+        rallyItem.querySelectorAll('.history-actions').forEach(actionDiv => {
+            // Function to check if content is truncated (will show ellipsis)
+            const isTextTruncated = (element) => {
+                const computedStyle = window.getComputedStyle(element);
+                
+                // Create a temporary span to measure text width with exact same styling
+                const span = document.createElement('span');
+                span.style.visibility = 'hidden';
+                span.style.position = 'absolute';
+                span.style.fontSize = computedStyle.fontSize;
+                span.style.fontFamily = computedStyle.fontFamily;
+                span.style.fontWeight = computedStyle.fontWeight;
+                span.style.letterSpacing = computedStyle.letterSpacing;
+                span.style.textTransform = computedStyle.textTransform;
+                span.style.whiteSpace = 'nowrap';
+                span.style.padding = computedStyle.padding;
+                span.textContent = element.textContent;
+                
+                document.body.appendChild(span);
+                const textWidth = span.offsetWidth;
+                document.body.removeChild(span);
+                
+                // Get the container width including any padding
+                const availableWidth = element.clientWidth;
+                
+                return textWidth > availableWidth;
+            };
+
+            actionDiv.addEventListener('mouseenter', (e) => {
+                if (isTextTruncated(actionDiv)) {
+                    tooltip.textContent = actionsText;
+                    tooltip.classList.add('show');
+                    
+                    // Position the tooltip
+                    const rect = actionDiv.getBoundingClientRect();
+                    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 5}px`;
+                    tooltip.style.left = `${rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2)}px`;
+                }
+            });
+            
+            actionDiv.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('show');
+            });
+            
+            actionDiv.addEventListener('click', (e) => {
+                if (isTextTruncated(actionDiv)) {
+                    e.stopPropagation();
+                    tooltip.textContent = actionsText;
+                    tooltip.classList.add('show');
+                    
+                    // Position the tooltip
+                    const rect = actionDiv.getBoundingClientRect();
+                    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 5}px`;
+                    tooltip.style.left = `${rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2)}px`;
+                    
+                    // Add click outside listener
+                    const closeTooltip = (event) => {
+                        if (!actionDiv.contains(event.target)) {
+                            tooltip.classList.remove('show');
+                            document.removeEventListener('click', closeTooltip);
+                        }
+                    };
+                    
+                    // Small delay to avoid immediate closure
+                    setTimeout(() => {
+                        document.addEventListener('click', closeTooltip);
+                    }, 0);
+                }
+            });
+        });
+        
+        // Only add the rally item if we have actions
+        if (actionsForRally.length > 0) {
+            historyContainer.appendChild(rallyItem);
+        }
+    });
+    
+    // Add the container to the history list
+    historyListEl.appendChild(historyContainer);
+    
+    // Scroll to the bottom to show the most recent rally
+    historyListEl.scrollTop = historyListEl.scrollHeight;
+}
+
+// Helper function to get state display name
+function getStateDisplayName(state) {
+    const ST = appState.teams.a.isServing ? appState.teams.a.name : appState.teams.b.name;
+    const RT = appState.teams.a.isServing ? appState.teams.b.name : appState.teams.a.name;
+    
+    switch(state) {
+        case 'Serve': return `${ST} Serve`;
+        case 'Reception': return `${RT} Received`;
+        case 'Zone of Attack Rec': return `Attack Zone for ${RT}`;
+        case 'Trajectory Rec': return `Trajectory ${RT}`;
+        case 'Attack by Receiving Team': return `Attack by ${RT}`;
+        case 'Defense By Serving Team': return `Defense by ${ST}`;
+        case 'Zone of Attack Srv': return `Attack Zone for ${ST}`;
+        case 'Trajectory Srv': return `Trajectory ${ST}`;
+        case 'Attack by Serving Team': return `Attack by ${ST}`;
+        case 'Defense By Receiving Team': return `Defense by ${RT}`;
+        case 'Point Server': return `Point ${ST}`;
+        case 'Point Receiver': return `Point ${RT}`;
+        default: return state;
+    }
+}
+
+function loadState(loadedAppState) {
+    Object.assign(appState, loadedAppState);
+    // Note: we don't save state here anymore as it leads to duplicate states
+}
+
+function saveStateForUndo() {
+    // This will also save to localStorage
+    saveState(appState);
+}
+
+function saveStateToLocalStorage() {
+    // This is now just an alias for saveStateForUndo
+    saveStateForUndo();
+}
+</script>
+</body>
+</html>
