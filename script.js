@@ -790,17 +790,13 @@ function updateHistoryDisplay() {
     
     // For each rally, create a history item showing actions and score
     rallyNumbers.forEach(rallyNum => {
-        // Get all actions for this rally
         let actionsForRally = [];
         let rallyData = null;
         
-        // If it's a completed rally, use the stored rally history
         if (appState.rallyHistory[rallyNum]) {
             rallyData = appState.rallyHistory[rallyNum];
             actionsForRally = rallyData.actions;
-        }
-        // For the current rally, use current actions
-        else if (rallyNum === appState.currentRally) {
+        } else if (rallyNum === appState.currentRally) {
             actionsForRally = appState.rallyActions;
         }
         
@@ -808,31 +804,35 @@ function updateHistoryDisplay() {
         const rallyItem = document.createElement('div');
         rallyItem.classList.add('history-item');
         
-        const actionsText = actionsForRally.join(' ');
+        // Format actions with proper tag classes
+        const formattedActions = actionsForRally.map(action => {
+            if (['Err', 'RE1', 'RE2'].includes(action)) {
+                return `<span class="tag-${action.toLowerCase()}">${action}</span>`;
+            } else if (['Point', 'Ace', 'Win'].includes(action)) {
+                return `<span class="tag-point">${action}</span>`;
+            }
+            return action;
+        }).join(' ');
         
         // For completed rallies, use the stored scores
         if (rallyData) {
             const scoreText = `${rallyData.scoreA}-${rallyData.scoreB}`;
             
             if (rallyData.scoringTeam === 'a') {
-                // Home team scored
                 rallyItem.innerHTML = `
-                    <div class="history-actions home-scored">${actionsText}</div>
+                    <div class="history-actions home-scored">${formattedActions}</div>
                     <div class="history-score">${scoreText}</div>
                 `;
             } else {
-                // Away team scored
                 rallyItem.innerHTML = `
                     <div class="history-score">${scoreText}</div>
-                    <div class="history-actions away-scored">${actionsText}</div>
+                    <div class="history-actions away-scored">${formattedActions}</div>
                 `;
             }
-        }
-        // For current rally, show current score
-        else if (actionsForRally.length > 0) {
+        } else if (actionsForRally.length > 0) {
             const scoreText = `${appState.teams.a.currentScore}-${appState.teams.b.currentScore}`;
             rallyItem.innerHTML = `
-                <div class="history-actions current-rally">${actionsText}</div>
+                <div class="history-actions current-rally">${formattedActions}</div>
                 <div class="history-score current-rally">${scoreText}</div>
             `;
         }
@@ -869,7 +869,7 @@ function updateHistoryDisplay() {
 
             actionDiv.addEventListener('mouseenter', (e) => {
                 if (isTextTruncated(actionDiv)) {
-                    tooltip.textContent = actionsText;
+                    tooltip.textContent = actionsForRally.join(' ');
                     tooltip.classList.add('show');
                     
                     // Position the tooltip
@@ -886,7 +886,7 @@ function updateHistoryDisplay() {
             actionDiv.addEventListener('click', (e) => {
                 if (isTextTruncated(actionDiv)) {
                     e.stopPropagation();
-                    tooltip.textContent = actionsText;
+                    tooltip.textContent = actionsForRally.join(' ');
                     tooltip.classList.add('show');
                     
                     // Position the tooltip

@@ -702,6 +702,19 @@ button {
     display: none;
 }
 
+/* Rally History Tags */
+.history-actions .tag-err,
+.history-actions .tag-re1,
+.history-actions .tag-re2 {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+.history-actions .tag-point {
+    color: #008000;
+    font-weight: bold;
+}
+
 /* Summary Screen */
 .summary-container {
     display: flex;
