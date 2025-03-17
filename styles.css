@@ -99,15 +99,37 @@ button {
 }
 
 .control-btn {
-    background-color: #e0e0e0;
-    color: #333;
-    margin: 5px;
-    width: calc(20% - 10px);
-    min-width: 50px;
+    background-color: #f5f5f5;
+    color: #1976d2;
+    border: 1px solid #1976d2;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 1.2rem;  /* Increased font size for icons */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;    /* Reduced min-width since we're using icons */
+    width: 40px;        /* Fixed width for square buttons */
+    height: 40px;       /* Fixed height for square buttons */
+    line-height: 1;     /* Ensure proper vertical alignment of icons */
 }
 
 .control-btn:hover {
-    background-color: #bdbdbd;
+    background-color: #1976d2;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 480px) {
+    .control-btn {
+        font-size: 1.1rem;
+        min-width: 36px;
+        width: 36px;
+        height: 36px;
+    }
 }
 
 .action-button {
@@ -392,17 +414,37 @@ button {
 }
 
 .control-btn {
-    background-color: #e0e0e0;
-    border: none;
+    background-color: #f5f5f5;
+    color: #1976d2;
+    border: 1px solid #1976d2;
     border-radius: 4px;
-    padding: 6px 12px;
-    font-size: 0.85rem;
+    padding: 4px 8px;
+    font-size: 1.2rem;  /* Increased font size for icons */
     cursor: pointer;
-    color: #333;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;    /* Reduced min-width since we're using icons */
+    width: 40px;        /* Fixed width for square buttons */
+    height: 40px;       /* Fixed height for square buttons */
+    line-height: 1;     /* Ensure proper vertical alignment of icons */
 }
 
 .control-btn:hover {
-    background-color: #bdbdbd;
+    background-color: #1976d2;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 480px) {
+    .control-btn {
+        font-size: 1.1rem;
+        min-width: 36px;
+        width: 36px;
+        height: 36px;
+    }
 }
 
 /* Match Controls - Enhanced Utility Buttons */
@@ -420,13 +462,16 @@ button {
     border: 1px solid #1976d2;
     border-radius: 4px;
     padding: 4px 8px;
-    font-size: 0.8rem;
+    font-size: 1.2rem;  /* Increased font size for icons */
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 60px;
+    min-width: 40px;    /* Reduced min-width since we're using icons */
+    width: 40px;        /* Fixed width for square buttons */
+    height: 40px;       /* Fixed height for square buttons */
+    line-height: 1;     /* Ensure proper vertical alignment of icons */
 }
 
 .control-btn:hover {
@@ -434,6 +479,15 @@ button {
     color: white;
     transform: translateY(-1px);
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 480px) {
+    .control-btn {
+        font-size: 1.1rem;
+        min-width: 36px;
+        width: 36px;
+        height: 36px;
+    }
 }
 
 .control-btn:active {
@@ -669,8 +723,10 @@ button {
     }
     
     .control-btn {
-        font-size: 0.8rem;
-        padding: 6px;
+        font-size: 1.1rem;
+        min-width: 36px;
+        width: 36px;
+        height: 36px;
     }
     
     .team-name {
@@ -714,8 +770,10 @@ button {
     }
 
     .control-btn {
-        font-size: 0.8rem;
-        padding: 5px 10px;
+        font-size: 1.1rem;
+        min-width: 36px;
+        width: 36px;
+        height: 36px;
     }
 
     .summary-sets span {
