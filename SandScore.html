@@ -941,6 +941,23 @@ button {
     height: 16px;
     cursor: pointer;
 }
+
+.stat-icon {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    padding: 4px;
+    margin-left: 8px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    font-weight: bold;
+    color: #1976d2;
+}
+
+.stat-icon:hover {
+    opacity: 1;
+}
 </style>
 </head>
 <body>
@@ -949,6 +966,7 @@ button {
         <div class="app-title-container">
             <div class="app-title">SandScore</div>
             <button class="info-icon" id="info-button" title="Show Legend">ℹ️</button>
+            <button class="stat-icon" id="stat-button" title="Show Statistics">Σ</button>
         </div>
         <div class="setup-container">
             <div class="team-setup">
@@ -995,6 +1013,7 @@ button {
         <div class="app-title-container">
             <div class="app-title">SandScore</div>
             <button class="info-icon" id="info-button-match" title="Show Legend">ℹ️</button>
+            <button class="stat-icon" id="stat-button-match" title="Show Statistics">Σ</button>
         </div>
         <div class="compact-scoreboard">
             <div class="team team-a">
@@ -1115,6 +1134,13 @@ button {
             <div class="legend-footer">
                 <p>By lucabol</p>
             </div>
+            <button class="close-modal">×</button>
+        </div>
+    </div>
+    <div id="statistics-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Statistics</h3>
+            <p>Matteo: cosa vorresti vedere qui durante la partita?</p>
             <button class="close-modal">×</button>
         </div>
     </div>
@@ -1250,6 +1276,11 @@ const legendModal = document.getElementById('legend-modal');
 const infoButton = document.getElementById('info-button');
 const infoButtonMatch = document.getElementById('info-button-match');
 const closeModalButton = document.querySelector('.close-modal');
+
+// Add these variables with the other DOM elements
+const statisticsModal = document.getElementById('statistics-modal');
+const statButton = document.getElementById('stat-button');
+const statButtonMatch = document.getElementById('stat-button-match');
 
 // Application State
 let appState = {
@@ -1459,6 +1490,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && !legendModal.classList.contains('hidden')) {
             hideLegendModal();
+        }
+    });
+
+    // Add these event listeners with the other initialization code
+    statButton.addEventListener('click', showStatisticsModal);
+    statButtonMatch.addEventListener('click', showStatisticsModal);
+    statisticsModal.querySelector('.close-modal').addEventListener('click', hideStatisticsModal);
+    statisticsModal.addEventListener('click', (e) => {
+        if (e.target === statisticsModal) {
+            hideStatisticsModal();
+        }
+    });
+
+    // Add this to the existing key handler for escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            hideStatisticsModal();
+            // ...existing escape key handlers...
         }
     });
 });
@@ -2090,6 +2139,16 @@ function showLegendModal() {
 function hideLegendModal() {
     legendModal.classList.add('hidden');
     document.body.style.overflow = ''; // Restore scrolling
+}
+
+function showStatisticsModal() {
+    statisticsModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function hideStatisticsModal() {
+    statisticsModal.classList.add('hidden');
+    document.body.style.overflow = '';
 }
 </script>
 </body>
