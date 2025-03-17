@@ -4,13 +4,13 @@ const stateMachine = {
         "transitions": [
             { "action": "Ace", "nextState": "Point Server" },
             { "action": "Err", "nextState": "Point Receiver" },
-            { "action": "R!1", "nextState": "Point Server" },
+            { "action": "RE1", "nextState": "Point Server" },
+            { "action": "RE2", "nextState": "Point Server" },
             { "action": "R-1", "nextState": "Reception" },
-            { "action": "R=1", "nextState": "Reception" },
-            { "action": "R+1", "nextState": "Reception" },
-            { "action": "R!2", "nextState": "Point Server" },
             { "action": "R-2", "nextState": "Reception" },
+            { "action": "R=1", "nextState": "Reception" },
             { "action": "R=2", "nextState": "Reception" },
+            { "action": "R+1", "nextState": "Reception" },
             { "action": "R+2", "nextState": "Reception" }
         ]
     },
@@ -444,14 +444,6 @@ async function handleAction(action, nextState) {
         scoreA: appState.teams.a.currentScore,
         scoreB: appState.teams.b.currentScore
     });
-    
-    // Limit the size of the history array
-    if (appState.history.length > 100) {
-        appState.history.shift();
-        if (historyListEl.children.length > 100) {
-            historyListEl.removeChild(historyListEl.firstChild);
-        }
-    }
     
     // Update current state
     appState.currentState = nextState;
