@@ -124,6 +124,10 @@ const loadBtn = document.getElementById('load-btn');
 const restartBtn = document.getElementById('restart-btn');
 const newMatchBtn = document.getElementById('new-match-btn');
 const historyListEl = document.getElementById('history-list');
+const legendModal = document.getElementById('legend-modal');
+const infoButton = document.getElementById('info-button');
+const infoButtonMatch = document.getElementById('info-button-match');
+const closeModalButton = document.querySelector('.close-modal');
 
 // Application State
 let appState = {
@@ -319,6 +323,22 @@ document.addEventListener('DOMContentLoaded', () => {
         matchScreen.classList.remove('hidden');
         summaryScreen.classList.add('hidden');
     }
+
+    infoButton.addEventListener('click', showLegendModal);
+    infoButtonMatch.addEventListener('click', showLegendModal);
+    closeModalButton.addEventListener('click', hideLegendModal);
+    legendModal.addEventListener('click', (e) => {
+        if (e.target === legendModal) {
+            hideLegendModal();
+        }
+    });
+
+    // Add escape key handler
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !legendModal.classList.contains('hidden')) {
+            hideLegendModal();
+        }
+    });
 });
 
 // Start a new match with the entered player data
@@ -938,4 +958,14 @@ function saveStateForUndo() {
 function saveStateToLocalStorage() {
     // This is now just an alias for saveStateForUndo
     saveStateForUndo();
+}
+
+function showLegendModal() {
+    legendModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
+}
+
+function hideLegendModal() {
+    legendModal.classList.add('hidden');
+    document.body.style.overflow = ''; // Restore scrolling
 }

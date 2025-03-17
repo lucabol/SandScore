@@ -22,12 +22,21 @@ body {
     max-width: 100vw;
 }
 
+/* App Title Container */
+.app-title-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    position: relative;
+}
+
 /* App Title */
 .app-title {
     text-align: center;
     color: #0d47a1;
     font-size: 1.8rem;
-    margin-bottom: 15px;
+    margin-bottom: 0;
     padding: 8px 0;
     position: relative;
     font-weight: bold;
@@ -45,6 +54,109 @@ body {
     height: 3px;
     background-color: #1976d2;
     border-radius: 2px;
+}
+
+.info-icon {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    padding: 4px;
+    margin-left: 8px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.info-icon:hover {
+    opacity: 1;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    width: 500px;
+}
+
+.modal-content h3 {
+    color: #0d47a1;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e3f2fd;
+}
+
+.legend-section {
+    margin-bottom: 20px;
+}
+
+.legend-section h4 {
+    color: #1976d2;
+    margin-bottom: 10px;
+}
+
+.legend-section p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.legend-footer {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #e3f2fd;
+    text-align: right;
+    font-style: italic;
+    color: #666;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 15px;
+        max-height: 80vh;
+    }
+
+    .legend-section p {
+        font-size: 0.85rem;
+    }
 }
 
 /* Regular heading styles - removed the display: none */
@@ -835,7 +947,10 @@ button {
 <body>
     <!-- Setup Screen -->
     <div id="setup-screen" class="screen">
-        <div class="app-title">SandScore</div>
+        <div class="app-title-container">
+            <div class="app-title">SandScore</div>
+            <button class="info-icon" id="info-button" title="Show Legend">ℹ️</button>
+        </div>
         <div class="setup-container">
             <div class="team-setup">
                 <div class="team-header">
@@ -878,7 +993,10 @@ button {
 
     <!-- Match Screen -->
     <div id="match-screen" class="screen hidden">
-        <div class="app-title">SandScore</div>
+        <div class="app-title-container">
+            <div class="app-title">SandScore</div>
+            <button class="info-icon" id="info-button-match" title="Show Legend">ℹ️</button>
+        </div>
         <div class="compact-scoreboard">
             <div class="team team-a">
                 <div class="team-info">
@@ -960,6 +1078,46 @@ button {
     </div>
 
     <div id="tooltip" class="tooltip"></div>
+    <div id="legend-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Button Legend</h3>
+            <div class="legend-section">
+                <h4>Serve Actions</h4>
+                <p><strong>Ace</strong> - Direct point from serve</p>
+                <p><strong>Err</strong> - Service error</p>
+                <p><strong>R-1/2</strong> - Poor reception by player 1/2</p>
+                <p><strong>R=1/2</strong> - Medium reception by player 1/2</p>
+                <p><strong>R+1/2</strong> - Good reception by player 1/2</p>
+            </div>
+            <div class="legend-section">
+                <h4>Attack Actions</h4>
+                <p><strong>Atk1/2</strong> - Attack by player 1/2</p>
+                <p><strong>Win</strong> - Winning attack</p>
+                <p><strong>Err</strong> - Attack error</p>
+                <p><strong>Blk1/2</strong> - Blocked by player 1/2</p>
+                <p><strong>Def1/2</strong> - Defended by player 1/2</p>
+            </div>
+            <div class="legend-section">
+                <h4>Attack Zones</h4>
+                <p><strong>V1-V5</strong> - Hard hits by position</p>
+                <p><strong>X1-X5</strong> - Medium hits by position</p>
+                <p><strong>I1-I5</strong> - Soft hits by position</p>
+            </div>
+            <div class="legend-section">
+                <h4>Attack Trajectories</h4>
+                <p><strong>Diag</strong> - Diagonal attack</p>
+                <p><strong>DiagL</strong> - Long diagonal attack</p>
+                <p><strong>DiagS</strong> - Short diagonal attack</p>
+                <p><strong>Line</strong> - Line attack</p>
+                <p><strong>LineS</strong> - Short line attack</p>
+                <p><strong>Cut</strong> - Cut shot</p>
+            </div>
+            <div class="legend-footer">
+                <p>By lucabol</p>
+            </div>
+            <button class="close-modal">×</button>
+        </div>
+    </div>
     
 <script>
 // State Machine Definition
@@ -1088,6 +1246,10 @@ const loadBtn = document.getElementById('load-btn');
 const restartBtn = document.getElementById('restart-btn');
 const newMatchBtn = document.getElementById('new-match-btn');
 const historyListEl = document.getElementById('history-list');
+const legendModal = document.getElementById('legend-modal');
+const infoButton = document.getElementById('info-button');
+const infoButtonMatch = document.getElementById('info-button-match');
+const closeModalButton = document.querySelector('.close-modal');
 
 // Application State
 let appState = {
@@ -1283,6 +1445,22 @@ document.addEventListener('DOMContentLoaded', () => {
         matchScreen.classList.remove('hidden');
         summaryScreen.classList.add('hidden');
     }
+
+    infoButton.addEventListener('click', showLegendModal);
+    infoButtonMatch.addEventListener('click', showLegendModal);
+    closeModalButton.addEventListener('click', hideLegendModal);
+    legendModal.addEventListener('click', (e) => {
+        if (e.target === legendModal) {
+            hideLegendModal();
+        }
+    });
+
+    // Add escape key handler
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !legendModal.classList.contains('hidden')) {
+            hideLegendModal();
+        }
+    });
 });
 
 // Start a new match with the entered player data
@@ -1902,6 +2080,16 @@ function saveStateForUndo() {
 function saveStateToLocalStorage() {
     // This is now just an alias for saveStateForUndo
     saveStateForUndo();
+}
+
+function showLegendModal() {
+    legendModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
+}
+
+function hideLegendModal() {
+    legendModal.classList.add('hidden');
+    document.body.style.overflow = ''; // Restore scrolling
 }
 </script>
 </body>
