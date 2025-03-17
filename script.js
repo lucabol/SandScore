@@ -134,14 +134,14 @@ let appState = {
     teams: {
         a: {
             name: 'Team A',
-            players: ['Player 1', 'Player 2'],
+            players: ['Luca', 'Matteo'],
             setScores: [0, 0, 0],
             currentScore: 0,
             isServing: true
         },
         b: {
             name: 'Team B',
-            players: ['Player 1', 'Player 2'],
+            players: ['Mol', 'Sorum'],
             setScores: [0, 0, 0],
             currentScore: 0,
             isServing: false
@@ -348,10 +348,10 @@ function startMatch() {
     state.states = [];
 
     // Get player names from input fields
-    const teamAPlayer1 = document.getElementById('team-a-player1').value || 'Player 1';
-    const teamAPlayer2 = document.getElementById('team-a-player2').value || 'Player 2';
-    const teamBPlayer1 = document.getElementById('team-b-player1').value || 'Player 1';
-    const teamBPlayer2 = document.getElementById('team-b-player2').value || 'Player 2';
+    const teamAPlayer1 = document.getElementById('team-a-player1').value || 'Luca';
+    const teamAPlayer2 = document.getElementById('team-a-player2').value || 'Matteo';
+    const teamBPlayer1 = document.getElementById('team-b-player1').value || 'Mol';
+    const teamBPlayer2 = document.getElementById('team-b-player2').value || 'Sorum';
 
     // Set team names based on player names
     const teamAName = `${teamAPlayer1}/${teamAPlayer2}`;
@@ -700,14 +700,14 @@ function restartApp() {
             teams: {
                 a: {
                     name: 'Team A',
-                    players: ['Player 1', 'Player 2'],
+                    players: ['Luca', 'Matteo'],
                     setScores: [0, 0, 0],
                     currentScore: 0,
                     isServing: true
                 },
                 b: {
                     name: 'Team B',
-                    players: ['Player 1', 'Player 2'],
+                    players: ['Mol', 'Sorum'],
                     setScores: [0, 0, 0],
                     currentScore: 0,
                     isServing: false
