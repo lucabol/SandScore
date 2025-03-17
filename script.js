@@ -129,6 +129,11 @@ const infoButton = document.getElementById('info-button');
 const infoButtonMatch = document.getElementById('info-button-match');
 const closeModalButton = document.querySelector('.close-modal');
 
+// Add these variables with the other DOM elements
+const statisticsModal = document.getElementById('statistics-modal');
+const statButton = document.getElementById('stat-button');
+const statButtonMatch = document.getElementById('stat-button-match');
+
 // Application State
 let appState = {
     teams: {
@@ -337,6 +342,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && !legendModal.classList.contains('hidden')) {
             hideLegendModal();
+        }
+    });
+
+    // Add these event listeners with the other initialization code
+    statButton.addEventListener('click', showStatisticsModal);
+    statButtonMatch.addEventListener('click', showStatisticsModal);
+    statisticsModal.querySelector('.close-modal').addEventListener('click', hideStatisticsModal);
+    statisticsModal.addEventListener('click', (e) => {
+        if (e.target === statisticsModal) {
+            hideStatisticsModal();
+        }
+    });
+
+    // Add this to the existing key handler for escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            hideStatisticsModal();
+            // ...existing escape key handlers...
         }
     });
 });
@@ -968,4 +991,14 @@ function showLegendModal() {
 function hideLegendModal() {
     legendModal.classList.add('hidden');
     document.body.style.overflow = ''; // Restore scrolling
+}
+
+function showStatisticsModal() {
+    statisticsModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function hideStatisticsModal() {
+    statisticsModal.classList.add('hidden');
+    document.body.style.overflow = '';
 }

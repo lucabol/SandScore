@@ -933,3 +933,20 @@ button {
     height: 16px;
     cursor: pointer;
 }
+
+.stat-icon {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    padding: 4px;
+    margin-left: 8px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    font-weight: bold;
+    color: #1976d2;
+}
+
+.stat-icon:hover {
+    opacity: 1;
+}
