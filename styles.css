@@ -520,8 +520,8 @@ button {
 .match-controls {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    margin: 15px 0;
+    gap: 12px;  /* Increased from 6px */
+    margin: 15px 0;  /* Increased from 10px */
     flex-wrap: wrap;
 }
 
@@ -537,9 +537,9 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 40px;    /* Reduced min-width since we're using icons */
-    width: 40px;        /* Fixed width for square buttons */
-    height: 40px;       /* Fixed height for square buttons */
+    min-width: 44px;    /* Increased from 40px for better touch target */
+    width: 44px;        /* Increased from 40px for better touch target */
+    height: 44px;       /* Increased from 40px for better touch target */
     line-height: 1;     /* Ensure proper vertical alignment of icons */
 }
 
@@ -553,52 +553,9 @@ button {
 @media (max-width: 480px) {
     .control-btn {
         font-size: 1.1rem;
-        min-width: 36px;
-        width: 36px;
-        height: 36px;
-    }
-}
-
-/* Match Controls - Enhanced Utility Buttons */
-.match-controls {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin: 10px 0;
-    flex-wrap: wrap;
-}
-
-.control-btn {
-    background-color: #f5f5f5;
-    color: #1976d2;
-    border: 1px solid #1976d2;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 1.2rem;  /* Increased font size for icons */
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 40px;    /* Reduced min-width since we're using icons */
-    width: 40px;        /* Fixed width for square buttons */
-    height: 40px;       /* Fixed height for square buttons */
-    line-height: 1;     /* Ensure proper vertical alignment of icons */
-}
-
-.control-btn:hover {
-    background-color: #1976d2;
-    color: white;
-    transform: translateY(-1px);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-@media (max-width: 480px) {
-    .control-btn {
-        font-size: 1.1rem;
-        min-width: 36px;
-        width: 36px;
-        height: 36px;
+        min-width: 44px;  /* Increased from 36px */
+        width: 44px;      /* Increased from 36px */
+        height: 44px;     /* Increased from 36px */
     }
 }
 
@@ -883,9 +840,9 @@ button {
 
     .control-btn {
         font-size: 1.1rem;
-        min-width: 36px;
-        width: 36px;
-        height: 36px;
+        min-width: 44px;  /* Increased from 36px */
+        width: 44px;      /* Increased from 36px */
+        height: 44px;     /* Increased from 36px */
     }
 
     .summary-sets span {
