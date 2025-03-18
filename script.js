@@ -94,8 +94,8 @@ const stateMachine = {
         "transitions": [
             { "action": "Win", "nextState": "Point Receiver", "style": "point", "help": "Winning attack" },
             { "action": "Err", "nextState": "Point Server", "style": "error", "help": "Attack error" },
-            { "action": "Blk1", "nextState": "Point Server", "style": "regular", "help": "Blocked by player 1" },
-            { "action": "Blk2", "nextState": "Point Server", "style": "regular", "help": "Blocked by player 2" },
+            { "action": "Blk1", "nextState": "Point Server", "style": "point", "help": "Blocked by player 1" },
+            { "action": "Blk2", "nextState": "Point Server", "style": "point", "help": "Blocked by player 2" },
             { "action": "Def1", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 1" },
             { "action": "Def2", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 2" }
         ]
