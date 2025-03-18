@@ -1154,5 +1154,7 @@ function updateCurrentPointDisplay() {
     } else if (appState.history.length > 0) {
         const lastRally = appState.history[appState.history.length - 1];
         currentPointEl.textContent = `Current Point: ${lastRally.action}`;
+    } else {
+        currentPointEl.textContent = 'Current Point: '; // Default text
     }
 }
