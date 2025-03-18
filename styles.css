@@ -1019,3 +1019,99 @@ button {
     margin-bottom: 10px;
     font-weight: bold;
 }
+
+/* Statistics Modal Styles */
+.stats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 0 0 15px 0;
+}
+
+.stats-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    font-weight: bold;
+    color: #0d47a1;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #e3f2fd;
+}
+
+.stats-section {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.stats-section h4 {
+    color: #0d47a1;
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+    text-align: center;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e3f2fd;
+}
+
+.stats-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.stats-row:nth-child(even) {
+    background-color: rgba(25, 118, 210, 0.05);
+}
+
+.stats-label {
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #333;
+    padding: 0 10px;
+}
+
+.stats-value {
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.stats-team {
+    text-align: center;
+    font-weight: bold;
+    color: #0d47a1;
+}
+
+.stats-metric {
+    text-align: center;
+    font-weight: bold;
+}
+
+.winning-score {
+    color: #008000;
+    font-weight: bold;
+}
+
+.stats-sequence {
+    font-size: 0.8rem;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 480px) {
+    .stats-label {
+        font-size: 0.8rem;
+    }
+    
+    .stats-value {
+        font-size: 0.8rem;
+    }
+    
+    .stats-section h4 {
+        font-size: 1rem;
+    }
+}

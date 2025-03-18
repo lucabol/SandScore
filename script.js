@@ -1123,13 +1123,194 @@ function hideLegendModal() {
 }
 
 function showStatisticsModal() {
+    const stats = calculateMatchStatistics();
+    const modalContent = statisticsModal.querySelector('.modal-content');
+    
+    // Create the HTML content for the statistics
+    let html = `
+        <h3>Match Statistics</h3>
+        <div class="stats-container">
+            <div class="stats-header">
+                <div class="stats-team">${stats.teamA.name}</div>
+                <div class="stats-metric">Stat</div>
+                <div class="stats-team">${stats.teamB.name}</div>
+            </div>
+            
+            <div class="stats-section">
+                <h4>Points</h4>
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.pointsWon} (${stats.teamA.pointsPercentage}%)</div>
+                    <div class="stats-label">Total Points</div>
+                    <div class="stats-value">${stats.teamB.pointsWon} (${stats.teamB.pointsPercentage}%)</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.aces}</div>
+                    <div class="stats-label">Aces</div>
+                    <div class="stats-value">${stats.teamB.aces}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.serviceErrors}</div>
+                    <div class="stats-label">Service Errors</div>
+                    <div class="stats-value">${stats.teamB.serviceErrors}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.attackPoints}</div>
+                    <div class="stats-label">Attack Points</div>
+                    <div class="stats-value">${stats.teamB.attackPoints}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.attackErrors}</div>
+                    <div class="stats-label">Attack Errors</div>
+                    <div class="stats-value">${stats.teamB.attackErrors}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.attackEfficiency}%</div>
+                    <div class="stats-label">Attack Efficiency</div>
+                    <div class="stats-value">${stats.teamB.attackEfficiency}%</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.blocks}</div>
+                    <div class="stats-label">Blocks</div>
+                    <div class="stats-value">${stats.teamB.blocks}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.receptionErrors}</div>
+                    <div class="stats-label">Reception Errors</div>
+                    <div class="stats-value">${stats.teamB.receptionErrors}</div>
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <h4>Player Stats - ${stats.teamA.name}</h4>
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.player1.name}</div>
+                    <div class="stats-label">Player</div>
+                    <div class="stats-value">${stats.teamA.player2.name}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.player1.attackPoints}</div>
+                    <div class="stats-label">Attack Points</div>
+                    <div class="stats-value">${stats.teamA.player2.attackPoints}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.player1.blocks}</div>
+                    <div class="stats-label">Blocks</div>
+                    <div class="stats-value">${stats.teamA.player2.blocks}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.player1.aces}</div>
+                    <div class="stats-label">Aces</div>
+                    <div class="stats-value">${stats.teamA.player2.aces}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.player1.serviceErrors}</div>
+                    <div class="stats-label">Service Errors</div>
+                    <div class="stats-value">${stats.teamA.player2.serviceErrors}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.player1.receptionErrors}</div>
+                    <div class="stats-label">Reception Errors</div>
+                    <div class="stats-value">${stats.teamA.player2.receptionErrors}</div>
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <h4>Player Stats - ${stats.teamB.name}</h4>
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamB.player1.name}</div>
+                    <div class="stats-label">Player</div>
+                    <div class="stats-value">${stats.teamB.player2.name}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamB.player1.attackPoints}</div>
+                    <div class="stats-label">Attack Points</div>
+                    <div class="stats-value">${stats.teamB.player2.attackPoints}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamB.player1.blocks}</div>
+                    <div class="stats-label">Blocks</div>
+                    <div class="stats-value">${stats.teamB.player2.blocks}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamB.player1.aces}</div>
+                    <div class="stats-label">Aces</div>
+                    <div class="stats-value">${stats.teamB.player2.aces}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamB.player1.serviceErrors}</div>
+                    <div class="stats-label">Service Errors</div>
+                    <div class="stats-value">${stats.teamB.player2.serviceErrors}</div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamB.player1.receptionErrors}</div>
+                    <div class="stats-label">Reception Errors</div>
+                    <div class="stats-value">${stats.teamB.player2.receptionErrors}</div>
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <h4>Match Info</h4>
+                <div class="stats-row">
+                    <div class="stats-value">${stats.totalRallies}</div>
+                    <div class="stats-label">Total Rallies</div>
+                    <div class="stats-value"></div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">${stats.longestRally.actions}</div>
+                    <div class="stats-label">Longest Rally Actions</div>
+                    <div class="stats-value"></div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value stats-sequence">${stats.longestRally.sequence}</div>
+                    <div class="stats-label">Longest Rally Sequence</div>
+                    <div class="stats-value"></div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stats-value">Set ${stats.currentSet + 1}</div>
+                    <div class="stats-label">Current Set</div>
+                    <div class="stats-value"></div>
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <h4>Set Scores</h4>
+                ${stats.setScores.map(set => `
+                <div class="stats-row">
+                    <div class="stats-value ${set.winner === 'a' ? 'winning-score' : ''}">${set.scoreA}</div>
+                    <div class="stats-label">Set ${set.set}</div>
+                    <div class="stats-value ${set.winner === 'b' ? 'winning-score' : ''}">${set.scoreB}</div>
+                </div>
+                `).join('')}
+            </div>
+        </div>
+        <button class="close-modal">×</button>
+    `;
+    
+    modalContent.innerHTML = html;
+    modalContent.querySelector('.close-modal').addEventListener('click', hideStatisticsModal);
+    
     statisticsModal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
-}
-
-function hideStatisticsModal() {
-    statisticsModal.classList.add('hidden');
-    document.body.style.overflow = '';
 }
 
 // Add this function near the other modal functions
@@ -1167,4 +1348,224 @@ function updateCurrentPointDisplay() {
             currentPointEl.textContent = `Current Point: ${lastRally.action}`;
         }
     }
+}
+
+// Calculate match statistics based on rally history
+function calculateMatchStatistics() {
+    const stats = {
+        teamA: {
+            name: appState.teams.a.name,
+            players: appState.teams.a.players,
+            pointsWon: 0,
+            aces: 0,
+            serviceErrors: 0,
+            attackErrors: 0,
+            attackPoints: 0,
+            blocks: 0,
+            receptionErrors: 0,
+            player1: {
+                name: appState.teams.a.players[0],
+                attackPoints: 0,
+                attackErrors: 0,
+                blocks: 0,
+                aces: 0,
+                serviceErrors: 0,
+                receptionErrors: 0
+            },
+            player2: {
+                name: appState.teams.a.players[1],
+                attackPoints: 0,
+                attackErrors: 0,
+                blocks: 0,
+                aces: 0,
+                serviceErrors: 0,
+                receptionErrors: 0
+            }
+        },
+        teamB: {
+            name: appState.teams.b.name,
+            players: appState.teams.b.players,
+            pointsWon: 0,
+            aces: 0,
+            serviceErrors: 0,
+            attackErrors: 0,
+            attackPoints: 0,
+            blocks: 0,
+            receptionErrors: 0,
+            player1: {
+                name: appState.teams.b.players[0],
+                attackPoints: 0,
+                attackErrors: 0,
+                blocks: 0,
+                aces: 0,
+                serviceErrors: 0,
+                receptionErrors: 0
+            },
+            player2: {
+                name: appState.teams.b.players[1],
+                attackPoints: 0,
+                attackErrors: 0,
+                blocks: 0,
+                aces: 0,
+                serviceErrors: 0,
+                receptionErrors: 0
+            }
+        },
+        totalRallies: 0,
+        longestRally: {
+            actions: 0,
+            sequence: ''
+        },
+        currentSet: appState.currentSet,
+        setScores: []
+    };
+    
+    // Add set scores
+    for (let i = 0; i <= appState.currentSet; i++) {
+        if (i < appState.currentSet || (appState.teams.a.currentScore > 0 || appState.teams.b.currentScore > 0)) {
+            const scoreA = i < appState.currentSet ? appState.teams.a.setScores[i] : appState.teams.a.currentScore;
+            const scoreB = i < appState.currentSet ? appState.teams.b.setScores[i] : appState.teams.b.currentScore;
+            stats.setScores.push({
+                set: i + 1,
+                scoreA: scoreA,
+                scoreB: scoreB,
+                winner: scoreA > scoreB ? 'a' : scoreB > scoreA ? 'b' : null
+            });
+        }
+    }
+    
+    // Process all completed rallies
+    Object.values(appState.rallyHistory).forEach(rally => {
+        stats.totalRallies++;
+        const actions = rally.actions;
+        
+        // Check for longest rally
+        if (actions.length > stats.longestRally.actions) {
+            stats.longestRally.actions = actions.length;
+            stats.longestRally.sequence = actions.join(' ');
+        }
+        
+        // Count points won by each team
+        if (rally.scoringTeam === 'a') {
+            stats.teamA.pointsWon++;
+        } else if (rally.scoringTeam === 'b') {
+            stats.teamB.pointsWon++;
+        }
+        
+        // First action is always a serve - figure out which team and player
+        const servingTeam = actions[0]?.startsWith('R') || actions[0] === 'Err' ? 'a' : 'b';
+        const receivingTeam = servingTeam === 'a' ? 'b' : 'a';
+        
+        // Analyze each action in the rally
+        for (let i = 0; i < actions.length; i++) {
+            const action = actions[i];
+            
+            // Early rally actions
+            if (i === 0) {
+                if (action === 'Ace') {
+                    // Ace serve
+                    if (servingTeam === 'a') stats.teamA.aces++;
+                    else stats.teamB.aces++;
+                } else if (action === 'Err') {
+                    // Serving error
+                    if (servingTeam === 'a') stats.teamA.serviceErrors++;
+                    else stats.teamB.serviceErrors++;
+                } else if (action === 'RE1') {
+                    // Reception error player 1
+                    if (receivingTeam === 'a') stats.teamA.player1.receptionErrors++;
+                    else stats.teamB.player1.receptionErrors++;
+                    
+                    if (receivingTeam === 'a') stats.teamA.receptionErrors++;
+                    else stats.teamB.receptionErrors++;
+                } else if (action === 'RE2') {
+                    // Reception error player 2
+                    if (receivingTeam === 'a') stats.teamA.player2.receptionErrors++;
+                    else stats.teamB.player2.receptionErrors++;
+                    
+                    if (receivingTeam === 'a') stats.teamA.receptionErrors++;
+                    else stats.teamB.receptionErrors++;
+                }
+            }
+            
+            // Terminal actions
+            if (action === 'Win' && i > 0) {
+                // Check who made the winning attack
+                const prevAction = actions[i-1];
+                const attackingTeam = actions.slice(0, i).filter(a => 
+                    a.startsWith('Atk') || a === 'Def1' || a === 'Def2').length % 2 === 0 
+                    ? receivingTeam : servingTeam;
+                
+                if (attackingTeam === 'a') stats.teamA.attackPoints++;
+                else stats.teamB.attackPoints++;
+                
+                // Try to identify which player
+                if (i >= 3 && actions[i-3]?.startsWith('Atk')) {
+                    const playerNum = actions[i-3].charAt(3);
+                    if (playerNum === '1') {
+                        if (attackingTeam === 'a') stats.teamA.player1.attackPoints++;
+                        else stats.teamB.player1.attackPoints++;
+                    } else if (playerNum === '2') {
+                        if (attackingTeam === 'a') stats.teamA.player2.attackPoints++;
+                        else stats.teamB.player2.attackPoints++;
+                    }
+                }
+            } else if (action === 'Err' && i > 0) {
+                // Attack error
+                const attackingTeam = actions.slice(0, i).filter(a => 
+                    a.startsWith('Atk') || a === 'Def1' || a === 'Def2').length % 2 === 0 
+                    ? receivingTeam : servingTeam;
+                    
+                if (attackingTeam === 'a') stats.teamA.attackErrors++;
+                else stats.teamB.attackErrors++;
+                
+                // Try to identify which player
+                if (i >= 3 && actions[i-3]?.startsWith('Atk')) {
+                    const playerNum = actions[i-3].charAt(3);
+                    if (playerNum === '1') {
+                        if (attackingTeam === 'a') stats.teamA.player1.attackErrors++;
+                        else stats.teamB.player1.attackErrors++;
+                    } else if (playerNum === '2') {
+                        if (attackingTeam === 'a') stats.teamA.player2.attackErrors++;
+                        else stats.teamB.player2.attackErrors++;
+                    }
+                }
+            } else if (action.startsWith('Blk') && i > 0) {
+                // Block point
+                const blockingTeam = actions.slice(0, i).filter(a => 
+                    a.startsWith('Atk') || a === 'Def1' || a === 'Def2').length % 2 === 0 
+                    ? servingTeam : receivingTeam;
+                    
+                const playerNum = action.charAt(3);
+                if (blockingTeam === 'a') {
+                    stats.teamA.blocks++;
+                    if (playerNum === '1') stats.teamA.player1.blocks++;
+                    else if (playerNum === '2') stats.teamA.player2.blocks++;
+                } else {
+                    stats.teamB.blocks++;
+                    if (playerNum === '1') stats.teamB.player1.blocks++;
+                    else if (playerNum === '2') stats.teamB.player2.blocks++;
+                }
+            }
+        }
+    });
+    
+    // Add rally percentages and efficiencies
+    stats.teamA.attackEfficiency = stats.teamA.attackPoints > 0 ? 
+        ((stats.teamA.attackPoints / (stats.teamA.attackPoints + stats.teamA.attackErrors)) * 100).toFixed(1) : 0;
+    
+    stats.teamB.attackEfficiency = stats.teamB.attackPoints > 0 ? 
+        ((stats.teamB.attackPoints / (stats.teamB.attackPoints + stats.teamB.attackErrors)) * 100).toFixed(1) : 0;
+        
+    stats.teamA.pointsPercentage = stats.totalRallies > 0 ? 
+        ((stats.teamA.pointsWon / stats.totalRallies) * 100).toFixed(1) : 0;
+        
+    stats.teamB.pointsPercentage = stats.totalRallies > 0 ? 
+        ((stats.teamB.pointsWon / stats.totalRallies) * 100).toFixed(1) : 0;
+    
+    return stats;
+}
+
+function hideStatisticsModal() {
+    statisticsModal.classList.add('hidden');
+    document.body.style.overflow = '';
 }
