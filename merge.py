@@ -5,8 +5,7 @@ import shutil
 html_file = 'index.html'
 css_file = 'styles.css'
 js_file = 'script.js'
-output_file = 'SandScore.html'
-public_folder = r'P:\Public Folder' 
+output_file = r'P:\Public Folder\SandScore.html'
 
 # Read the contents of the HTML file
 with open(html_file, 'r', encoding='utf-8') as file:
@@ -35,11 +34,3 @@ with open(output_file, 'w', encoding='utf-8') as file:
     file.write(html_content)
 
 print(f'Merged file created: {output_file}')
-
-# Copy the merged file to the public folder
-try:
-    public_file = os.path.join(public_folder, os.path.basename(output_file))
-    shutil.copy2(output_file, public_file)
-    print(f'File successfully copied to: {public_file}')
-except Exception as e:
-    print(f'Error copying file to public folder: {e}')
