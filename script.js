@@ -39,121 +39,121 @@ const stateMachine = {
     "Serve": {
         "displayName": "{servingTeam} Serve",
         "transitions": [
-            { "action": "Ace", "nextState": "Point Server", "style": "point" },
-            { "action": "Err", "nextState": "Point Receiver", "style": "error" },
-            { "action": "RE1", "nextState": "Point Server", "style": "error" },
-            { "action": "RE2", "nextState": "Point Server", "style": "error" },
-            { "action": "R-1", "nextState": "Reception", "style": "regular" },
-            { "action": "R-2", "nextState": "Reception", "style": "regular" },
-            { "action": "R=1", "nextState": "Reception", "style": "regular" },
-            { "action": "R=2", "nextState": "Reception", "style": "regular" },
-            { "action": "R+1", "nextState": "Reception", "style": "regular" },
-            { "action": "R+2", "nextState": "Reception", "style": "regular" }
+            { "action": "Ace", "nextState": "Point Server", "style": "point", "help": "Direct point from serve" },
+            { "action": "Err", "nextState": "Point Receiver", "style": "error", "help": "Service error" },
+            { "action": "RE1", "nextState": "Point Server", "style": "error", "help": "Recept error by player 1" },
+            { "action": "RE2", "nextState": "Point Server", "style": "error", "help": "Recept error by player 2" },
+            { "action": "R-1", "nextState": "Reception", "style": "regular", "help": "Poor reception by player 1" },
+            { "action": "R-2", "nextState": "Reception", "style": "regular", "help": "Poor reception by player 2" },
+            { "action": "R=1", "nextState": "Reception", "style": "regular", "help": "Medium reception by player 1" },
+            { "action": "R=2", "nextState": "Reception", "style": "regular", "help": "Medium reception by player 2" },
+            { "action": "R+1", "nextState": "Reception", "style": "regular", "help": "Good reception by player 1" },
+            { "action": "R+2", "nextState": "Reception", "style": "regular", "help": "Good reception by player 2" }
         ]
     },
     "Reception": {
         "displayName": "{receivingTeam} Received",
         "transitions": [
-            { "action": "Atk1", "nextState": "Zone of Attack Rec", "style": "regular" },
-            { "action": "Atk2", "nextState": "Zone of Attack Rec", "style": "regular" }
+            { "action": "Atk1", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 1" },
+            { "action": "Atk2", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 2" }
         ]
     },
     "Zone of Attack Rec": {
         "displayName": "Attack Zone for {receivingTeam}",
         "transitions": [
-            { "action": "V1", "nextState": "Trajectory Rec" },
-            { "action": "V2", "nextState": "Trajectory Rec" },
-            { "action": "V3", "nextState": "Trajectory Rec" },
-            { "action": "V4", "nextState": "Trajectory Rec" },
-            { "action": "V5", "nextState": "Trajectory Rec" },
-            { "action": "X1", "nextState": "Trajectory Rec" },
-            { "action": "X2", "nextState": "Trajectory Rec" },
-            { "action": "X3", "nextState": "Trajectory Rec" },
-            { "action": "X4", "nextState": "Trajectory Rec" },
-            { "action": "X5", "nextState": "Trajectory Rec" },
-            { "action": "I1", "nextState": "Trajectory Rec" },
-            { "action": "I2", "nextState": "Trajectory Rec" },
-            { "action": "I3", "nextState": "Trajectory Rec" },
-            { "action": "I4", "nextState": "Trajectory Rec" },
-            { "action": "I5", "nextState": "Trajectory Rec" }
+            { "action": "V1", "nextState": "Trajectory Rec", "help": "High ball position 1" },
+            { "action": "V2", "nextState": "Trajectory Rec", "help": "High ball position 2" },
+            { "action": "V3", "nextState": "Trajectory Rec", "help": "High ball position 3" },
+            { "action": "V4", "nextState": "Trajectory Rec", "help": "High ball position 4" },
+            { "action": "V5", "nextState": "Trajectory Rec", "help": "High ball position 5" },
+            { "action": "X1", "nextState": "Trajectory Rec", "help": "Low ball position 1" },
+            { "action": "X2", "nextState": "Trajectory Rec", "help": "Low ball position 2" },
+            { "action": "X3", "nextState": "Trajectory Rec", "help": "Low ball position 3" },
+            { "action": "X4", "nextState": "Trajectory Rec", "help": "Low ball position 4" },
+            { "action": "X5", "nextState": "Trajectory Rec", "help": "Low ball position 5" },
+            { "action": "I1", "nextState": "Trajectory Rec", "help": "Around setter position 1" },
+            { "action": "I2", "nextState": "Trajectory Rec", "help": "Around setter position 2" },
+            { "action": "I3", "nextState": "Trajectory Rec", "help": "Around setter position 3" },
+            { "action": "I4", "nextState": "Trajectory Rec", "help": "Around setter position 4" },
+            { "action": "I5", "nextState": "Trajectory Rec", "help": "Around setter position 5" }
         ]
     },
     "Trajectory Rec": {
         "displayName": "Trajectory {receivingTeam}",
         "transitions": [
-            { "action": "Diag", "nextState": "Attack by Receiving Team" },
-            { "action": "DiagL", "nextState": "Attack by Receiving Team" },
-            { "action": "DiagS", "nextState": "Attack by Receiving Team" },
-            { "action": "Line", "nextState": "Attack by Receiving Team" },
-            { "action": "LineS", "nextState": "Attack by Receiving Team" },
-            { "action": "Cut", "nextState": "Attack by Receiving Team" }
+            { "action": "Diag", "nextState": "Attack by Receiving Team", "help": "Diagonal attack" },
+            { "action": "DiagL", "nextState": "Attack by Receiving Team", "help": "Long diagonal attack" },
+            { "action": "DiagS", "nextState": "Attack by Receiving Team", "help": "Short diagonal attack" },
+            { "action": "Line", "nextState": "Attack by Receiving Team", "help": "Line attack" },
+            { "action": "LineS", "nextState": "Attack by Receiving Team", "help": "Short line attack" },
+            { "action": "Cut", "nextState": "Attack by Receiving Team", "help": "Cut shot" }
         ]
     },
     "Attack by Receiving Team": {
         "displayName": "Attack by {receivingTeam}",
         "transitions": [
-            { "action": "Win", "nextState": "Point Receiver", "style": "point" },
-            { "action": "Err", "nextState": "Point Server", "style": "error" },
-            { "action": "Blk1", "nextState": "Point Server", "style": "regular" },
-            { "action": "Blk2", "nextState": "Point Server", "style": "regular" },
-            { "action": "Def1", "nextState": "Defense By Serving Team", "style": "regular" },
-            { "action": "Def2", "nextState": "Defense By Serving Team", "style": "regular" }
+            { "action": "Win", "nextState": "Point Receiver", "style": "point", "help": "Winning attack" },
+            { "action": "Err", "nextState": "Point Server", "style": "error", "help": "Attack error" },
+            { "action": "Blk1", "nextState": "Point Server", "style": "regular", "help": "Blocked by player 1" },
+            { "action": "Blk2", "nextState": "Point Server", "style": "regular", "help": "Blocked by player 2" },
+            { "action": "Def1", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 1" },
+            { "action": "Def2", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 2" }
         ]
     },
     "Defense By Serving Team": {
         "displayName": "Defense by {servingTeam}",
         "transitions": [
-            { "action": "Atk1", "nextState": "Zone of Attack Srv" },
-            { "action": "Atk2", "nextState": "Zone of Attack Srv" }
+            { "action": "Atk1", "nextState": "Zone of Attack Srv", "help": "Attack by player 1" },
+            { "action": "Atk2", "nextState": "Zone of Attack Srv", "help": "Attack by player 2" }
         ]
     },
     "Zone of Attack Srv": {
         "displayName": "Attack Zone for {servingTeam}",
         "transitions": [
-            { "action": "V1", "nextState": "Trajectory Srv" },
-            { "action": "V2", "nextState": "Trajectory Srv" },
-            { "action": "V3", "nextState": "Trajectory Srv" },
-            { "action": "V4", "nextState": "Trajectory Srv" },
-            { "action": "V5", "nextState": "Trajectory Srv" },
-            { "action": "X1", "nextState": "Trajectory Srv" },
-            { "action": "X2", "nextState": "Trajectory Srv" },
-            { "action": "X3", "nextState": "Trajectory Srv" },
-            { "action": "X4", "nextState": "Trajectory Srv" },
-            { "action": "X5", "nextState": "Trajectory Srv" },
-            { "action": "I1", "nextState": "Trajectory Srv" },
-            { "action": "I2", "nextState": "Trajectory Srv" },
-            { "action": "I3", "nextState": "Trajectory Srv" },
-            { "action": "I4", "nextState": "Trajectory Srv" },
-            { "action": "I5", "nextState": "Trajectory Srv" }
+            { "action": "V1", "nextState": "Trajectory Srv", "help": "High ball position 1" },
+            { "action": "V2", "nextState": "Trajectory Srv", "help": "High ball position 2" },
+            { "action": "V3", "nextState": "Trajectory Srv", "help": "High ball position 3" },
+            { "action": "V4", "nextState": "Trajectory Srv", "help": "High ball position 4" },
+            { "action": "V5", "nextState": "Trajectory Srv", "help": "High ball position 5" },
+            { "action": "X1", "nextState": "Trajectory Srv", "help": "Low ball position 1" },
+            { "action": "X2", "nextState": "Trajectory Srv", "help": "Low ball position 2" },
+            { "action": "X3", "nextState": "Trajectory Srv", "help": "Low ball position 3" },
+            { "action": "X4", "nextState": "Trajectory Srv", "help": "Low ball position 4" },
+            { "action": "X5", "nextState": "Trajectory Srv", "help": "Low ball position 5" },
+            { "action": "I1", "nextState": "Trajectory Srv", "help": "Around setter position 1" },
+            { "action": "I2", "nextState": "Trajectory Srv", "help": "Around setter position 2" },
+            { "action": "I3", "nextState": "Trajectory Srv", "help": "Around setter position 3" },
+            { "action": "I4", "nextState": "Trajectory Srv", "help": "Around setter position 4" },
+            { "action": "I5", "nextState": "Trajectory Srv", "help": "Around setter position 5" }
         ]
     },
     "Trajectory Srv": {
         "displayName": "Trajectory {servingTeam}",
         "transitions": [
-            { "action": "Diag", "nextState": "Attack by Serving Team" },
-            { "action": "DiagL", "nextState": "Attack by Serving Team" },
-            { "action": "DiagS", "nextState": "Attack by Serving Team" },
-            { "action": "Line", "nextState": "Attack by Serving Team" },
-            { "action": "LineS", "nextState": "Attack by Serving Team" },
-            { "action": "Cut", "nextState": "Attack by Serving Team" }
+            { "action": "Diag", "nextState": "Attack by Serving Team", "help": "Diagonal attack" },
+            { "action": "DiagL", "nextState": "Attack by Serving Team", "help": "Long diagonal attack" },
+            { "action": "DiagS", "nextState": "Attack by Serving Team", "help": "Short diagonal attack" },
+            { "action": "Line", "nextState": "Attack by Serving Team", "help": "Line attack" },
+            { "action": "LineS", "nextState": "Attack by Serving Team", "help": "Short line attack" },
+            { "action": "Cut", "nextState": "Attack by Serving Team", "help": "Cut shot" }
         ]
     },
     "Attack by Serving Team": {
         "displayName": "Attack by {servingTeam}",
         "transitions": [
-            { "action": "Win", "nextState": "Point Server", "style": "point" },
-            { "action": "Err", "nextState": "Point Receiver", "style": "error" },
-            { "action": "Blk1", "nextState": "Point Receiver", "style": "regular" },
-            { "action": "Blk2", "nextState": "Point Receiver", "style": "regular" },
-            { "action": "Def1", "nextState": "Defense By Receiving Team", "style": "regular" },
-            { "action": "Def2", "nextState": "Defense By Receiving Team", "style": "regular" }
+            { "action": "Win", "nextState": "Point Server", "style": "point", "help": "Winning attack" },
+            { "action": "Err", "nextState": "Point Receiver", "style": "error", "help": "Attack error" },
+            { "action": "Blk1", "nextState": "Point Receiver", "style": "regular", "help": "Blocked by player 1" },
+            { "action": "Blk2", "nextState": "Point Receiver", "style": "regular", "help": "Blocked by player 2" },
+            { "action": "Def1", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 1" },
+            { "action": "Def2", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 2" }
         ]
     },
     "Defense By Receiving Team": {
         "displayName": "Defense by {receivingTeam}",
         "transitions": [
-            { "action": "Atk1", "nextState": "Zone of Attack Rec" },
-            { "action": "Atk2", "nextState": "Zone of Attack Rec" }
+            { "action": "Atk1", "nextState": "Zone of Attack Rec", "help": "Attack by player 1" },
+            { "action": "Atk2", "nextState": "Zone of Attack Rec", "help": "Attack by player 2" }
         ]
     },
     "Point Server": {
@@ -1032,7 +1032,84 @@ function saveStateToLocalStorage() {
     saveStateForUndo();
 }
 
+// Add this function to generate the legend modal content dynamically
+function generateLegendContent() {
+    const legendContainer = document.getElementById('legend-container');
+    legendContainer.innerHTML = ''; // Clear any existing content
+    
+    // Create category containers for different action types
+    const categories = {
+        'serve': { title: 'Serve Actions', actions: {} },
+        'reception': { title: 'Reception Actions', actions: {} },
+        'attack': { title: 'Attack Actions', actions: {} },
+        'zone': { title: 'Attack Zones', actions: {} },
+        'trajectory': { title: 'Attack Trajectories', actions: {} }
+    };
+    
+    // Scan all transitions in the state machine and collect unique actions with their help text
+    for (const stateName in stateMachine) {
+        if (stateName.startsWith('__')) continue; // Skip metadata
+        
+        const state = stateMachine[stateName];
+        if (!state.transitions) continue;
+        
+        state.transitions.forEach(transition => {
+            if (!transition.help) return; // Skip actions without help text
+            
+            const action = transition.action;
+            const help = transition.help;
+            
+            // Categorize actions based on patterns
+            if (stateName === 'Serve') {
+                categories.serve.actions[action] = help;
+            } else if (action.startsWith('R') && (action.includes('+') || action.includes('-') || action.includes('='))) {
+                categories.reception.actions[action] = help;
+            } else if (action.match(/^(V|X|I)\d$/)) {
+                categories.zone.actions[action] = help;
+            } else if (action.match(/^(Diag|DiagL|DiagS|Line|LineS|Cut)$/)) {
+                categories.trajectory.actions[action] = help;
+            } else if (action.match(/^(Atk|Win|Err|Blk|Def)/)) {
+                categories.attack.actions[action] = help;
+            }
+        });
+    }
+    
+    // Create the HTML sections for each category
+    for (const categoryKey in categories) {
+        const category = categories[categoryKey];
+        const actionEntries = Object.entries(category.actions);
+        
+        if (actionEntries.length === 0) continue; // Skip empty categories
+        
+        // Create section for this category
+        const sectionEl = document.createElement('div');
+        sectionEl.className = 'legend-section';
+        
+        // Add section title
+        const titleEl = document.createElement('h4');
+        titleEl.textContent = category.title;
+        sectionEl.appendChild(titleEl);
+        
+        // Sort actions to ensure consistent display
+        actionEntries.sort((a, b) => a[0].localeCompare(b[0]));
+        
+        // Add action descriptions
+        for (const [action, help] of actionEntries) {
+            const paraEl = document.createElement('p');
+            paraEl.innerHTML = `<strong>${action}</strong> - ${help}`;
+            sectionEl.appendChild(paraEl);
+        }
+        
+        // Add the section to the container
+        legendContainer.appendChild(sectionEl);
+    }
+}
+
 function showLegendModal() {
+    // Generate content before showing
+    generateLegendContent();
+    
+    // Show the modal
     legendModal.classList.remove('hidden');
     document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
 }
