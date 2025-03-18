@@ -631,6 +631,7 @@ async function handleAction(action, nextState) {
     updateActionButtons();
     updateHistoryDisplay();
     saveStateForUndo();
+    updateCurrentPointDisplay();
 }
 
 // Helper function to check if a set is complete
@@ -715,6 +716,7 @@ function undoLastAction() {
         updateScoreboard();
         updateActionButtons();
         updateHistoryDisplay();
+        updateCurrentPointDisplay();
     }
 }
 
@@ -1002,6 +1004,7 @@ function updateHistoryDisplay() {
     
     // Scroll to the bottom to show the most recent rally
     historyListEl.scrollTop = historyListEl.scrollHeight;
+    updateCurrentPointDisplay();
 }
 
 // Helper function to get state display name
@@ -1141,4 +1144,15 @@ function showSet3ServerModal() {
 function hideSet3ServerModal() {
     set3ServerModal.classList.add('hidden');
     document.body.style.overflow = '';
+}
+
+function updateCurrentPointDisplay() {
+    const currentPointEl = document.getElementById('current-point');
+    const currentRallyActions = appState.rallyActions.join(' ');
+    if (currentRallyActions) {
+        currentPointEl.textContent = `Current Point: ${currentRallyActions}`;
+    } else if (appState.history.length > 0) {
+        const lastRally = appState.history[appState.history.length - 1];
+        currentPointEl.textContent = `Current Point: ${lastRally.action}`;
+    }
 }
