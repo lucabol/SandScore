@@ -38,7 +38,6 @@ const stateMachine = {
     // State definitions
     "Serve": {
         "displayName": "{servingTeam} Serve",
-        "category": "serving",
         "transitions": [
             { "action": "Ace", "nextState": "Point Server", "style": "point" },
             { "action": "Err", "nextState": "Point Receiver", "style": "error" },
@@ -54,7 +53,6 @@ const stateMachine = {
     },
     "Reception": {
         "displayName": "{receivingTeam} Received",
-        "category": "receiving",
         "transitions": [
             { "action": "Atk1", "nextState": "Zone of Attack Rec", "style": "regular" },
             { "action": "Atk2", "nextState": "Zone of Attack Rec", "style": "regular" }
@@ -62,7 +60,6 @@ const stateMachine = {
     },
     "Zone of Attack Rec": {
         "displayName": "Attack Zone for {receivingTeam}",
-        "category": "receiving",
         "transitions": [
             { "action": "V1", "nextState": "Trajectory Rec" },
             { "action": "V2", "nextState": "Trajectory Rec" },
@@ -83,7 +80,6 @@ const stateMachine = {
     },
     "Trajectory Rec": {
         "displayName": "Trajectory {receivingTeam}",
-        "category": "receiving",
         "transitions": [
             { "action": "Diag", "nextState": "Attack by Receiving Team" },
             { "action": "DiagL", "nextState": "Attack by Receiving Team" },
@@ -95,7 +91,6 @@ const stateMachine = {
     },
     "Attack by Receiving Team": {
         "displayName": "Attack by {receivingTeam}",
-        "category": "receiving",
         "transitions": [
             { "action": "Win", "nextState": "Point Receiver", "style": "point" },
             { "action": "Err", "nextState": "Point Server", "style": "error" },
@@ -107,7 +102,6 @@ const stateMachine = {
     },
     "Defense By Serving Team": {
         "displayName": "Defense by {servingTeam}",
-        "category": "serving",
         "transitions": [
             { "action": "Atk1", "nextState": "Zone of Attack Srv" },
             { "action": "Atk2", "nextState": "Zone of Attack Srv" }
@@ -115,7 +109,6 @@ const stateMachine = {
     },
     "Zone of Attack Srv": {
         "displayName": "Attack Zone for {servingTeam}",
-        "category": "serving",
         "transitions": [
             { "action": "V1", "nextState": "Trajectory Srv" },
             { "action": "V2", "nextState": "Trajectory Srv" },
@@ -136,7 +129,6 @@ const stateMachine = {
     },
     "Trajectory Srv": {
         "displayName": "Trajectory {servingTeam}",
-        "category": "serving",
         "transitions": [
             { "action": "Diag", "nextState": "Attack by Serving Team" },
             { "action": "DiagL", "nextState": "Attack by Serving Team" },
@@ -148,7 +140,6 @@ const stateMachine = {
     },
     "Attack by Serving Team": {
         "displayName": "Attack by {servingTeam}",
-        "category": "serving",
         "transitions": [
             { "action": "Win", "nextState": "Point Server", "style": "point" },
             { "action": "Err", "nextState": "Point Receiver", "style": "error" },
@@ -160,7 +151,6 @@ const stateMachine = {
     },
     "Defense By Receiving Team": {
         "displayName": "Defense by {receivingTeam}",
-        "category": "receiving",
         "transitions": [
             { "action": "Atk1", "nextState": "Zone of Attack Rec" },
             { "action": "Atk2", "nextState": "Zone of Attack Rec" }
@@ -168,7 +158,6 @@ const stateMachine = {
     },
     "Point Server": {
         "displayName": "Point {servingTeam}",
-        "category": "terminal",
         "isTerminal": true,
         "scoring": {
             "awardPoint": "server",
@@ -180,7 +169,6 @@ const stateMachine = {
     },
     "Point Receiver": {
         "displayName": "Point {receivingTeam}",
-        "category": "terminal",
         "isTerminal": true,
         "scoring": {
             "awardPoint": "receiver",
