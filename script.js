@@ -1,26 +1,68 @@
 // State Machine Definition
 const stateMachine = {
+    // Game rules metadata
+    "__rules__": {
+        "setWinConditions": {
+            "pointsToWin": {
+                "short": [3, 3, 3],
+                "regular": [21, 21, 15]
+            },
+            "minPointDifference": 2,
+            "setsToWin": 2
+        },
+        "initialState": "Serve",
+        "setTransitions": {
+            "firstServer": "winner", // winner of previous set serves first
+            "nextState": "Serve",
+            "resetScores": true,
+            "matchEndCondition": {
+                "setsToWin": 2
+            }
+        },
+        "defaults": {
+            "teamA": {
+                "players": ["Player 1", "Player 2"],
+                "isServing": true
+            },
+            "teamB": {
+                "players": ["Player 3", "Player 4"],
+                "isServing": false
+            }
+        },
+        "actionStyles": {
+            "error": "danger",
+            "point": "success",
+            "regular": "primary"
+        }
+    },
+    // State definitions
     "Serve": {
+        "displayName": "{servingTeam} Serve",
+        "category": "serving",
         "transitions": [
-            { "action": "Ace", "nextState": "Point Server" },
-            { "action": "Err", "nextState": "Point Receiver" },
-            { "action": "RE1", "nextState": "Point Server" },
-            { "action": "RE2", "nextState": "Point Server" },
-            { "action": "R-1", "nextState": "Reception" },
-            { "action": "R-2", "nextState": "Reception" },
-            { "action": "R=1", "nextState": "Reception" },
-            { "action": "R=2", "nextState": "Reception" },
-            { "action": "R+1", "nextState": "Reception" },
-            { "action": "R+2", "nextState": "Reception" }
+            { "action": "Ace", "nextState": "Point Server", "style": "point" },
+            { "action": "Err", "nextState": "Point Receiver", "style": "error" },
+            { "action": "RE1", "nextState": "Point Server", "style": "error" },
+            { "action": "RE2", "nextState": "Point Server", "style": "error" },
+            { "action": "R-1", "nextState": "Reception", "style": "regular" },
+            { "action": "R-2", "nextState": "Reception", "style": "regular" },
+            { "action": "R=1", "nextState": "Reception", "style": "regular" },
+            { "action": "R=2", "nextState": "Reception", "style": "regular" },
+            { "action": "R+1", "nextState": "Reception", "style": "regular" },
+            { "action": "R+2", "nextState": "Reception", "style": "regular" }
         ]
     },
     "Reception": {
+        "displayName": "{receivingTeam} Received",
+        "category": "receiving",
         "transitions": [
-            { "action": "Atk1", "nextState": "Zone of Attack Rec" },
-            { "action": "Atk2", "nextState": "Zone of Attack Rec" }
+            { "action": "Atk1", "nextState": "Zone of Attack Rec", "style": "regular" },
+            { "action": "Atk2", "nextState": "Zone of Attack Rec", "style": "regular" }
         ]
     },
     "Zone of Attack Rec": {
+        "displayName": "Attack Zone for {receivingTeam}",
+        "category": "receiving",
         "transitions": [
             { "action": "V1", "nextState": "Trajectory Rec" },
             { "action": "V2", "nextState": "Trajectory Rec" },
@@ -40,6 +82,8 @@ const stateMachine = {
         ]
     },
     "Trajectory Rec": {
+        "displayName": "Trajectory {receivingTeam}",
+        "category": "receiving",
         "transitions": [
             { "action": "Diag", "nextState": "Attack by Receiving Team" },
             { "action": "DiagL", "nextState": "Attack by Receiving Team" },
@@ -50,22 +94,28 @@ const stateMachine = {
         ]
     },
     "Attack by Receiving Team": {
+        "displayName": "Attack by {receivingTeam}",
+        "category": "receiving",
         "transitions": [
-            { "action": "Win", "nextState": "Point Receiver" },
-            { "action": "Err", "nextState": "Point Server" },
-            { "action": "Blk1", "nextState": "Point Server" },
-            { "action": "Blk2", "nextState": "Point Server" },
-            { "action": "Def1", "nextState": "Defense By Serving Team" },
-            { "action": "Def2", "nextState": "Defense By Serving Team" }
+            { "action": "Win", "nextState": "Point Receiver", "style": "point" },
+            { "action": "Err", "nextState": "Point Server", "style": "error" },
+            { "action": "Blk1", "nextState": "Point Server", "style": "regular" },
+            { "action": "Blk2", "nextState": "Point Server", "style": "regular" },
+            { "action": "Def1", "nextState": "Defense By Serving Team", "style": "regular" },
+            { "action": "Def2", "nextState": "Defense By Serving Team", "style": "regular" }
         ]
     },
     "Defense By Serving Team": {
+        "displayName": "Defense by {servingTeam}",
+        "category": "serving",
         "transitions": [
             { "action": "Atk1", "nextState": "Zone of Attack Srv" },
             { "action": "Atk2", "nextState": "Zone of Attack Srv" }
         ]
     },
     "Zone of Attack Srv": {
+        "displayName": "Attack Zone for {servingTeam}",
+        "category": "serving",
         "transitions": [
             { "action": "V1", "nextState": "Trajectory Srv" },
             { "action": "V2", "nextState": "Trajectory Srv" },
@@ -85,6 +135,8 @@ const stateMachine = {
         ]
     },
     "Trajectory Srv": {
+        "displayName": "Trajectory {servingTeam}",
+        "category": "serving",
         "transitions": [
             { "action": "Diag", "nextState": "Attack by Serving Team" },
             { "action": "DiagL", "nextState": "Attack by Serving Team" },
@@ -95,20 +147,48 @@ const stateMachine = {
         ]
     },
     "Attack by Serving Team": {
+        "displayName": "Attack by {servingTeam}",
+        "category": "serving",
         "transitions": [
-            { "action": "Win", "nextState": "Point Server" },
-            { "action": "Err", "nextState": "Point Receiver" },
-            { "action": "Blk1", "nextState": "Point Receiver" },
-            { "action": "Blk2", "nextState": "Point Receiver" },
-            { "action": "Def1", "nextState": "Defense By Receiving Team" },
-            { "action": "Def2", "nextState": "Defense By Receiving Team" }
+            { "action": "Win", "nextState": "Point Server", "style": "point" },
+            { "action": "Err", "nextState": "Point Receiver", "style": "error" },
+            { "action": "Blk1", "nextState": "Point Receiver", "style": "regular" },
+            { "action": "Blk2", "nextState": "Point Receiver", "style": "regular" },
+            { "action": "Def1", "nextState": "Defense By Receiving Team", "style": "regular" },
+            { "action": "Def2", "nextState": "Defense By Receiving Team", "style": "regular" }
         ]
     },
     "Defense By Receiving Team": {
+        "displayName": "Defense by {receivingTeam}",
+        "category": "receiving",
         "transitions": [
             { "action": "Atk1", "nextState": "Zone of Attack Rec" },
             { "action": "Atk2", "nextState": "Zone of Attack Rec" }
         ]
+    },
+    "Point Server": {
+        "displayName": "Point {servingTeam}",
+        "category": "terminal",
+        "isTerminal": true,
+        "scoring": {
+            "awardPoint": "server",
+            "switchServer": true
+        },
+        "setTransition": {
+            "nextServer": "winner"
+        }
+    },
+    "Point Receiver": {
+        "displayName": "Point {receivingTeam}",
+        "category": "terminal",
+        "isTerminal": true,
+        "scoring": {
+            "awardPoint": "receiver",
+            "switchServer": true
+        },
+        "setTransition": {
+            "nextServer": "winner"
+        }
     }
 };
 
@@ -133,6 +213,12 @@ const closeModalButton = document.querySelector('.close-modal');
 const statisticsModal = document.getElementById('statistics-modal');
 const statButton = document.getElementById('stat-button');
 const statButtonMatch = document.getElementById('stat-button-match');
+
+// Add these with the other DOM elements at the top
+const set3ServerModal = document.getElementById('set3-server-modal');
+const set3TeamAName = document.getElementById('set3-team-a-name');
+const set3TeamBName = document.getElementById('set3-team-b-name');
+const set3ServerConfirm = document.getElementById('set3-server-confirm');
 
 // Application State
 let appState = {
@@ -362,6 +448,30 @@ document.addEventListener('DOMContentLoaded', () => {
             // ...existing escape key handlers...
         }
     });
+
+    // Add Set 3 server modal handler
+    set3ServerConfirm.addEventListener('click', () => {
+        const selectedTeam = document.querySelector('input[name="set3-server"]:checked').value;
+        appState.teams.a.isServing = selectedTeam === 'a';
+        appState.teams.b.isServing = selectedTeam === 'b';
+        appState.currentState = stateMachine.__rules__.setTransitions.nextState;
+        hideSet3ServerModal();
+        updateScoreboard();
+        updateActionButtons();
+        saveStateForUndo();
+    });
+
+    // Add escape key handler for set3 server modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (!set3ServerModal.classList.contains('hidden')) {
+                e.preventDefault(); // Prevent closing if this modal is open
+            } else {
+                hideStatisticsModal();
+                hideLegendModal();
+            }
+        }
+    });
 });
 
 // Start a new match with the entered player data
@@ -384,7 +494,7 @@ function startMatch() {
     const scoringFormat = document.querySelector('input[name="scoring"]:checked').value;
     const servingTeam = document.querySelector('input[name="serving"]:checked').value;
     
-    // Initialize app state
+    // Initialize app state using state machine rules
     appState = {
         teams: {
             a: {
@@ -404,11 +514,11 @@ function startMatch() {
         },
         currentSet: 0,
         currentRally: 1,
-        pointsPerSet: scoringFormat === 'short' ? [3, 3, 3] : [21, 21, 15],
-        currentState: 'Serve',
-        history: [], // Reset history
-        rallyActions: [], // Reset actions for current rally
-        rallyHistory: {}, // Reset rally history
+        pointsPerSet: stateMachine.__rules__.setWinConditions.pointsToWin[scoringFormat],
+        currentState: stateMachine.__rules__.initialState,
+        history: [],
+        rallyActions: [],
+        rallyHistory: {},
         firstServingTeam: servingTeam === 'team-a' ? 'a' : 'b'
     };
 
@@ -461,11 +571,15 @@ function updateActionButtons() {
     
     // Show action buttons for the current state
     const transitions = stateMachine[appState.currentState]?.transitions || [];
+    const styles = stateMachine.__rules__.actionStyles;
     
     transitions.forEach(transition => {
         const button = document.createElement('button');
         button.textContent = transition.action;
         button.classList.add('action-button');
+        if (transition.style && styles[transition.style]) {
+            button.classList.add(`button-${styles[transition.style]}`);
+        }
         button.addEventListener('click', () => {
             handleAction(transition.action, transition.nextState);
         });
@@ -475,10 +589,7 @@ function updateActionButtons() {
 
 // Handle action button click
 async function handleAction(action, nextState) {
-    // Add action to the current rally actions
     appState.rallyActions.push(action);
-    
-    // Add to history
     appState.history.push({
         rally: appState.currentRally,
         state: appState.currentState,
@@ -488,98 +599,38 @@ async function handleAction(action, nextState) {
         scoreB: appState.teams.b.currentScore
     });
     
-    // Update current state
     appState.currentState = nextState;
     
-    // Handle point scoring if we've reached a terminal state
-    if (nextState === 'Point Server' || nextState === 'Point Receiver') {
-        const scoringTeam = nextState === 'Point Server' ? 
+    // Use state machine metadata for scoring
+    const stateConfig = stateMachine[nextState];
+    if (stateConfig?.isTerminal) {
+        const scoring = stateConfig.scoring;
+        const scoringTeam = scoring.awardPoint === 'server' ? 
             (appState.teams.a.isServing ? 'a' : 'b') : 
             (appState.teams.a.isServing ? 'b' : 'a');
         
-        // Award a point
+        // Award point
         appState.teams[scoringTeam].currentScore++;
         
-        const oppositeTeam = scoringTeam === 'a' ? 'b' : 'a';
-        const pointsToWin = appState.pointsPerSet[appState.currentSet];
-        const hasEnoughPoints = appState.teams[scoringTeam].currentScore >= pointsToWin;
-        const hasTwoPointLead = appState.teams[scoringTeam].currentScore - appState.teams[oppositeTeam].currentScore >= 2;
-        const setIsOver = hasEnoughPoints && hasTwoPointLead;
-        
-        // Store the completed rally actions in the rally history
+        // Store rally history
         appState.rallyHistory[appState.currentRally] = {
             actions: [...appState.rallyActions],
             scoreA: appState.teams.a.currentScore,
             scoreB: appState.teams.b.currentScore,
             scoringTeam: scoringTeam
         };
+
+        const oppositeTeam = scoringTeam === 'a' ? 'b' : 'a';
+        const setIsOver = isSetComplete(scoringTeam, oppositeTeam);
         
-        // Check if the set is over
         if (setIsOver) {
-            // Update set score
-            appState.teams[scoringTeam].setScores[appState.currentSet] = appState.teams[scoringTeam].currentScore;
-            appState.teams[oppositeTeam].setScores[appState.currentSet] = appState.teams[oppositeTeam].currentScore;
-            
-            // Reset current scores
-            appState.teams.a.currentScore = 0;
-            appState.teams.b.currentScore = 0;
-            
-            // Move to next set
-            appState.currentSet++;
-            
-            // Count sets won
-            let setsWonA = 0;
-            let setsWonB = 0;
-            for (let i = 0; i < appState.currentSet; i++) {
-                if (appState.teams.a.setScores[i] > appState.teams.b.setScores[i]) {
-                    setsWonA++;
-                } else if (appState.teams.b.setScores[i] > appState.teams.a.setScores[i]) {
-                    setsWonB++;
-                }
-            }
-            
-            // End match if a team has won 2 sets
-            if (setsWonA >= 2 || setsWonB >= 2) {
-                showMatchSummary();
-                return;
-            }
-            
-            // Continue to next set if match isn't over
-            if (appState.currentSet < 3) {
-                appState.currentRally++;
-                
-                // For set 2, swap serving from first set
-                if (appState.currentSet === 1) {
-                    const secondSetServer = appState.firstServingTeam === 'a' ? 'b' : 'a';
-                    appState.teams.a.isServing = secondSetServer === 'a';
-                    appState.teams.b.isServing = secondSetServer === 'b';
-                }
-                // For set 3, prompt for serving team if match is tied 1-1
-                else if (appState.currentSet === 2) {
-                    if (setsWonA === 1 && setsWonB === 1) {
-                        promptThirdSetService().then(servingTeam => {
-                            appState.teams.a.isServing = servingTeam === 'a';
-                            appState.teams.b.isServing = servingTeam === 'b';
-                            updateScoreboard();
-                            updateActionButtons();
-                        });
-                    } else {
-                        appState.teams.a.isServing = scoringTeam === 'a';
-                        appState.teams.b.isServing = scoringTeam === 'b';
-                    }
-                }
-                
-                // Reset to Serve state
-                appState.currentState = 'Serve';
-                appState.rallyActions = [];
-                
-                updateScoreboard();
-                updateActionButtons();
-            }
+            handleSetCompletion(scoringTeam, oppositeTeam);
         } else {
-            // Server changes when point is scored
-            appState.teams.a.isServing = scoringTeam === 'a';
-            appState.teams.b.isServing = scoringTeam === 'b';
+            // Handle server changes based on state machine config
+            if (scoring.switchServer) {
+                appState.teams.a.isServing = scoringTeam === 'a';
+                appState.teams.b.isServing = scoringTeam === 'b';
+            }
             
             // Start next rally
             appState.currentRally++;
@@ -588,65 +639,79 @@ async function handleAction(action, nextState) {
         }
     }
     
-    // Update UI
     updateScoreboard();
     updateActionButtons();
     updateHistoryDisplay();
-    
-    // Save current state for undo after all changes are complete
     saveStateForUndo();
 }
 
-// Function to prompt for third set service
-function promptThirdSetService() {
-    return new Promise((resolve) => {
-        const modal = document.createElement('div');
-        modal.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        `;
+// Helper function to check if a set is complete
+function isSetComplete(scoringTeam, oppositeTeam) {
+    const rules = stateMachine.__rules__.setWinConditions;
+    const pointsToWin = appState.pointsPerSet[appState.currentSet];
+    const hasEnoughPoints = appState.teams[scoringTeam].currentScore >= pointsToWin;
+    const hasTwoPointLead = appState.teams[scoringTeam].currentScore - appState.teams[oppositeTeam].currentScore >= rules.minPointDifference;
+    return hasEnoughPoints && hasTwoPointLead;
+}
 
-        const content = document.createElement('div');
-        content.style.cssText = `
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        `;
-
-        content.innerHTML = `
-            <h3>Choose Serving Team for Set 3</h3>
-            <div style="margin: 20px 0;">
-                <button id="team-a-serve" style="margin: 5px;">${appState.teams.a.name}</button>
-                <button id="team-b-serve" style="margin: 5px;">${appState.teams.b.name}</button>
-            </div>
-        `;
-
-        modal.appendChild(content);
-        document.body.appendChild(modal);
-
-        const teamABtn = content.querySelector('#team-a-serve');
-        const teamBBtn = content.querySelector('#team-b-serve');
-
-        teamABtn.onclick = () => {
-            document.body.removeChild(modal);
-            resolve('a');
+// Helper function to handle set completion
+function handleSetCompletion(scoringTeam, oppositeTeam) {
+    // Update set scores
+    appState.teams[scoringTeam].setScores[appState.currentSet] = appState.teams[scoringTeam].currentScore;
+    appState.teams[oppositeTeam].setScores[appState.currentSet] = appState.teams[oppositeTeam].currentScore;
+    
+    const rules = stateMachine.__rules__.setTransitions;
+    
+    // Store the final rally of the set before resetting rally counter
+    if (appState.rallyActions.length > 0) {
+        appState.rallyHistory[appState.currentRally] = {
+            actions: [...appState.rallyActions],
+            scoreA: appState.teams.a.currentScore,
+            scoreB: appState.teams.b.currentScore,
+            scoringTeam: scoringTeam
         };
+    }
+    
+    // Reset current scores if configured
+    if (rules.resetScores) {
+        appState.teams.a.currentScore = 0;
+        appState.teams.b.currentScore = 0;
+    }
+    
+    // Move to next set
+    appState.currentSet++;
+    // Reset rally counter for new set
+    appState.currentRally = (appState.currentSet * 1000) + 1; // Use different range for each set
+    appState.rallyActions = [];
+    
+    // Check match end condition
+    const setsWonA = appState.teams.a.setScores.filter((score, i) => 
+        score > appState.teams.b.setScores[i]).length;
+    const setsWonB = appState.teams.b.setScores.filter((score, i) => 
+        score > appState.teams.a.setScores[i]).length;
+    
+    if (setsWonA >= rules.matchEndCondition.setsToWin || 
+        setsWonB >= rules.matchEndCondition.setsToWin) {
+        showMatchSummary();
+        return;
+    }
+    
+    if (appState.currentSet < 3) {
+        // For set 2, serve goes to the opposite of the first serving team
+        if (appState.currentSet === 1) { // This is the start of set 2
+            const firstServingTeam = appState.firstServingTeam;
+            appState.teams.a.isServing = firstServingTeam === 'b';
+            appState.teams.b.isServing = firstServingTeam === 'a';
+            appState.currentState = rules.nextState;
+        } else if (appState.currentSet === 2) { // This is the start of set 3
+            // Show dialog to choose serving team
+            showSet3ServerModal();
+            // The rest of the logic will be handled by the dialog confirmation
+        }
+    }
 
-        teamBBtn.onclick = () => {
-            document.body.removeChild(modal);
-            resolve('b');
-        };
-    });
+    updateScoreboard();
+    updateActionButtons();
 }
 
 // Undo the last action
@@ -793,7 +858,7 @@ function showMatchSummary() {
     summaryScreen.classList.remove('hidden');
 }
 
-// Update the history display function to handle sets properly
+// Update the history display function to use state machine styles
 function updateHistoryDisplay() {
     // Clear existing history list first
     historyListEl.innerHTML = '';
@@ -827,14 +892,19 @@ function updateHistoryDisplay() {
         const rallyItem = document.createElement('div');
         rallyItem.classList.add('history-item');
         
-        // Format actions with proper tag classes
+        // Format actions with proper tag classes using state machine metadata
         const formattedActions = actionsForRally.map(action => {
-            if (['Err', 'RE1', 'RE2'].includes(action)) {
-                return `<span class="tag-${action.toLowerCase()}">${action}</span>`;
-            } else if (['Point', 'Ace', 'Win'].includes(action)) {
-                return `<span class="tag-point">${action}</span>`;
+            // Find the style of this action in any state's transitions
+            let style = 'regular';  // default style
+            for (const state in stateMachine) {
+                const transitions = stateMachine[state].transitions || [];
+                const transition = transitions.find(t => t.action === action);
+                if (transition?.style) {
+                    style = transition.style;
+                    break;
+                }
             }
-            return action;
+            return `<span class="tag-${style}">${action}</span>`;
         }).join(' ');
         
         // For completed rallies, use the stored scores
@@ -948,24 +1018,15 @@ function updateHistoryDisplay() {
 
 // Helper function to get state display name
 function getStateDisplayName(state) {
+    const stateConfig = stateMachine[state];
+    if (!stateConfig?.displayName) return state;
+    
     const ST = appState.teams.a.isServing ? appState.teams.a.name : appState.teams.b.name;
     const RT = appState.teams.a.isServing ? appState.teams.b.name : appState.teams.a.name;
     
-    switch(state) {
-        case 'Serve': return `${ST} Serve`;
-        case 'Reception': return `${RT} Received`;
-        case 'Zone of Attack Rec': return `Attack Zone for ${RT}`;
-        case 'Trajectory Rec': return `Trajectory ${RT}`;
-        case 'Attack by Receiving Team': return `Attack by ${RT}`;
-        case 'Defense By Serving Team': return `Defense by ${ST}`;
-        case 'Zone of Attack Srv': return `Attack Zone for ${ST}`;
-        case 'Trajectory Srv': return `Trajectory ${ST}`;
-        case 'Attack by Serving Team': return `Attack by ${ST}`;
-        case 'Defense By Receiving Team': return `Defense by ${RT}`;
-        case 'Point Server': return `Point ${ST}`;
-        case 'Point Receiver': return `Point ${RT}`;
-        default: return state;
-    }
+    return stateConfig.displayName
+        .replace('{servingTeam}', ST)
+        .replace('{receivingTeam}', RT);
 }
 
 function loadState(loadedAppState) {
@@ -1000,5 +1061,19 @@ function showStatisticsModal() {
 
 function hideStatisticsModal() {
     statisticsModal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+// Add this function near the other modal functions
+function showSet3ServerModal() {
+    set3ServerModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    // Set the team names in the dialog
+    set3TeamAName.textContent = appState.teams.a.name;
+    set3TeamBName.textContent = appState.teams.b.name;
+}
+
+function hideSet3ServerModal() {
+    set3ServerModal.classList.add('hidden');
     document.body.style.overflow = '';
 }
