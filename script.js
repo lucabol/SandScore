@@ -55,7 +55,9 @@ const stateMachine = {
         "displayName": "{receivingTeam} Received",
         "transitions": [
             { "action": "Atk1", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 1" },
-            { "action": "Atk2", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 2" }
+            { "action": "Atk2", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 2" },
+            { "action": "SetE1", "nextState": "Point Server", "style": "point", "help": "Set err by player 1" },
+            { "action": "SetE2", "nextState": "Point Server", "style": "point", "help": "Set err by player 2" }
         ]
     },
     "Zone of Attack Rec": {
@@ -104,7 +106,9 @@ const stateMachine = {
         "displayName": "Defense by {servingTeam}",
         "transitions": [
             { "action": "Atk1", "nextState": "Zone of Attack Srv", "help": "Attack by player 1" },
-            { "action": "Atk2", "nextState": "Zone of Attack Srv", "help": "Attack by player 2" }
+            { "action": "Atk2", "nextState": "Zone of Attack Srv", "help": "Attack by player 2" },
+            { "action": "SetE1", "nextState": "Point Receiver", "style": "point", "help": "Set err by player 1" },
+            { "action": "SetE2", "nextState": "Point Receiver", "style": "point", "help": "Set err by player 2" }
         ]
     },
     "Zone of Attack Srv": {
@@ -153,7 +157,9 @@ const stateMachine = {
         "displayName": "Defense by {receivingTeam}",
         "transitions": [
             { "action": "Atk1", "nextState": "Zone of Attack Rec", "help": "Attack by player 1" },
-            { "action": "Atk2", "nextState": "Zone of Attack Rec", "help": "Attack by player 2" }
+            { "action": "Atk2", "nextState": "Zone of Attack Rec", "help": "Attack by player 2" },
+            { "action": "SetE1", "nextState": "Point Server", "style": "point", "help": "Set err by player 1" },
+            { "action": "SetE2", "nextState": "Point Server", "style": "point", "help": "Set err by player 2" }
         ]
     },
     "Point Server": {
