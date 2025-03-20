@@ -1480,16 +1480,10 @@ function calculateMatchStatistics() {
                     // Reception error player 1
                     if (receivingTeam === 'a') stats.teamA.player1.receptionErrors++;
                     else stats.teamB.player1.receptionErrors++;
-                    
-                    if (receivingTeam === 'a') stats.teamA.receptionErrors++;
-                    else stats.teamB.receptionErrors++;
                 } else if (action === 'RE2') {
                     // Reception error player 2
                     if (receivingTeam === 'a') stats.teamA.player2.receptionErrors++;
                     else stats.teamB.player2.receptionErrors++;
-                    
-                    if (receivingTeam === 'a') stats.teamA.receptionErrors++;
-                    else stats.teamB.receptionErrors++;
                 }
             }
             
