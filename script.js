@@ -475,10 +475,10 @@ function startMatch() {
     state.states = [];
 
     // Get player names from input fields
-    const teamAPlayer1 = document.getElementById('team-a-player1').value || 'Luca';
-    const teamAPlayer2 = document.getElementById('team-a-player2').value || 'Matteo';
-    const teamBPlayer1 = document.getElementById('team-b-player1').value || 'Mol';
-    const teamBPlayer2 = document.getElementById('team-b-player2').value || 'Sorum';
+    const teamAPlayer1 = document.getElementById('team-a-player1').value || stateMachine.__rules__.defaults.teamA.players[0];
+    const teamAPlayer2 = document.getElementById('team-a-player2').value || stateMachine.__rules__.defaults.teamA.players[1];
+    const teamBPlayer1 = document.getElementById('team-b-player1').value || stateMachine.__rules__.defaults.teamB.players[0];
+    const teamBPlayer2 = document.getElementById('team-b-player2').value || stateMachine.__rules__.defaults.teamB.players[1];
 
     // Set team names based on player names
     const teamAName = `${teamAPlayer1}/${teamAPlayer2}`;
@@ -784,14 +784,14 @@ function restartApp() {
             teams: {
                 a: {
                     name: 'Team A',
-                    players: ['Luca', 'Matteo'],
+                    players: [stateMachine.__rules__.defaults.teamA.players[0], stateMachine.__rules__.defaults.teamA.players[1]],
                     setScores: [0, 0, 0],
                     currentScore: 0,
                     isServing: true
                 },
                 b: {
                     name: 'Team B',
-                    players: ['Mol', 'Sorum'],
+                    players: [stateMachine.__rules__.defaults.teamB.players[0], stateMachine.__rules__.defaults.teamB.players[1]],
                     setScores: [0, 0, 0],
                     currentScore: 0,
                     isServing: false
