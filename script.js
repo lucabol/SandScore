@@ -227,6 +227,28 @@ stateMachine.__statisticsTable__ = [
         }, 0)
     },
     {
+        key: 'totalAttacks',
+        label: 'Total Attacks',
+        showInPlayerStats: true,
+        calculate: (team, rallyHistory) => {
+            let count = 0;
+            Object.values(rallyHistory).forEach(rally => {
+                let isReceivingTeam = rally.actions[0].startsWith('R'); // Check if this team received first
+                let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a'); // First attack is by receiving team
+                
+                rally.actions.forEach(action => {
+                    if (action.startsWith('Atk')) {
+                        if (isTeamsTurn) {
+                            count++;
+                        }
+                        isTeamsTurn = !isTeamsTurn; // Switch turns after each attack
+                    }
+                });
+            });
+            return count;
+        }
+    },
+    {
         key: 'attackEfficiency',
         label: 'Attack Efficiency',
         showInPlayerStats: true,
@@ -234,11 +256,22 @@ stateMachine.__statisticsTable__ = [
             const points = Object.values(rallyHistory).reduce((count, rally) => {
                 return count + rally.actions.filter(action => action === 'Win' && rally.scoringTeam === team).length;
             }, 0);
-            const errors = Object.values(rallyHistory).reduce((count, rally) => {
-                return count + rally.actions.filter(action => action === 'Err' && rally.scoringTeam === team).length;
-            }, 0);
-            const total = points + errors;
-            return total > 0 ? Math.round((points / total) * 100) : 'NaN';
+            // Get the total number of attacks for this team
+            let totalAttacks = 0;
+            Object.values(rallyHistory).forEach(rally => {
+                let isReceivingTeam = rally.actions[0].startsWith('R'); // Check if this team received first
+                let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a'); // First attack is by receiving team
+                
+                rally.actions.forEach(action => {
+                    if (action.startsWith('Atk')) {
+                        if (isTeamsTurn) {
+                            totalAttacks++;
+                        }
+                        isTeamsTurn = !isTeamsTurn; // Switch turns after each attack
+                    }
+                });
+            });
+            return totalAttacks > 0 ? Math.round((points / totalAttacks) * 100) : 'NaN';
         }
     },
     {
@@ -1214,7 +1247,7 @@ function showStatisticsModal() {
     const modalContent = statisticsModal.querySelector('.modal-content');
     
     // Create the HTML content for the statistics
-    let html = `
+    const html = `
         <h3>Match Statistics</h3>
         <div class="stats-container">
             <div class="stats-header">
@@ -1363,6 +1396,7 @@ function calculateMatchStatistics() {
                 serviceErrors: 0,
                 attackPoints: 0,
                 attackErrors: 0,
+                totalAttacks: 0,
                 blocks: 0,
                 receptionErrors: 0,
                 defenses: 0
@@ -1374,6 +1408,7 @@ function calculateMatchStatistics() {
                 serviceErrors: 0,
                 attackPoints: 0,
                 attackErrors: 0,
+                totalAttacks: 0,
                 blocks: 0,
                 receptionErrors: 0,
                 defenses: 0
@@ -1388,6 +1423,7 @@ function calculateMatchStatistics() {
                 serviceErrors: 0,
                 attackPoints: 0,
                 attackErrors: 0,
+                totalAttacks: 0,
                 blocks: 0,
                 receptionErrors: 0,
                 defenses: 0
@@ -1399,6 +1435,7 @@ function calculateMatchStatistics() {
                 serviceErrors: 0,
                 attackPoints: 0,
                 attackErrors: 0,
+                totalAttacks: 0,
                 blocks: 0,
                 receptionErrors: 0,
                 defenses: 0
@@ -1424,7 +1461,21 @@ function calculateMatchStatistics() {
         const teamKey = scoringTeam === 'a' ? 'teamA' : 'teamB';
         const opponentKey = scoringTeam === 'a' ? 'teamB' : 'teamA';
 
+        // Track which team's turn it is to attack, starting with the receiving team
+        let isReceivingTeam = rally.actions[0].startsWith('R');
+        let isTeamATurn = isReceivingTeam ? false : true; // First attack is by receiving team
+
         rally.actions.forEach((action, index) => {
+            if (action.startsWith('Atk')) {
+                const playerNum = parseInt(action.charAt(action.length - 1));
+                if (playerNum === 1 || playerNum === 2) {
+                    // Add to total attacks for the correct team and player based on turn
+                    const currentTeam = isTeamATurn ? 'teamA' : 'teamB';
+                    stats[currentTeam]['player' + playerNum].totalAttacks++;
+                }
+                isTeamATurn = !isTeamATurn; // Switch turns after each attack
+            }
+
             // Points won attribution
             if (index === rally.actions.length - 1) {
                 const playerNum = getPlayerNumberFromLastAction(action);
@@ -1482,26 +1533,19 @@ function calculateMatchStatistics() {
     stats.teamA.pointsPercentage = totalPoints > 0 ? Math.round((stats.teamA.pointsWon / totalPoints) * 100) : 'NaN';
     stats.teamB.pointsPercentage = totalPoints > 0 ? Math.round((stats.teamB.pointsWon / totalPoints) * 100) : 'NaN';
     
-    // Team attack efficiencies
-    const totalAttacksA = (stats.teamA.attackPoints || 0) + (stats.teamA.attackErrors || 0);
-    stats.teamA.attackEfficiency = totalAttacksA > 0 ? 
-        Math.round(((stats.teamA.attackPoints || 0) / totalAttacksA) * 100) : 'NaN';
-    
-    const totalAttacksB = (stats.teamB.attackPoints || 0) + (stats.teamB.attackErrors || 0);
-    stats.teamB.attackEfficiency = totalAttacksB > 0 ? 
-        Math.round(((stats.teamB.attackPoints || 0) / totalAttacksB) * 100) : 'NaN';
-    
     // Player attack efficiencies
     ['player1', 'player2'].forEach(playerKey => {
         // Team A players
-        const totalPlayerAttacksA = (stats.teamA[playerKey].attackPoints || 0) + (stats.teamA[playerKey].attackErrors || 0);
-        stats.teamA[playerKey].attackEfficiency = totalPlayerAttacksA > 0 ? 
-            Math.round(((stats.teamA[playerKey].attackPoints || 0) / totalPlayerAttacksA) * 100) : 'NaN';
+        const points = stats.teamA[playerKey].attackPoints || 0;
+        const totalAttacks = stats.teamA[playerKey].totalAttacks || 0;
+        stats.teamA[playerKey].attackEfficiency = totalAttacks > 0 ? 
+            Math.round((points / totalAttacks) * 100) : 'NaN';
         
         // Team B players
-        const totalPlayerAttacksB = (stats.teamB[playerKey].attackPoints || 0) + (stats.teamB[playerKey].attackErrors || 0);
-        stats.teamB[playerKey].attackEfficiency = totalPlayerAttacksB > 0 ? 
-            Math.round(((stats.teamB[playerKey].attackPoints || 0) / totalPlayerAttacksB) * 100) : 'NaN';
+        const pointsB = stats.teamB[playerKey].attackPoints || 0;
+        const totalAttacksB = stats.teamB[playerKey].totalAttacks || 0;
+        stats.teamB[playerKey].attackEfficiency = totalAttacksB > 0 ? 
+            Math.round((pointsB / totalAttacksB) * 100) : 'NaN';
     });
 
     // Populate set scores
