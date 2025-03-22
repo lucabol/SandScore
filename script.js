@@ -40,7 +40,7 @@ const stateMachine = {
         "displayName": "{servingTeam} Serve",
         "transitions": [
             { "action": "Ace", "nextState": "Point Server", "style": "point", "help": "Direct point from serve" },
-            { "action": "Err", "nextState": "Point Receiver", "style": "error", "help": "Service error" },
+            { "action": "SErr", "nextState": "Point Receiver", "style": "error", "help": "Service error" },
             { "action": "RE1", "nextState": "Point Server", "style": "error", "help": "Recept error by player 1" },
             { "action": "RE2", "nextState": "Point Server", "style": "error", "help": "Recept error by player 2" },
             { "action": "R-1", "nextState": "Reception", "style": "regular", "help": "Poor reception by player 1" },
@@ -185,6 +185,50 @@ const stateMachine = {
         }
     }
 };
+
+// Add a statisticsTable to the stateMachine
+stateMachine.__statisticsTable__ = [
+    {
+        key: 'pointsWon',
+        label: 'Total Points',
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).filter(rally => rally.scoringTeam === team).length
+    },
+    {
+        key: 'aces',
+        label: 'Aces',
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
+            return count + rally.actions.filter(action => action === 'Ace' && rally.scoringTeam === team).length;
+        }, 0)
+    },
+    {
+        key: 'serviceErrors',
+        label: 'Service Errors',
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
+            return count + rally.actions.filter(action => action === 'SErr' && rally.scoringTeam !== team).length;
+        }, 0)
+    },
+    {
+        key: 'attackPoints',
+        label: 'Attack Points',
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
+            return count + rally.actions.filter(action => action === 'Win' && rally.scoringTeam === team).length;
+        }, 0)
+    },
+    {
+        key: 'attackErrors',
+        label: 'Attack Errors',
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
+            return count + rally.actions.filter(action => action === 'Err' && rally.scoringTeam === team).length;
+        }, 0)
+    },
+    {
+        key: 'blocks',
+        label: 'Blocks',
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
+            return count + rally.actions.filter(action => action.startsWith('Blk') && rally.scoringTeam === team).length;
+        }, 0)
+    }
+];
 
 // DOM Elements
 const setupScreen = document.getElementById('setup-screen');
@@ -1361,207 +1405,91 @@ function calculateMatchStatistics() {
     const stats = {
         teamA: {
             name: appState.teams.a.name,
-            players: appState.teams.a.players,
-            pointsWon: 0,
-            aces: 0,
-            serviceErrors: 0,
-            attackErrors: 0,
-            attackPoints: 0,
-            blocks: 0,
+            player1: { name: appState.teams.a.players[0], receptionErrors: 0 },
+            player2: { name: appState.teams.a.players[1], receptionErrors: 0 },
             receptionErrors: 0,
-            player1: {
-                name: appState.teams.a.players[0],
-                attackPoints: 0,
-                attackErrors: 0,
-                blocks: 0,
-                aces: 0,
-                serviceErrors: 0,
-                receptionErrors: 0
-            },
-            player2: {
-                name: appState.teams.a.players[1],
-                attackPoints: 0,
-                attackErrors: 0,
-                blocks: 0,
-                aces: 0,
-                serviceErrors: 0,
-                receptionErrors: 0
-            }
+            serviceErrors: 0
         },
         teamB: {
             name: appState.teams.b.name,
-            players: appState.teams.b.players,
-            pointsWon: 0,
-            aces: 0,
-            serviceErrors: 0,
-            attackErrors: 0,
-            attackPoints: 0,
-            blocks: 0,
+            player1: { name: appState.teams.b.players[0], receptionErrors: 0 },
+            player2: { name: appState.teams.b.players[1], receptionErrors: 0 },
             receptionErrors: 0,
-            player1: {
-                name: appState.teams.b.players[0],
-                attackPoints: 0,
-                attackErrors: 0,
-                blocks: 0,
-                aces: 0,
-                serviceErrors: 0,
-                receptionErrors: 0
-            },
-            player2: {
-                name: appState.teams.b.players[1],
-                attackPoints: 0,
-                attackErrors: 0,
-                blocks: 0,
-                aces: 0,
-                serviceErrors: 0,
-                receptionErrors: 0
-            }
+            serviceErrors: 0
         },
-        totalRallies: 0,
+        totalRallies: Object.keys(appState.rallyHistory).length,
         longestRally: {
             actions: 0,
             sequence: ''
         },
-        currentSet: appState.currentSet,
-        setScores: []
+        setScores: [] // Initialize setScores property
     };
-    
-    // Add set scores
-    for (let i = 0; i <= appState.currentSet; i++) {
-        if (i < appState.currentSet || (appState.teams.a.currentScore > 0 || appState.teams.b.currentScore > 0)) {
-            const scoreA = i < appState.currentSet ? appState.teams.a.setScores[i] : appState.teams.a.currentScore;
-            const scoreB = i < appState.currentSet ? appState.teams.b.setScores[i] : appState.teams.b.currentScore;
-            stats.setScores.push({
-                set: i + 1,
-                scoreA: scoreA,
-                scoreB: scoreB,
-                winner: scoreA > scoreB ? 'a' : scoreB > scoreA ? 'b' : null
+
+    stateMachine.__statisticsTable__.forEach(stat => {
+        stats.teamA[stat.key] = stat.calculate('a', appState.rallyHistory);
+        stats.teamB[stat.key] = stat.calculate('b', appState.rallyHistory);
+    });
+
+    // Initialize player-specific statistics
+    ['player1', 'player2'].forEach((playerKey, index) => {
+        stateMachine.__statisticsTable__.forEach(stat => {
+            stats.teamA[playerKey][stat.key] = 0;
+            stats.teamB[playerKey][stat.key] = 0;
+        });
+
+        // Populate player-specific statistics
+        Object.values(appState.rallyHistory).forEach(rally => {
+            rally.actions.forEach(action => {
+                if (action.startsWith('Atk') || action.startsWith('Blk') || action.startsWith('RE')) {
+                    const playerNum = parseInt(action.charAt(action.length - 1), 10);
+                    const teamKey = rally.scoringTeam === 'a' ? 'teamA' : 'teamB';
+                    const opponentKey = rally.scoringTeam === 'a' ? 'teamB' : 'teamA';
+
+                    if (playerNum === index + 1) {
+                        if (action.startsWith('Atk')) {
+                            stats[teamKey][playerKey].attackPoints = (stats[teamKey][playerKey].attackPoints || 0) + 1;
+                        } else if (action.startsWith('Blk')) {
+                            stats[teamKey][playerKey].blocks = (stats[teamKey][playerKey].blocks || 0) + 1;
+                        } else if (action.startsWith('RE')) {
+                            stats[opponentKey][playerKey].receptionErrors = (stats[opponentKey][playerKey].receptionErrors || 0) + 1;
+                            stats[opponentKey].receptionErrors = (stats[opponentKey].receptionErrors || 0) + 1; // Add team-level reception errors
+                        }
+                    }
+                }
             });
-        }
-    }
-    
-    // Process all completed rallies
+        });
+    });
+
+    // Correctly handle service errors without assigning attack errors
     Object.values(appState.rallyHistory).forEach(rally => {
-        stats.totalRallies++;
-        const actions = rally.actions;
-        
-        // Check for longest rally
-        if (actions.length > stats.longestRally.actions) {
-            stats.longestRally.actions = actions.length;
-            stats.longestRally.sequence = actions.join(' ');
-        }
-        
-        // Count points won by each team
-        if (rally.scoringTeam === 'a') {
-            stats.teamA.pointsWon++;
-        } else if (rally.scoringTeam === 'b') {
-            stats.teamB.pointsWon++;
-        }
-        
-        // First action is always a serve - figure out which team and player
-        const servingTeam = actions[0]?.startsWith('R') || actions[0] === 'Err' ? 'a' : 'b';
-        const receivingTeam = servingTeam === 'a' ? 'b' : 'a';
-        
-        // Analyze each action in the rally
-        for (let i = 0; i < actions.length; i++) {
-            const action = actions[i];
-            
-            // Early rally actions
-            if (i === 0) {
-                if (action === 'Ace') {
-                    // Ace serve
-                    if (servingTeam === 'a') stats.teamA.aces++;
-                    else stats.teamB.aces++;
-                } else if (action === 'Err') {
-                    // Serving error
-                    if (servingTeam === 'a') stats.teamA.serviceErrors++;
-                    else stats.teamB.serviceErrors++;
-                } else if (action === 'RE1') {
-                    // Reception error player 1
-                    if (receivingTeam === 'a') stats.teamA.player1.receptionErrors++;
-                    else stats.teamB.player1.receptionErrors++;
-                } else if (action === 'RE2') {
-                    // Reception error player 2
-                    if (receivingTeam === 'a') stats.teamA.player2.receptionErrors++;
-                    else stats.teamB.player2.receptionErrors++;
-                }
+        rally.actions.forEach(action => {
+            if (action === 'Err') {
+                const servingTeam = rally.scoringTeam === 'a' ? 'teamA' : 'teamB';
+                stats[servingTeam].serviceErrors = (stats[servingTeam].serviceErrors || 0) + 1;
             }
-            
-            // Terminal actions
-            if (action === 'Win' && i > 0) {
-                // Check who made the winning attack
-                const prevAction = actions[i-1];
-                const attackingTeam = actions.slice(0, i).filter(a => 
-                    a.startsWith('Atk') || a === 'Def1' || a === 'Def2').length % 2 === 0 
-                    ? receivingTeam : servingTeam;
-                
-                if (attackingTeam === 'a') stats.teamA.attackPoints++;
-                else stats.teamB.attackPoints++;
-                
-                // Try to identify which player
-                if (i >= 3 && actions[i-3]?.startsWith('Atk')) {
-                    const playerNum = actions[i-3].charAt(3);
-                    if (playerNum === '1') {
-                        if (attackingTeam === 'a') stats.teamA.player1.attackPoints++;
-                        else stats.teamB.player1.attackPoints++;
-                    } else if (playerNum === '2') {
-                        if (attackingTeam === 'a') stats.teamA.player2.attackPoints++;
-                        else stats.teamB.player2.attackPoints++;
-                    }
-                }
-            } else if (action === 'Err' && i > 0) {
-                // Attack error
-                const attackingTeam = actions.slice(0, i).filter(a => 
-                    a.startsWith('Atk') || a === 'Def1' || a === 'Def2').length % 2 === 0 
-                    ? receivingTeam : servingTeam;
-                    
-                if (attackingTeam === 'a') stats.teamA.attackErrors++;
-                else stats.teamB.attackErrors++;
-                
-                // Try to identify which player
-                if (i >= 3 && actions[i-3]?.startsWith('Atk')) {
-                    const playerNum = actions[i-3].charAt(3);
-                    if (playerNum === '1') {
-                        if (attackingTeam === 'a') stats.teamA.player1.attackErrors++;
-                        else stats.teamB.player1.attackErrors++;
-                    } else if (playerNum === '2') {
-                        if (attackingTeam === 'a') stats.teamA.player2.attackErrors++;
-                        else stats.teamB.player2.attackErrors++;
-                    }
-                }
-            } else if (action.startsWith('Blk') && i > 0) {
-                // Block point
-                const blockingTeam = actions.slice(0, i).filter(a => 
-                    a.startsWith('Atk') || a === 'Def1' || a === 'Def2').length % 2 === 0 
-                    ? servingTeam : receivingTeam;
-                    
-                const playerNum = action.charAt(3);
-                if (blockingTeam === 'a') {
-                    stats.teamA.blocks++;
-                    if (playerNum === '1') stats.teamA.player1.blocks++;
-                    else if (playerNum === '2') stats.teamA.player2.blocks++;
-                } else {
-                    stats.teamB.blocks++;
-                    if (playerNum === '1') stats.teamB.player1.blocks++;
-                    else if (playerNum === '2') stats.teamB.player2.blocks++;
-                }
-            }
+        });
+    });
+
+    // Calculate the longest rally
+    Object.values(appState.rallyHistory).forEach(rally => {
+        if (rally.actions.length > stats.longestRally.actions) {
+            stats.longestRally.actions = rally.actions.length;
+            stats.longestRally.sequence = rally.actions.join(' ');
         }
     });
-    
-    // Add rally percentages and efficiencies
-    stats.teamA.attackEfficiency = stats.teamA.attackPoints > 0 ? 
-        ((stats.teamA.attackPoints / (stats.teamA.attackPoints + stats.teamA.attackErrors)) * 100).toFixed(1) : 0;
-    
-    stats.teamB.attackEfficiency = stats.teamB.attackPoints > 0 ? 
-        ((stats.teamB.attackPoints / (stats.teamB.attackPoints + stats.teamB.attackErrors)) * 100).toFixed(1) : 0;
-        
-    stats.teamA.pointsPercentage = stats.totalRallies > 0 ? 
-        ((stats.teamA.pointsWon / stats.totalRallies) * 100).toFixed(1) : 0;
-        
-    stats.teamB.pointsPercentage = stats.totalRallies > 0 ? 
-        ((stats.teamB.pointsWon / stats.totalRallies) * 100).toFixed(1) : 0;
-    
+
+    // Populate setScores
+    for (let i = 0; i <= appState.currentSet; i++) {
+        const scoreA = i < appState.currentSet ? appState.teams.a.setScores[i] : appState.teams.a.currentScore;
+        const scoreB = i < appState.currentSet ? appState.teams.b.setScores[i] : appState.teams.b.currentScore;
+        stats.setScores.push({
+            set: i + 1,
+            scoreA: scoreA,
+            scoreB: scoreB,
+            winner: scoreA > scoreB ? 'a' : scoreB > scoreA ? 'b' : null
+        });
+    }
+
     return stats;
 }
 
