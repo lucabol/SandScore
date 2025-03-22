@@ -1266,9 +1266,9 @@ function showStatisticsModal() {
                 <h4>Team Stats</h4>
                 ${stateMachine.__statisticsTable__.map(stat => `
                     <div class="stats-row">
-                        <div class="stats-value">${stats.teamA[stat.key]}${stat.key === 'attackEfficiency' || (stat.key === 'pointsWon' && stats.teamA.pointsPercentage) ? ` (${stats.teamA[stat.key === 'pointsWon' ? 'pointsPercentage' : stat.key]}%)` : ''}</div>
+                        <div class="stats-value">${stats.teamA[stat.key]}${stat.key === 'pointsWon' && stats.teamA.pointsPercentage ? ` (${stats.teamA.pointsPercentage}%)` : stat.key === 'attackEfficiency' ? '%' : ''}</div>
                         <div class="stats-label">${stat.label}</div>
-                        <div class="stats-value">${stats.teamB[stat.key]}${stat.key === 'attackEfficiency' || (stat.key === 'pointsWon' && stats.teamB.pointsPercentage) ? ` (${stats.teamB[stat.key === 'pointsWon' ? 'pointsPercentage' : stat.key]}%)` : ''}</div>
+                        <div class="stats-value">${stats.teamB[stat.key]}${stat.key === 'pointsWon' && stats.teamB.pointsPercentage ? ` (${stats.teamB.pointsPercentage}%)` : stat.key === 'attackEfficiency' ? '%' : ''}</div>
                     </div>
                 `).join('')}
             </div>
