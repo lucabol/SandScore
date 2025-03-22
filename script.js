@@ -1478,6 +1478,23 @@ function calculateMatchStatistics() {
         }
     });
 
+    // Calculate percentages
+    const totalPoints = stats.teamA.pointsWon + stats.teamB.pointsWon;
+    
+    // Calculate point percentages
+    stats.teamA.pointsPercentage = totalPoints > 0 ? Math.round((stats.teamA.pointsWon / totalPoints) * 100) : 'NaN';
+    stats.teamB.pointsPercentage = totalPoints > 0 ? Math.round((stats.teamB.pointsWon / totalPoints) * 100) : 'NaN';
+    
+    // Calculate attack efficiency for team A
+    const totalAttacksA = (stats.teamA.attackPoints || 0) + (stats.teamA.attackErrors || 0);
+    stats.teamA.attackEfficiency = totalAttacksA > 0 ? 
+        Math.round(((stats.teamA.attackPoints || 0) / totalAttacksA) * 100) : 'NaN';
+    
+    // Calculate attack efficiency for team B
+    const totalAttacksB = (stats.teamB.attackPoints || 0) + (stats.teamB.attackErrors || 0);
+    stats.teamB.attackEfficiency = totalAttacksB > 0 ? 
+        Math.round(((stats.teamB.attackPoints || 0) / totalAttacksB) * 100) : 'NaN';
+
     // Populate setScores
     for (let i = 0; i <= appState.currentSet; i++) {
         const scoreA = i < appState.currentSet ? appState.teams.a.setScores[i] : appState.teams.a.currentScore;
