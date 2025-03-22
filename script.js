@@ -256,22 +256,28 @@ stateMachine.__statisticsTable__ = [
             const points = Object.values(rallyHistory).reduce((count, rally) => {
                 return count + rally.actions.filter(action => action === 'Win' && rally.scoringTeam === team).length;
             }, 0);
-            // Get the total number of attacks for this team
+            const errors = Object.values(rallyHistory).reduce((count, rally) => {
+                return count + rally.actions.filter(action => action === 'Err' && rally.scoringTeam !== team).length;
+            }, 0);
+            
             let totalAttacks = 0;
             Object.values(rallyHistory).forEach(rally => {
-                let isReceivingTeam = rally.actions[0].startsWith('R'); // Check if this team received first
-                let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a'); // First attack is by receiving team
+                let isReceivingTeam = rally.actions[0].startsWith('R');
+                let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a');
                 
                 rally.actions.forEach(action => {
                     if (action.startsWith('Atk')) {
                         if (isTeamsTurn) {
                             totalAttacks++;
                         }
-                        isTeamsTurn = !isTeamsTurn; // Switch turns after each attack
+                        isTeamsTurn = !isTeamsTurn;
                     }
                 });
             });
-            return totalAttacks > 0 ? Math.round((points / totalAttacks) * 100) : 'NaN';
+
+            if (totalAttacks === 0) return 'NaN';
+            let efficiency = Math.round(((points - errors) / totalAttacks) * 100);
+            return efficiency; // Don't clamp to 0, allow negative values
         }
     },
     {
@@ -1537,15 +1543,17 @@ function calculateMatchStatistics() {
     ['player1', 'player2'].forEach(playerKey => {
         // Team A players
         const points = stats.teamA[playerKey].attackPoints || 0;
+        const errors = stats.teamA[playerKey].attackErrors || 0;
         const totalAttacks = stats.teamA[playerKey].totalAttacks || 0;
         stats.teamA[playerKey].attackEfficiency = totalAttacks > 0 ? 
-            Math.round((points / totalAttacks) * 100) : 'NaN';
+            Math.round(((points - errors) / totalAttacks) * 100) : 'NaN';
         
         // Team B players
         const pointsB = stats.teamB[playerKey].attackPoints || 0;
+        const errorsB = stats.teamB[playerKey].attackErrors || 0;
         const totalAttacksB = stats.teamB[playerKey].totalAttacks || 0;
         stats.teamB[playerKey].attackEfficiency = totalAttacksB > 0 ? 
-            Math.round((pointsB / totalAttacksB) * 100) : 'NaN';
+            Math.round(((pointsB - errorsB) / totalAttacksB) * 100) : 'NaN';
     });
 
     // Populate set scores
