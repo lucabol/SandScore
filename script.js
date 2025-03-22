@@ -256,7 +256,15 @@ stateMachine.__statisticsTable__ = [
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
             return count + rally.actions.filter(action => action.startsWith('RE') && rally.scoringTeam !== team).length;
         }, 0)
-    }
+    },
+    {
+        key: 'defenses',
+        label: 'Defenses',
+        showInPlayerStats: true,
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
+            return count + rally.actions.filter(action => action.startsWith('Def') && rally.scoringTeam === team).length;
+        }, 0)
+    },
 ];
 
 // DOM Elements
@@ -1356,7 +1364,8 @@ function calculateMatchStatistics() {
                 attackPoints: 0,
                 attackErrors: 0,
                 blocks: 0,
-                receptionErrors: 0
+                receptionErrors: 0,
+                defenses: 0
             },
             player2: { 
                 name: appState.teams.a.players[1],
@@ -1366,7 +1375,8 @@ function calculateMatchStatistics() {
                 attackPoints: 0,
                 attackErrors: 0,
                 blocks: 0,
-                receptionErrors: 0
+                receptionErrors: 0,
+                defenses: 0
             }
         },
         teamB: {
@@ -1379,7 +1389,8 @@ function calculateMatchStatistics() {
                 attackPoints: 0,
                 attackErrors: 0,
                 blocks: 0,
-                receptionErrors: 0
+                receptionErrors: 0,
+                defenses: 0
             },
             player2: { 
                 name: appState.teams.b.players[1],
@@ -1389,7 +1400,8 @@ function calculateMatchStatistics() {
                 attackPoints: 0,
                 attackErrors: 0,
                 blocks: 0,
-                receptionErrors: 0
+                receptionErrors: 0,
+                defenses: 0
             }
         },
         totalRallies: Object.keys(appState.rallyHistory).length,
@@ -1453,6 +1465,11 @@ function calculateMatchStatistics() {
                 if (attackingPlayer) {
                     // Attribution of error to the losing team (non-scoring team)
                     stats[opponentKey]['player' + attackingPlayer].attackErrors++;
+                }
+            } else if (action.startsWith('Def')) {
+                const playerNum = parseInt(action.charAt(action.length - 1));
+                if (playerNum === 1 || playerNum === 2) {
+                    stats[teamKey]['player' + playerNum].defenses++;
                 }
             }
         });
@@ -1530,7 +1547,7 @@ function findLastAttackingPlayer(actions) {
 
 // Helper function to get player number from the final action of a rally
 function getPlayerNumberFromLastAction(action) {
-    if (action.match(/^(Win|Err|Blk|RE)\d$/)) {
+    if (action.match(/^(Win|Err|Blk|RE|Def)\d$/)) {
         return action.charAt(action.length - 1);
     }
     return null;
