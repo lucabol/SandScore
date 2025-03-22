@@ -1373,7 +1373,7 @@ function updateCurrentPointDisplay() {
     
     // If we have actions in the current rally, display them
     if (currentRallyActions) {
-        currentPointEl.textContent = `Current Point: ${currentRallyActions}`;
+        currentPointEl.textContent = currentRallyActions;
     } else if (appState.history.length > 0) {
         // If the rally just ended, get the complete history for that rally
         const rallyNumber = appState.history[appState.history.length - 1].rally;
@@ -1381,11 +1381,11 @@ function updateCurrentPointDisplay() {
         // Check if we have the rally in the rally history
         if (appState.rallyHistory[rallyNumber]) {
             const completeRallyActions = appState.rallyHistory[rallyNumber].actions.join(' ');
-            currentPointEl.textContent = `Current Point: ${completeRallyActions}`;
+            currentPointEl.textContent = completeRallyActions;
         } else {
             // Fallback to the last action if we can't find the complete history
             const lastRally = appState.history[appState.history.length - 1];
-            currentPointEl.textContent = `Current Point: ${lastRally.action}`;
+            currentPointEl.textContent = lastRally.action;
         }
     }
 }
