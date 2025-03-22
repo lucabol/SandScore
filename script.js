@@ -223,7 +223,7 @@ stateMachine.__statisticsTable__ = [
         label: 'Attack Errors',
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
-            return count + rally.actions.filter(action => action === 'Err' && rally.scoringTeam === team).length;
+            return count + rally.actions.filter(action => action === 'Err' && rally.scoringTeam !== team).length;
         }, 0)
     },
     {
@@ -1451,7 +1451,8 @@ function calculateMatchStatistics() {
             } else if (action === 'Err') {
                 const attackingPlayer = findLastAttackingPlayer(rally.actions);
                 if (attackingPlayer) {
-                    stats[teamKey]['player' + attackingPlayer].attackErrors++;
+                    // Attribution of error to the losing team (non-scoring team)
+                    stats[opponentKey]['player' + attackingPlayer].attackErrors++;
                 }
             }
         });
