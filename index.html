@@ -147,7 +147,13 @@
                 </div>
             </div>
         </div>
-        <button id="new-match-btn" class="primary-btn">New</button>
+        <!-- Remove the New button and reuse the match controls from match screen -->
+        <div class="match-controls">
+            <button id="undo-btn-summary" class="control-btn" title="Undo">↩️</button>
+            <button id="save-btn-summary" class="control-btn" title="Save game">💾</button>
+            <button id="load-btn-summary" class="control-btn" title="Load game">📂</button>
+            <button id="restart-btn-summary" class="control-btn" title="New game">➕</button>
+        </div>
     </div>
 
     <div id="tooltip" class="tooltip"></div>

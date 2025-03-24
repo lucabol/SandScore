@@ -315,7 +315,6 @@ const undoBtn = document.getElementById('undo-btn');
 const saveBtn = document.getElementById('save-btn');
 const loadBtn = document.getElementById('load-btn');
 const restartBtn = document.getElementById('restart-btn');
-const newMatchBtn = document.getElementById('new-match-btn');
 const historyListEl = document.getElementById('history-list');
 const legendModal = document.getElementById('legend-modal');
 const infoButton = document.getElementById('info-button');
@@ -473,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
     saveBtn.addEventListener('click', saveMatch);
     loadBtn.addEventListener('click', loadMatch);
     restartBtn.addEventListener('click', restartApp);
-    newMatchBtn.addEventListener('click', restartApp);
+    document.getElementById('restart-btn-summary').addEventListener('click', restartApp);
 
     // Add file input change listener
     document.getElementById('load-file').addEventListener('change', (event) => {
@@ -550,15 +549,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Add these event listeners with the other initialization code
-    statButton.addEventListener('click', showStatisticsModal);
-    statButtonMatch.addEventListener('click', showStatisticsModal);
-    statisticsModal.querySelector('.close-modal').addEventListener('click', hideStatisticsModal);
-    statisticsModal.addEventListener('click', (e) => {
-        if (e.target === statisticsModal) {
-            hideStatisticsModal();
-        }
-    });
+    // Initialize summary screen buttons and add event listeners
+    const undoBtnSummary = document.getElementById('undo-btn-summary');
+    const saveBtnSummary = document.getElementById('save-btn-summary');
+    const loadBtnSummary = document.getElementById('load-btn-summary');
+    const restartBtnSummary = document.getElementById('restart-btn-summary');
+
+    // Add event listeners for summary screen utility buttons
+    if (undoBtnSummary) undoBtnSummary.addEventListener('click', undoLastAction);
+    if (saveBtnSummary) saveBtnSummary.addEventListener('click', saveMatch);
+    if (loadBtnSummary) loadBtnSummary.addEventListener('click', loadMatch);
+    if (restartBtnSummary) restartBtnSummary.addEventListener('click', restartApp);
 
     // Add event listeners for All Stats button
     detailsButton.addEventListener('click', showAllStatsModal);
