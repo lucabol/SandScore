@@ -373,8 +373,15 @@ const state = {
 };
 
 function saveState(newState) {
+    // Avoid saving duplicate states
+    const lastState = state.states[state.states.length - 1];
+    if (lastState && JSON.stringify(newState) === lastState) {
+        return; // Do not save if the state is identical to the last one
+    }
+
     // Push new state to stack
     state.states.push(JSON.stringify(newState));
+
     // Save to localStorage
     localStorage.setItem('sandscoreStates', JSON.stringify(state));
 }
@@ -383,13 +390,32 @@ function loadFromStorage() {
     const savedState = localStorage.getItem('sandscoreStates');
     if (savedState) {
         const loadedState = JSON.parse(savedState);
-        state.states = loadedState.states;
+        state.states = loadedState.states || [];
         if (state.states.length > 0) {
-            loadState(JSON.parse(state.states[state.states.length - 1]));
+            const lastState = JSON.parse(state.states[state.states.length - 1]);
+            loadState(lastState, true);
             return true;
         }
     }
     return false;
+}
+
+function loadState(loadedAppState, replaceStack = false) {
+    // Restore appState from the loaded state
+    Object.assign(appState, loadedAppState);
+
+    if (replaceStack) {
+        // Replace the entire undo stack with the loaded state
+        state.states = [JSON.stringify(loadedAppState)];
+    } else {
+        // Ensure the current state is saved to the stack
+        saveState(appState);
+    }
+}
+
+function saveStateForUndo() {
+    // Save the current appState for undo functionality
+    saveState(appState);
 }
 
 // Save player preferences to localStorage
@@ -484,18 +510,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     const parsedState = JSON.parse(e.target.result);
                     
                     // Restore the main parts of the state
-                    appState.teams = parsedState.teams;
-                    appState.currentSet = parsedState.currentSet;
-                    appState.currentRally = parsedState.currentRally;
-                    appState.pointsPerSet = parsedState.pointsPerSet;
-                    appState.currentState = parsedState.currentState;
-                    appState.history = parsedState.history || [];
-                    appState.rallyActions = parsedState.rallyActions || [];
-                    appState.rallyHistory = parsedState.rallyHistory || {};
-                    appState.firstServingTeam = parsedState.firstServingTeam;
+                    appState = {
+                        teams: parsedState.teams,
+                        currentSet: parsedState.currentSet,
+                        currentRally: parsedState.currentRally,
+                        pointsPerSet: parsedState.pointsPerSet,
+                        currentState: parsedState.currentState,
+                        history: parsedState.history || [],
+                        rallyActions: parsedState.rallyActions || [],
+                        rallyHistory: parsedState.rallyHistory || {},
+                        firstServingTeam: parsedState.firstServingTeam
+                    };
                     
-                    // Save the loaded state once
-                    saveStateForUndo();
+                    // Restore undo stack if it exists in the saved file
+                    if (parsedState.undoStack) {
+                        state.states = parsedState.undoStack;
+                    } else {
+                        // Initialize undo stack with just this state if no stack was saved
+                        state.states = [JSON.stringify(appState)];
+                    }
+                    
+                    // Save to localStorage with the restored stack
+                    localStorage.setItem('sandscoreStates', JSON.stringify(state));
                     
                     // Update UI
                     updateHistoryDisplay();
@@ -899,7 +935,7 @@ function undoLastAction() {
 // Save the match state to a file
 function saveMatch() {
     try {
-        // Create a streamlined version of the state to save
+        // Create a streamlined version of the state to save, including the undo stack
         const stateToSave = {
             teams: appState.teams,
             currentSet: appState.currentSet,
@@ -909,7 +945,8 @@ function saveMatch() {
             history: appState.history,
             rallyActions: appState.rallyActions,
             rallyHistory: appState.rallyHistory,
-            firstServingTeam: appState.firstServingTeam
+            firstServingTeam: appState.firstServingTeam,
+            undoStack: state.states  // Add the undo stack to the saved state
         };
 
         // Create file name with current date and player names
@@ -1194,16 +1231,6 @@ function getStateDisplayName(state) {
     return stateConfig.displayName
         .replace('{servingTeam}', ST)
         .replace('{receivingTeam}', RT);
-}
-
-function loadState(loadedAppState) {
-    Object.assign(appState, loadedAppState);
-    // Note: we don't save state here anymore as it leads to duplicate states
-}
-
-function saveStateForUndo() {
-    // This will also save to localStorage
-    saveState(appState);
 }
 
 function saveStateToLocalStorage() {
