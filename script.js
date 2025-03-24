@@ -494,6 +494,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Add statistics button event listeners
+    statButton.addEventListener('click', showStatisticsModal);
+    statButtonMatch.addEventListener('click', showStatisticsModal);
+    const statButtonSummary = document.getElementById('stat-button-summary');
+    statButtonSummary.addEventListener('click', showStatisticsModal);
+    statisticsModal.querySelector('.close-modal').addEventListener('click', hideStatisticsModal);
+    statisticsModal.addEventListener('click', (e) => {
+        if (e.target === statisticsModal) {
+            hideStatisticsModal();
+        }
+    });
+
     undoBtn.addEventListener('click', undoLastAction);
     saveBtn.addEventListener('click', saveMatch);
     loadBtn.addEventListener('click', loadMatch);
