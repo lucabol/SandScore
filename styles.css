@@ -574,30 +574,34 @@ button {
 
 /* History Panel */
 .history-panel {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-top: 15px;
-    max-height: 150px;
-    overflow-y: auto;
-}
-
-.history-list {
-    padding: 8px;
-}
-
-/* History Panel */
-.history-panel {
     background-color: #f5f5f5;
     padding: 10px;
     border-radius: 6px;
     margin-top: 15px;
     max-height: 150px;
-    overflow-y: auto;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #1976d2 #f5f5f5;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.history-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.history-panel::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 6px;
+}
+
+.history-panel::-webkit-scrollbar-thumb {
+    background-color: #1976d2;
+    border-radius: 6px;
+    border: 2px solid #f5f5f5;
 }
 
 .history-list {
-    font-size: 0.9rem;
+    padding: 8px;
 }
 
 .history-container {
