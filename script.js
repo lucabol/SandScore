@@ -590,7 +590,6 @@ document.addEventListener('DOMContentLoaded', () => {
         hideSet3ServerModal();
         updateScoreboard();
         updateActionButtons();
-        saveStateForUndo();
     });
 
     // Add escape key handler for set3 server modal
@@ -836,6 +835,7 @@ function handleSetCompletion(scoringTeam, oppositeTeam) {
             appState.teams.a.isServing = firstServingTeam === 'b';
             appState.teams.b.isServing = firstServingTeam === 'a';
             appState.currentState = rules.nextState;
+            saveStateForUndo(); // Save state after updating serving team
         } else if (appState.currentSet === 2) { // This is the start of set 3
             // Show dialog to choose serving team
             showSet3ServerModal();
@@ -1018,9 +1018,6 @@ function showMatchSummary() {
     let score = `${setsWonA}-${setsWonB}`;
     
     document.getElementById('winner-announcement').textContent = `${winner} wins ${score}!`;
-    
-    // Save the final state to enable undo in summary screen
-    saveStateForUndo();
     
     // Show summary screen
     matchScreen.classList.add('hidden');
