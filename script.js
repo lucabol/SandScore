@@ -1708,12 +1708,22 @@ function generateStatsRows(categoryStats, categoryKey) {
     let html = '';
     let total = { a: 0, b: 0 };
     
-    // Add rows for each action in the category
+    // First calculate totals for each team within this category
     Object.keys(categoryStats).forEach(action => {
         const countA = categoryStats[action].a || 0;
         const countB = categoryStats[action].b || 0;
         total.a += countA;
         total.b += countB;
+    });
+    
+    // Add rows for each action in the category with percentages based on team totals
+    Object.keys(categoryStats).forEach(action => {
+        const countA = categoryStats[action].a || 0;
+        const countB = categoryStats[action].b || 0;
+        
+        // Calculate percentages relative to each team's category total (not combined)
+        const percentA = total.a > 0 ? Math.round((countA / total.a) * 100) : 0;
+        const percentB = total.b > 0 ? Math.round((countB / total.b) * 100) : 0;
         
         // Get the help text for this action from the state machine
         let helpText = action;
@@ -1729,19 +1739,23 @@ function generateStatsRows(categoryStats, categoryKey) {
         
         html += `
             <div class="stats-row">
-                <div class="stats-value">${countA}</div>
+                <div class="stats-value">${countA} <span class="stats-percent">(${percentA}%)</span></div>
                 <div class="stats-label" title="${helpText}">${action}</div>
-                <div class="stats-value">${countB}</div>
+                <div class="stats-value">${countB} <span class="stats-percent">(${percentB}%)</span></div>
             </div>
         `;
     });
     
-    // Add a total row
+    // The total row will always show 100% for each team (or 0% if no actions)
+    const totalPercentA = total.a > 0 ? 100 : 0;
+    const totalPercentB = total.b > 0 ? 100 : 0;
+    
+    // Add a total row with percentages
     html += `
-        <div class="stats-row">
-            <div class="stats-value">${total.a}</div>
+        <div class="stats-row total-row">
+            <div class="stats-value">${total.a} <span class="stats-percent">(${totalPercentA}%)</span></div>
             <div class="stats-label">Total ${getCategoryDisplayName(categoryKey)}</div>
-            <div class="stats-value">${total.b}</div>
+            <div class="stats-value">${total.b} <span class="stats-percent">(${totalPercentB}%)</span></div>
         </div>
     `;
     
@@ -1758,12 +1772,22 @@ function generatePlayerStatsRows(categoryPlayerStats, categoryKey) {
     let totalPlayer1 = 0;
     let totalPlayer2 = 0;
     
-    // Add rows for each action in the category
+    // First calculate total for each player within this category
     Object.keys(categoryPlayerStats).forEach(action => {
         const player1Count = categoryPlayerStats[action][1] || 0;
         const player2Count = categoryPlayerStats[action][2] || 0;
         totalPlayer1 += player1Count;
         totalPlayer2 += player2Count;
+    });
+    
+    // Add rows for each action in the category with percentages based on player totals
+    Object.keys(categoryPlayerStats).forEach(action => {
+        const player1Count = categoryPlayerStats[action][1] || 0;
+        const player2Count = categoryPlayerStats[action][2] || 0;
+        
+        // Calculate percentages relative to each player's category total (not combined)
+        const percentP1 = totalPlayer1 > 0 ? Math.round((player1Count / totalPlayer1) * 100) : 0;
+        const percentP2 = totalPlayer2 > 0 ? Math.round((player2Count / totalPlayer2) * 100) : 0;
         
         // Get the help text for this action from the state machine
         let helpText = action;
@@ -1779,19 +1803,23 @@ function generatePlayerStatsRows(categoryPlayerStats, categoryKey) {
         
         html += `
             <div class="stats-row">
-                <div class="stats-value">${player1Count}</div>
+                <div class="stats-value">${player1Count} <span class="stats-percent">(${percentP1}%)</span></div>
                 <div class="stats-label" title="${helpText}">${action}</div>
-                <div class="stats-value">${player2Count}</div>
+                <div class="stats-value">${player2Count} <span class="stats-percent">(${percentP2}%)</span></div>
             </div>
         `;
     });
     
-    // Add a total row
+    // The total row will always show 100% for each player (or 0% if no actions)
+    const totalPercentP1 = totalPlayer1 > 0 ? 100 : 0;
+    const totalPercentP2 = totalPlayer2 > 0 ? 100 : 0;
+    
+    // Add a total row with percentages
     html += `
-        <div class="stats-row">
-            <div class="stats-value">${totalPlayer1}</div>
+        <div class="stats-row total-row">
+            <div class="stats-value">${totalPlayer1} <span class="stats-percent">(${totalPercentP1}%)</span></div>
             <div class="stats-label">Total ${getCategoryDisplayName(categoryKey)}</div>
-            <div class="stats-value">${totalPlayer2}</div>
+            <div class="stats-value">${totalPlayer2} <span class="stats-percent">(${totalPercentP2}%)</span></div>
         </div>
     `;
     

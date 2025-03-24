@@ -1216,3 +1216,21 @@ button {
 .details-icon:hover {
     opacity: 1;
 }
+
+.stats-percent {
+    color: #666;
+    font-size: 0.85em;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.total-row {
+    font-weight: bold;
+    border-top: 1px solid #e3f2fd;
+    margin-top: 5px;
+    padding-top: 5px;
+}
+
+.total-row .stats-value {
+    color: #0d47a1;
+}
