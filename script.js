@@ -12,7 +12,6 @@ const stateMachine = {
         },
         "initialState": "Serve",
         "setTransitions": {
-            "firstServer": "winner", // winner of previous set serves first
             "nextState": "Serve",
             "resetScores": true,
             "matchEndCondition": {
