@@ -857,10 +857,42 @@ function undoLastAction() {
         loadState(previousState);
         // Save updated stack to localStorage
         localStorage.setItem('sandscoreStates', JSON.stringify(state));
+        
+        // Check if we need to switch back from summary screen to match screen
+        const setsWonA = appState.teams.a.setScores.filter((score, i) => 
+            score > appState.teams.b.setScores[i]).length;
+        const setsWonB = appState.teams.b.setScores.filter((score, i) => 
+            score > appState.teams.a.setScores[i]).length;
+        const rules = stateMachine.__rules__.setTransitions;
+        
+        // If neither team has won enough sets, we should be on the match screen
+        if (setsWonA < rules.matchEndCondition.setsToWin && 
+            setsWonB < rules.matchEndCondition.setsToWin) {
+            summaryScreen.classList.add('hidden');
+            matchScreen.classList.remove('hidden');
+        }
+        
         updateScoreboard();
         updateActionButtons();
         updateHistoryDisplay();
         updateCurrentPointDisplay();
+        
+        // Update summary screen display if we're still on that screen
+        if (!summaryScreen.classList.contains('hidden')) {
+            for (let i = 0; i < 3; i++) {
+                document.getElementById(`summary-team-a-set${i+1}`).textContent = appState.teams.a.setScores[i];
+                document.getElementById(`summary-team-b-set${i+1}`).textContent = appState.teams.b.setScores[i];
+            }
+            
+            // Update winner announcement
+            const setsWonA = appState.teams.a.setScores.filter((score, i) => 
+                score > appState.teams.b.setScores[i]).length;
+            const setsWonB = appState.teams.b.setScores.filter((score, i) => 
+                score > appState.teams.a.setScores[i]).length;
+            let winner = setsWonA > setsWonB ? appState.teams.a.name : appState.teams.b.name;
+            let score = `${setsWonA}-${setsWonB}`;
+            document.getElementById('winner-announcement').textContent = `${winner} wins ${score}!`;
+        }
     }
 }
 
@@ -986,6 +1018,9 @@ function showMatchSummary() {
     let score = `${setsWonA}-${setsWonB}`;
     
     document.getElementById('winner-announcement').textContent = `${winner} wins ${score}!`;
+    
+    // Save the final state to enable undo in summary screen
+    saveStateForUndo();
     
     // Show summary screen
     matchScreen.classList.add('hidden');
