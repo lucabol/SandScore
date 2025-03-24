@@ -38,127 +38,127 @@ const stateMachine = {
     "Serve": {
         "displayName": "{servingTeam} Serve",
         "transitions": [
-            { "action": "Ace", "nextState": "Point Server", "style": "point", "help": "Direct point from serve" },
-            { "action": "SErr", "nextState": "Point Receiver", "style": "error", "help": "Service error" },
-            { "action": "RE1", "nextState": "Point Server", "style": "error", "help": "Recept error by player 1" },
-            { "action": "RE2", "nextState": "Point Server", "style": "error", "help": "Recept error by player 2" },
-            { "action": "R-1", "nextState": "Reception", "style": "regular", "help": "Poor reception by player 1" },
-            { "action": "R-2", "nextState": "Reception", "style": "regular", "help": "Poor reception by player 2" },
-            { "action": "R=1", "nextState": "Reception", "style": "regular", "help": "Medium reception by player 1" },
-            { "action": "R=2", "nextState": "Reception", "style": "regular", "help": "Medium reception by player 2" },
-            { "action": "R+1", "nextState": "Reception", "style": "regular", "help": "Good reception by player 1" },
-            { "action": "R+2", "nextState": "Reception", "style": "regular", "help": "Good reception by player 2" }
+            { "action": "Ace", "nextState": "Point Server", "style": "point", "help": "Direct point from serve", "category": "serve" },
+            { "action": "SErr", "nextState": "Point Receiver", "style": "error", "help": "Service error", "category": "serve" },
+            { "action": "RE1", "nextState": "Point Server", "style": "error", "help": "Recept error by player 1", "category": "reception" },
+            { "action": "RE2", "nextState": "Point Server", "style": "error", "help": "Recept error by player 2", "category": "reception" },
+            { "action": "R-1", "nextState": "Reception", "style": "regular", "help": "Poor reception by player 1", "category": "reception" },
+            { "action": "R-2", "nextState": "Reception", "style": "regular", "help": "Poor reception by player 2", "category": "reception" },
+            { "action": "R=1", "nextState": "Reception", "style": "regular", "help": "Medium reception by player 1", "category": "reception" },
+            { "action": "R=2", "nextState": "Reception", "style": "regular", "help": "Medium reception by player 2", "category": "reception" },
+            { "action": "R+1", "nextState": "Reception", "style": "regular", "help": "Good reception by player 1", "category": "reception" },
+            { "action": "R+2", "nextState": "Reception", "style": "regular", "help": "Good reception by player 2", "category": "reception" }
         ]
     },
     "Reception": {
         "displayName": "{receivingTeam} Received",
         "transitions": [
-            { "action": "Atk1", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 1" },
-            { "action": "Atk2", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 2" },
-            { "action": "SetE1", "nextState": "Point Server", "style": "point", "help": "Set err by player 1" },
-            { "action": "SetE2", "nextState": "Point Server", "style": "point", "help": "Set err by player 2" }
+            { "action": "Atk1", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 1", "category": "set" },
+            { "action": "Atk2", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 2", "category": "set" },
+            { "action": "SetE1", "nextState": "Point Server", "style": "point", "help": "Set err by player 1", "category": "set" },
+            { "action": "SetE2", "nextState": "Point Server", "style": "point", "help": "Set err by player 2", "category": "set" }
         ]
     },
     "Zone of Attack Rec": {
         "displayName": "Attack Zone for {receivingTeam}",
         "transitions": [
-            { "action": "V1", "nextState": "Trajectory Rec", "help": "High ball position 1" },
-            { "action": "V2", "nextState": "Trajectory Rec", "help": "High ball position 2" },
-            { "action": "V3", "nextState": "Trajectory Rec", "help": "High ball position 3" },
-            { "action": "V4", "nextState": "Trajectory Rec", "help": "High ball position 4" },
-            { "action": "V5", "nextState": "Trajectory Rec", "help": "High ball position 5" },
-            { "action": "X1", "nextState": "Trajectory Rec", "help": "Low ball position 1" },
-            { "action": "X2", "nextState": "Trajectory Rec", "help": "Low ball position 2" },
-            { "action": "X3", "nextState": "Trajectory Rec", "help": "Low ball position 3" },
-            { "action": "X4", "nextState": "Trajectory Rec", "help": "Low ball position 4" },
-            { "action": "X5", "nextState": "Trajectory Rec", "help": "Low ball position 5" },
-            { "action": "I1", "nextState": "Trajectory Rec", "help": "Around setter position 1" },
-            { "action": "I2", "nextState": "Trajectory Rec", "help": "Around setter position 2" },
-            { "action": "I3", "nextState": "Trajectory Rec", "help": "Around setter position 3" },
-            { "action": "I4", "nextState": "Trajectory Rec", "help": "Around setter position 4" },
-            { "action": "I5", "nextState": "Trajectory Rec", "help": "Around setter position 5" }
+            { "action": "V1", "nextState": "Trajectory Rec", "help": "High ball position 1", "category": "atk Zone" },
+            { "action": "V2", "nextState": "Trajectory Rec", "help": "High ball position 2", "category": "atk Zone" },
+            { "action": "V3", "nextState": "Trajectory Rec", "help": "High ball position 3", "category": "atk Zone" },
+            { "action": "V4", "nextState": "Trajectory Rec", "help": "High ball position 4", "category": "atk Zone" },
+            { "action": "V5", "nextState": "Trajectory Rec", "help": "High ball position 5", "category": "atk Zone" },
+            { "action": "X1", "nextState": "Trajectory Rec", "help": "Low ball position 1", "category": "atk Zone" },
+            { "action": "X2", "nextState": "Trajectory Rec", "help": "Low ball position 2", "category": "atk Zone" },
+            { "action": "X3", "nextState": "Trajectory Rec", "help": "Low ball position 3", "category": "atk Zone" },
+            { "action": "X4", "nextState": "Trajectory Rec", "help": "Low ball position 4", "category": "atk Zone" },
+            { "action": "X5", "nextState": "Trajectory Rec", "help": "Low ball position 5", "category": "atk Zone" },
+            { "action": "I1", "nextState": "Trajectory Rec", "help": "Around setter position 1", "category": "atk Zone" },
+            { "action": "I2", "nextState": "Trajectory Rec", "help": "Around setter position 2", "category": "atk Zone" },
+            { "action": "I3", "nextState": "Trajectory Rec", "help": "Around setter position 3", "category": "atk Zone" },
+            { "action": "I4", "nextState": "Trajectory Rec", "help": "Around setter position 4", "category": "atk Zone" },
+            { "action": "I5", "nextState": "Trajectory Rec", "help": "Around setter position 5", "category": "atk Zone" }
         ]
     },
     "Trajectory Rec": {
         "displayName": "Trajectory {receivingTeam}",
         "transitions": [
-            { "action": "Diag", "nextState": "Attack by Receiving Team", "help": "Diagonal attack" },
-            { "action": "DiagL", "nextState": "Attack by Receiving Team", "help": "Long diagonal attack" },
-            { "action": "DiagS", "nextState": "Attack by Receiving Team", "help": "Short diagonal attack" },
-            { "action": "Line", "nextState": "Attack by Receiving Team", "help": "Line attack" },
-            { "action": "LineS", "nextState": "Attack by Receiving Team", "help": "Short line attack" },
-            { "action": "Cut", "nextState": "Attack by Receiving Team", "help": "Cut shot" }
+            { "action": "Diag", "nextState": "Attack by Receiving Team", "help": "Diagonal attack", "category": "atk Traj" },
+            { "action": "DiagL", "nextState": "Attack by Receiving Team", "help": "Long diagonal attack", "category": "atk Traj" },
+            { "action": "DiagS", "nextState": "Attack by Receiving Team", "help": "Short diagonal attack", "category": "atk Traj" },
+            { "action": "Line", "nextState": "Attack by Receiving Team", "help": "Line attack", "category": "atk Traj" },
+            { "action": "LineS", "nextState": "Attack by Receiving Team", "help": "Short line attack", "category": "atk Traj" },
+            { "action": "Cut", "nextState": "Attack by Receiving Team", "help": "Cut shot", "category": "atk Traj" }
         ]
     },
     "Attack by Receiving Team": {
         "displayName": "Attack by {receivingTeam}",
         "transitions": [
-            { "action": "Win", "nextState": "Point Receiver", "style": "point", "help": "Winning attack" },
-            { "action": "Err", "nextState": "Point Server", "style": "error", "help": "Attack error" },
-            { "action": "Blk1", "nextState": "Point Server", "style": "point", "help": "Blocked by player 1" },
-            { "action": "Blk2", "nextState": "Point Server", "style": "point", "help": "Blocked by player 2" },
-            { "action": "Def1", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 1" },
-            { "action": "Def2", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 2" }
+            { "action": "Win", "nextState": "Point Receiver", "style": "point", "help": "Winning attack", "category": "atk Result" },
+            { "action": "Err", "nextState": "Point Server", "style": "error", "help": "Attack error", "category": "atk Result" },
+            { "action": "Blk1", "nextState": "Point Server", "style": "point", "help": "Blocked by player 1", "category": "atk Result" },
+            { "action": "Blk2", "nextState": "Point Server", "style": "point", "help": "Blocked by player 2", "category": "atk Result" },
+            { "action": "Def1", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 1", "category": "atk Res" },
+            { "action": "Def2", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 2", "category": "atk Res" }
         ]
     },
     "Defense By Serving Team": {
         "displayName": "Defense by {servingTeam}",
         "transitions": [
-            { "action": "Atk1", "nextState": "Zone of Attack Srv", "help": "Attack by player 1" },
-            { "action": "Atk2", "nextState": "Zone of Attack Srv", "help": "Attack by player 2" },
-            { "action": "SetE1", "nextState": "Point Receiver", "style": "point", "help": "Set err by player 1" },
-            { "action": "SetE2", "nextState": "Point Receiver", "style": "point", "help": "Set err by player 2" }
+            { "action": "Atk1", "nextState": "Zone of Attack Srv", "help": "Attack by player 1", "category": "set" },
+            { "action": "Atk2", "nextState": "Zone of Attack Srv", "help": "Attack by player 2", "category": "set" },
+            { "action": "SetE1", "nextState": "Point Receiver", "style": "point", "help": "Set err by player 1", "category": "set" },
+            { "action": "SetE2", "nextState": "Point Receiver", "style": "point", "help": "Set err by player 2", "category": "set" }
         ]
     },
     "Zone of Attack Srv": {
         "displayName": "Attack Zone for {servingTeam}",
         "transitions": [
-            { "action": "V1", "nextState": "Trajectory Srv", "help": "High ball position 1" },
-            { "action": "V2", "nextState": "Trajectory Srv", "help": "High ball position 2" },
-            { "action": "V3", "nextState": "Trajectory Srv", "help": "High ball position 3" },
-            { "action": "V4", "nextState": "Trajectory Srv", "help": "High ball position 4" },
-            { "action": "V5", "nextState": "Trajectory Srv", "help": "High ball position 5" },
-            { "action": "X1", "nextState": "Trajectory Srv", "help": "Low ball position 1" },
-            { "action": "X2", "nextState": "Trajectory Srv", "help": "Low ball position 2" },
-            { "action": "X3", "nextState": "Trajectory Srv", "help": "Low ball position 3" },
-            { "action": "X4", "nextState": "Trajectory Srv", "help": "Low ball position 4" },
-            { "action": "X5", "nextState": "Trajectory Srv", "help": "Low ball position 5" },
-            { "action": "I1", "nextState": "Trajectory Srv", "help": "Around setter position 1" },
-            { "action": "I2", "nextState": "Trajectory Srv", "help": "Around setter position 2" },
-            { "action": "I3", "nextState": "Trajectory Srv", "help": "Around setter position 3" },
-            { "action": "I4", "nextState": "Trajectory Srv", "help": "Around setter position 4" },
-            { "action": "I5", "nextState": "Trajectory Srv", "help": "Around setter position 5" }
+            { "action": "V1", "nextState": "Trajectory Srv", "help": "High ball position 1", "category": "atk Zone" },
+            { "action": "V2", "nextState": "Trajectory Srv", "help": "High ball position 2", "category": "atk Zone" },
+            { "action": "V3", "nextState": "Trajectory Srv", "help": "High ball position 3", "category": "atk Zone" },
+            { "action": "V4", "nextState": "Trajectory Srv", "help": "High ball position 4", "category": "atk Zone" },
+            { "action": "V5", "nextState": "Trajectory Srv", "help": "High ball position 5", "category": "atk Zone" },
+            { "action": "X1", "nextState": "Trajectory Srv", "help": "Low ball position 1", "category": "atk Zone" },
+            { "action": "X2", "nextState": "Trajectory Srv", "help": "Low ball position 2", "category": "atk Zone" },
+            { "action": "X3", "nextState": "Trajectory Srv", "help": "Low ball position 3", "category": "atk Zone" },
+            { "action": "X4", "nextState": "Trajectory Srv", "help": "Low ball position 4", "category": "atk Zone" },
+            { "action": "X5", "nextState": "Trajectory Srv", "help": "Low ball position 5", "category": "atk Zone" },
+            { "action": "I1", "nextState": "Trajectory Srv", "help": "Around setter position 1", "category": "atk Zone" },
+            { "action": "I2", "nextState": "Trajectory Srv", "help": "Around setter position 2", "category": "atk Zone" },
+            { "action": "I3", "nextState": "Trajectory Srv", "help": "Around setter position 3", "category": "atk Zone" },
+            { "action": "I4", "nextState": "Trajectory Srv", "help": "Around setter position 4", "category": "atk Zone" },
+            { "action": "I5", "nextState": "Trajectory Srv", "help": "Around setter position 5", "category": "atk Zone" }
         ]
     },
     "Trajectory Srv": {
         "displayName": "Trajectory {servingTeam}",
         "transitions": [
-            { "action": "Diag", "nextState": "Attack by Serving Team", "help": "Diagonal attack" },
-            { "action": "DiagL", "nextState": "Attack by Serving Team", "help": "Long diagonal attack" },
-            { "action": "DiagS", "nextState": "Attack by Serving Team", "help": "Short diagonal attack" },
-            { "action": "Line", "nextState": "Attack by Serving Team", "help": "Line attack" },
-            { "action": "LineS", "nextState": "Attack by Serving Team", "help": "Short line attack" },
-            { "action": "Cut", "nextState": "Attack by Serving Team", "help": "Cut shot" }
+            { "action": "Diag", "nextState": "Attack by Serving Team", "help": "Diagonal attack", "category": "atk Traj" },
+            { "action": "DiagL", "nextState": "Attack by Serving Team", "help": "Long diagonal attack", "category": "atk Traj" },
+            { "action": "DiagS", "nextState": "Attack by Serving Team", "help": "Short diagonal attack", "category": "atk Traj" },
+            { "action": "Line", "nextState": "Attack by Serving Team", "help": "Line attack", "category": "atk Traj" },
+            { "action": "LineS", "nextState": "Attack by Serving Team", "help": "Short line attack", "category": "atk Traj" },
+            { "action": "Cut", "nextState": "Attack by Serving Team", "help": "Cut shot", "category": "atk Traj" }
         ]
     },
     "Attack by Serving Team": {
         "displayName": "Attack by {servingTeam}",
         "transitions": [
-            { "action": "Win", "nextState": "Point Server", "style": "point", "help": "Winning attack" },
-            { "action": "Err", "nextState": "Point Receiver", "style": "error", "help": "Attack error" },
-            { "action": "Blk1", "nextState": "Point Receiver", "style": "regular", "help": "Blocked by player 1" },
-            { "action": "Blk2", "nextState": "Point Receiver", "style": "regular", "help": "Blocked by player 2" },
-            { "action": "Def1", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 1" },
-            { "action": "Def2", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 2" }
+            { "action": "Win", "nextState": "Point Server", "style": "point", "help": "Winning attack", "category": "atk Res" },
+            { "action": "Err", "nextState": "Point Receiver", "style": "error", "help": "Attack error", "category": "atk Res" },
+            { "action": "Blk1", "nextState": "Point Receiver", "style": "regular", "help": "Blocked by player 1", "category": "atk Res" },
+            { "action": "Blk2", "nextState": "Point Receiver", "style": "regular", "help": "Blocked by player 2", "category": "atk Res" },
+            { "action": "Def1", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 1", "category": "atk Res" },
+            { "action": "Def2", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 2", "category": "atk Res" }
         ]
     },
     "Defense By Receiving Team": {
         "displayName": "Defense by {receivingTeam}",
         "transitions": [
-            { "action": "Atk1", "nextState": "Zone of Attack Rec", "help": "Attack by player 1" },
-            { "action": "Atk2", "nextState": "Zone of Attack Rec", "help": "Attack by player 2" },
-            { "action": "SetE1", "nextState": "Point Server", "style": "point", "help": "Set err by player 1" },
-            { "action": "SetE2", "nextState": "Point Server", "style": "point", "help": "Set err by player 2" }
+            { "action": "Atk1", "nextState": "Zone of Attack Rec", "help": "Attack by player 1", "category": "set" },
+            { "action": "Atk2", "nextState": "Zone of Attack Rec", "help": "Attack by player 2", "category": "set" },
+            { "action": "SetE1", "nextState": "Point Server", "style": "point", "help": "Set err by player 1", "category": "set" },
+            { "action": "SetE2", "nextState": "Point Server", "style": "point", "help": "Set err by player 2", "category": "set" }
         ]
     },
     "Point Server": {
@@ -326,6 +326,12 @@ const closeModalButton = document.querySelector('.close-modal');
 const statisticsModal = document.getElementById('statistics-modal');
 const statButton = document.getElementById('stat-button');
 const statButtonMatch = document.getElementById('stat-button-match');
+
+// Add new elements for All Stats modal
+const allStatsModal = document.getElementById('all-stats-modal');
+const detailsButton = document.getElementById('details-button');
+const detailsButtonMatch = document.getElementById('details-button-match');
+const detailsButtonSummary = document.getElementById('details-button-summary');
 
 // Add these with the other DOM elements at the top
 const set3ServerModal = document.getElementById('set3-server-modal');
@@ -554,10 +560,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Add event listeners for All Stats button
+    detailsButton.addEventListener('click', showAllStatsModal);
+    detailsButtonMatch.addEventListener('click', showAllStatsModal);
+    detailsButtonSummary.addEventListener('click', showAllStatsModal);
+    allStatsModal.querySelector('.close-modal').addEventListener('click', hideAllStatsModal);
+    allStatsModal.addEventListener('click', (e) => {
+        if (e.target === allStatsModal) {
+            hideAllStatsModal();
+        }
+    });
+
     // Add this to the existing key handler for escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             hideStatisticsModal();
+            hideAllStatsModal();
             // ...existing escape key handlers...
         }
     });
@@ -1607,4 +1625,286 @@ function getPlayerNumberFromLastAction(action) {
 function hideStatisticsModal() {
     statisticsModal.classList.add('hidden');
     document.body.style.overflow = ''; // Restore scrolling
+}
+
+// Function to show All Stats modal with categorized transition statistics
+function showAllStatsModal() {
+    const allStatsContainer = document.getElementById('all-stats-container');
+    
+    // Dynamically collect all unique categories from the state machine transitions
+    const categories = getAllCategories();
+    
+    // Create HTML for All Stats based on category
+    let html = `
+        <div class="stats-header">
+            <div class="stats-team">${appState.teams.a.name}</div>
+            <div class="stats-metric">Action</div>
+            <div class="stats-team">${appState.teams.b.name}</div>
+        </div>
+    `;
+    
+    // Generate detailed stats for team and player level
+    const teamStats = generateCategoryStats();
+    
+    // Create a section for each category
+    Object.keys(categories).forEach(categoryKey => {
+        const categoryName = getCategoryDisplayName(categoryKey);
+        const categoryTeamStats = teamStats.team[categoryKey] || {};
+        const categoryPlayerAStats = teamStats.playerA[categoryKey] || {};
+        const categoryPlayerBStats = teamStats.playerB[categoryKey] || {};
+        
+        // Only display categories that have stats
+        if (Object.keys(categoryTeamStats).length > 0) {
+            // Team level stats section
+            html += `
+                <div class="stats-section">
+                    <h4>${categoryName} Stats - Team</h4>
+                    ${generateStatsRows(categoryTeamStats, categoryKey)}
+                </div>
+            `;
+            
+            // Player level stats for Team A
+            html += `
+                <div class="stats-section">
+                    <h4>${categoryName} Stats - ${appState.teams.a.name}</h4>
+                    <div class="stats-row">
+                        <div class="stats-value">${appState.teams.a.players[0]}</div>
+                        <div class="stats-label">Player</div>
+                        <div class="stats-value">${appState.teams.a.players[1]}</div>
+                    </div>
+                    ${generatePlayerStatsRows(categoryPlayerAStats, categoryKey)}
+                </div>
+            `;
+            
+            // Player level stats for Team B
+            html += `
+                <div class="stats-section">
+                    <h4>${categoryName} Stats - ${appState.teams.b.name}</h4>
+                    <div class="stats-row">
+                        <div class="stats-value">${appState.teams.b.players[0]}</div>
+                        <div class="stats-label">Player</div>
+                        <div class="stats-value">${appState.teams.b.players[1]}</div>
+                    </div>
+                    ${generatePlayerStatsRows(categoryPlayerBStats, categoryKey)}
+                </div>
+            `;
+        }
+    });
+    
+    // Set the HTML content
+    allStatsContainer.innerHTML = html;
+    
+    // Show the modal
+    allStatsModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling
+}
+
+// Helper function to generate stats rows for team level
+function generateStatsRows(categoryStats, categoryKey) {
+    if (Object.keys(categoryStats).length === 0) {
+        return '<div class="stats-row"><div class="stats-value">-</div><div class="stats-label">No data</div><div class="stats-value">-</div></div>';
+    }
+    
+    let html = '';
+    let total = { a: 0, b: 0 };
+    
+    // Add rows for each action in the category
+    Object.keys(categoryStats).forEach(action => {
+        const countA = categoryStats[action].a || 0;
+        const countB = categoryStats[action].b || 0;
+        total.a += countA;
+        total.b += countB;
+        
+        // Get the help text for this action from the state machine
+        let helpText = action;
+        for (const state in stateMachine) {
+            if (state.startsWith('__')) continue;
+            const transitions = stateMachine[state].transitions || [];
+            const transition = transitions.find(t => t.action === action);
+            if (transition?.help) {
+                helpText = transition.help;
+                break;
+            }
+        }
+        
+        html += `
+            <div class="stats-row">
+                <div class="stats-value">${countA}</div>
+                <div class="stats-label" title="${helpText}">${action}</div>
+                <div class="stats-value">${countB}</div>
+            </div>
+        `;
+    });
+    
+    // Add a total row
+    html += `
+        <div class="stats-row">
+            <div class="stats-value">${total.a}</div>
+            <div class="stats-label">Total ${getCategoryDisplayName(categoryKey)}</div>
+            <div class="stats-value">${total.b}</div>
+        </div>
+    `;
+    
+    return html;
+}
+
+// Helper function to generate stats rows for player level
+function generatePlayerStatsRows(categoryPlayerStats, categoryKey) {
+    if (Object.keys(categoryPlayerStats).length === 0) {
+        return '<div class="stats-row"><div class="stats-value">-</div><div class="stats-label">No data</div><div class="stats-value">-</div></div>';
+    }
+    
+    let html = '';
+    let totalPlayer1 = 0;
+    let totalPlayer2 = 0;
+    
+    // Add rows for each action in the category
+    Object.keys(categoryPlayerStats).forEach(action => {
+        const player1Count = categoryPlayerStats[action][1] || 0;
+        const player2Count = categoryPlayerStats[action][2] || 0;
+        totalPlayer1 += player1Count;
+        totalPlayer2 += player2Count;
+        
+        // Get the help text for this action from the state machine
+        let helpText = action;
+        for (const state in stateMachine) {
+            if (state.startsWith('__')) continue;
+            const transitions = stateMachine[state].transitions || [];
+            const transition = transitions.find(t => t.action === action);
+            if (transition?.help) {
+                helpText = transition.help;
+                break;
+            }
+        }
+        
+        html += `
+            <div class="stats-row">
+                <div class="stats-value">${player1Count}</div>
+                <div class="stats-label" title="${helpText}">${action}</div>
+                <div class="stats-value">${player2Count}</div>
+            </div>
+        `;
+    });
+    
+    // Add a total row
+    html += `
+        <div class="stats-row">
+            <div class="stats-value">${totalPlayer1}</div>
+            <div class="stats-label">Total ${getCategoryDisplayName(categoryKey)}</div>
+            <div class="stats-value">${totalPlayer2}</div>
+        </div>
+    `;
+    
+    return html;
+}
+
+// Generate category stats from rally history
+function generateCategoryStats() {
+    // Initialize stats structure
+    const stats = {
+        team: {},
+        playerA: {},
+        playerB: {}
+    };
+    
+    // Dynamically get categories
+    const categories = getAllCategories();
+    
+    // Initialize categories
+    Object.keys(categories).forEach(category => {
+        stats.team[category] = {};
+        stats.playerA[category] = {};
+        stats.playerB[category] = {};
+    });
+    
+    // Process all rallies
+    Object.values(appState.rallyHistory).forEach(rally => {
+        const actions = rally.actions;
+        
+        // For team stats, we need to know which team performed each action
+        let isTeamATurn = true; // Assuming team A serves first in the rally
+        
+        actions.forEach(action => {
+            // Find the transition for this action to get its category
+            let category = null;
+            for (const state in stateMachine) {
+                if (state.startsWith('__')) continue;
+                const transitions = stateMachine[state].transitions || [];
+                const transition = transitions.find(t => t.action === action);
+                if (transition?.category) {
+                    category = transition.category;
+                    break;
+                }
+            }
+            
+            if (category) {
+                // Team stats
+                if (!stats.team[category][action]) {
+                    stats.team[category][action] = { a: 0, b: 0 };
+                }
+                stats.team[category][action][isTeamATurn ? 'a' : 'b']++;
+                
+                // Player stats - extract player number from action if available
+                const playerMatch = action.match(/(\d)$/);
+                if (playerMatch) {
+                    const playerNum = parseInt(playerMatch[1]);
+                    if (playerNum === 1 || playerNum === 2) {
+                        const teamStats = isTeamATurn ? stats.playerA : stats.playerB;
+                        if (!teamStats[category][action]) {
+                            teamStats[category][action] = { 1: 0, 2: 0 };
+                        }
+                        teamStats[category][action][playerNum]++;
+                    }
+                } else {
+                    // For actions without player numbers, attribute to both players
+                    const teamStats = isTeamATurn ? stats.playerA : stats.playerB;
+                    if (!teamStats[category][action]) {
+                        teamStats[category][action] = { 1: 0, 2: 0 };
+                    }
+                    teamStats[category][action][1]++;
+                    teamStats[category][action][2]++;
+                }
+                
+                // Switch turns for certain actions
+                if (action.startsWith('Atk') || action === 'Win' || action === 'Err') {
+                    isTeamATurn = !isTeamATurn;
+                }
+            }
+        });
+    });
+    
+    return stats;
+}
+
+function hideAllStatsModal() {
+    allStatsModal.classList.add('hidden');
+    document.body.style.overflow = ''; // Restore scrolling
+}
+
+// Function to gather all unique categories from state machine transitions
+function getAllCategories() {
+    const categories = {};
+    
+    // Iterate through all states and their transitions
+    for (const stateName in stateMachine) {
+        if (stateName.startsWith('__')) continue; // Skip metadata
+        
+        const state = stateMachine[stateName];
+        if (!state.transitions) continue;
+        
+        // Collect all unique categories from transitions
+        state.transitions.forEach(transition => {
+            if (transition.category) {
+                categories[transition.category] = true;
+            }
+        });
+    }
+    
+    return categories;
+}
+
+// Function to get a display name for a category
+function getCategoryDisplayName(categoryKey) {
+    // Convert category key to title case
+    return categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1);
 }

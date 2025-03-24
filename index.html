@@ -13,6 +13,7 @@
             <div class="app-title">SandScore</div>
             <button class="info-icon" id="info-button" title="Show Legend">ℹ️</button>
             <button class="stat-icon" id="stat-button" title="Show Statistics">Σ</button>
+            <button class="details-icon" id="details-button" title="All Stats">📊</button>
         </div>
         <div class="setup-container">
             <div class="team-setup">
@@ -60,6 +61,7 @@
             <div class="app-title">SandScore</div>
             <button class="info-icon" id="info-button-match" title="Show Legend">ℹ️</button>
             <button class="stat-icon" id="stat-button-match" title="Show Statistics">Σ</button>
+            <button class="details-icon" id="details-button-match" title="All Stats">📊</button>
         </div>
         <div class="compact-scoreboard">
             <div class="team team-a">
@@ -113,7 +115,12 @@
 
     <!-- Match Summary Screen -->
     <div id="summary-screen" class="screen hidden">
-        <div class="app-title">SandScore</div>
+        <div class="app-title-container">
+            <div class="app-title">SandScore</div>
+            <button class="info-icon" id="info-button-summary" title="Show Legend">ℹ️</button>
+            <button class="stat-icon" id="stat-button-summary" title="Show Statistics">Σ</button>
+            <button class="details-icon" id="details-button-summary" title="All Stats">📊</button>
+        </div>
         <div class="compact-scoreboard final">
             <div class="team team-a">
                 <div class="team-info">
@@ -177,6 +184,15 @@
                 </label>
             </div>
             <button id="set3-server-confirm" class="primary-btn">Confirm</button>
+        </div>
+    </div>
+    <div id="all-stats-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>All Stats</h3>
+            <div id="all-stats-container" class="stats-container">
+                <!-- Content will be dynamically generated -->
+            </div>
+            <button class="close-modal">×</button>
         </div>
     </div>
     <script src="script.js"></script>
