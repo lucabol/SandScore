@@ -713,7 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (undoBtnSummary) undoBtnSummary.addEventListener('click', undoLastAction);
     if (saveBtnSummary) saveBtnSummary.addEventListener('click', saveMatch);
     if (loadBtnSummary) loadBtnSummary.addEventListener('click', loadMatch);
-    if (restartBtnSummary) restartBtnSummary.addEventListener('click', restartApp);
+    if (restartBtnSummary) loadBtnSummary.addEventListener('click', restartApp);
 
     // Add event listeners for All Stats button
     detailsButton.addEventListener('click', showAllStatsModal);
@@ -775,9 +775,13 @@ function startMatch() {
     const teamAName = `${teamAPlayer1}/${teamAPlayer2}`;
     const teamBName = `${teamBPlayer1}/${teamBPlayer2}`;
     
-    // Get scoring format and serving team
+    // Get scoring format, serving team, and game mode
     const scoringFormat = document.querySelector('input[name="scoring"]:checked').value;
     const servingTeam = document.querySelector('input[name="serving"]:checked').value;
+    const gameMode = document.querySelector('input[name="mode"]:checked').value;
+    
+    // Set the state machine based on game mode
+    stateMachine = gameMode === 'beginner' ? beginnerStateMachine : advancedStateMachine;
     
     // Initialize app state using state machine rules
     appState = {
@@ -1748,7 +1752,7 @@ function calculateMatchStatistics() {
         const errorsB = stats.teamB[playerKey].attackErrors || 0;
         const totalAttacksB = stats.teamB[playerKey].totalAttacks || 0;
         stats.teamB[playerKey].attackEfficiency = totalAttacksB > 0 ? 
-            Math.round(((pointsB - errorsB) / totalAttacksB) * 100) : 'NaN';
+            Math.round(((pointsB - errors) / totalAttacksB) * 100) : 'NaN';
     });
 
     // Populate set scores
