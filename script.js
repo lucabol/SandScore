@@ -1,5 +1,5 @@
 // State Machine Definition
-const stateMachine = {
+const advancedStateMachine = {
     // Game rules metadata
     "__rules__": {
         "setWinConditions": {
@@ -186,7 +186,7 @@ const stateMachine = {
 };
 
 // Add a statisticsTable to the stateMachine
-stateMachine.__statisticsTable__ = [
+advancedStateMachine.__statisticsTable__ = [
     {
         key: 'pointsWon',
         label: 'Total Points',
@@ -304,6 +304,112 @@ stateMachine.__statisticsTable__ = [
         }, 0)
     },
 ];
+
+// Simplified state machine for beginners that only includes states leading to points
+const beginnerStateMachine = {
+    // Game rules metadata
+    "__rules__": {
+        "setWinConditions": {
+            "pointsToWin": {
+                "beginner": [21, 21, 15],
+                "short": [3, 3, 3],
+                "regular": [21, 21, 15]
+            },
+            "minPointDifference": 2,
+            "setsToWin": 2
+        },
+        "initialState": "Serve",
+        "setTransitions": {
+            "nextState": "Serve",
+            "resetScores": true,
+            "matchEndCondition": {
+                "setsToWin": 2
+            }
+        },
+        "defaults": {
+            "teamA": {
+                "players": ["Player 1", "Player 2"],
+                "isServing": true
+            },
+            "teamB": {
+                "players": ["Player 3", "Player 4"],
+                "isServing": false
+            }
+        },
+        "actionStyles": {
+            "error": "danger",
+            "point": "success",
+            "regular": "primary"
+        }
+    },
+    // State definitions
+    "Serve": {
+        "displayName": "{servingTeam} Serve",
+        "transitions": [
+            { "action": "Ace", "nextState": "Point Server", "style": "point", "help": "Direct point from serve", "category": "serve" },
+            { "action": "SErr", "nextState": "Point Receiver", "style": "error", "help": "Service error", "category": "serve" },
+            { "action": "RE1", "nextState": "Point Receiver", "style": "error", "help": "Reception error by player 1", "category": "reception" },
+            { "action": "RE2", "nextState": "Point Receiver", "style": "error", "help": "Reception error by player 2", "category": "reception" },
+            { "action": "R1", "nextState": "Attack Receiver", "style": "regular", "help": "Reception by player 1", "category": "reception" },
+            { "action": "R2", "nextState": "Attack Receiver", "style": "regular", "help": "Reception by player 2", "category": "reception" }
+        ]
+    },
+    "Attack Receiver": {
+        "displayName": "{receivingTeam} Attack",
+        "transitions": [
+            { "action": "Win1", "nextState": "Point Receiver", "style": "point", "help": "Winning attack by player 1", "category": "attack" },
+            { "action": "Win2", "nextState": "Point Receiver", "style": "point", "help": "Winning attack by player 2", "category": "attack" },
+            { "action": "Err1", "nextState": "Point Server", "style": "error", "help": "Attack error by player 1", "category": "attack" },
+            { "action": "Err2", "nextState": "Point Server", "style": "error", "help": "Attack error by player 2", "category": "attack" },
+            { "action": "Blk1", "nextState": "Point Server", "style": "point", "help": "Blocked by player 1", "category": "attack" },
+            { "action": "Blk2", "nextState": "Point Server", "style": "point", "help": "Blocked by player 2", "category": "attack" },
+            { "action": "Def1", "nextState": "Attack Server", "style": "regular", "help": "Defended by player 1", "category": "defense" },
+            { "action": "Def2", "nextState": "Attack Server", "style": "regular", "help": "Defended by player 2", "category": "defense" }
+        ]
+    },
+    "Attack Server": {
+        "displayName": "{servingTeam} Attack",
+        "transitions": [
+            { "action": "Win1", "nextState": "Point Server", "style": "point", "help": "Winning attack by player 1", "category": "attack" },
+            { "action": "Win2", "nextState": "Point Server", "style": "point", "help": "Winning attack by player 2", "category": "attack" },
+            { "action": "Err1", "nextState": "Point Receiver", "style": "error", "help": "Attack error by player 1", "category": "attack" },
+            { "action": "Err2", "nextState": "Point Receiver", "style": "error", "help": "Attack error by player 2", "category": "attack" },
+            { "action": "Blk1", "nextState": "Point Receiver", "style": "point", "help": "Blocked by player 1", "category": "attack" },
+            { "action": "Blk2", "nextState": "Point Receiver", "style": "point", "help": "Blocked by player 2", "category": "attack" },
+            { "action": "Def1", "nextState": "Attack Receiver", "style": "regular", "help": "Defended by player 1", "category": "defense" },
+            { "action": "Def2", "nextState": "Attack Receiver", "style": "regular", "help": "Defended by player 2", "category": "defense" }
+        ]
+    },
+    "Point Server": {
+        "displayName": "Point {servingTeam}",
+        "isTerminal": true,
+        "scoring": {
+            "awardPoint": "server",
+            "switchServer": true
+        },
+        "setTransition": {
+            "nextServer": "winner"
+        }
+    },
+    "Point Receiver": {
+        "displayName": "Point {receivingTeam}",
+        "isTerminal": true,
+        "scoring": {
+            "awardPoint": "receiver",
+            "switchServer": true
+        },
+        "setTransition": {
+            "nextServer": "winner"
+        }
+    }
+};
+
+beginnerStateMachine.__statisticsTable__ = advancedStateMachine.__statisticsTable__.map(stat => {
+    // Create a copy of the statistics configuration
+    return {...stat};
+});
+
+stateMachine = advancedStateMachine;
 
 // DOM Elements
 const setupScreen = document.getElementById('setup-screen');
