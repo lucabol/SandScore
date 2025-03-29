@@ -1764,7 +1764,7 @@ function calculateMatchStatistics() {
                 defenses: 0
             },
             player2: { 
-                name: appState.teams.b.players[0],
+                name: appState.teams.b.players[1],
                 pointsWon: 0,
                 aces: 0,
                 serviceErrors: 0,
