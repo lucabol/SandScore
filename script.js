@@ -215,7 +215,7 @@ advancedStateMachine.__statisticsTable__ = [
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
             return count + rally.actions.filter(action => 
-                (action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
+                action === 'Win' && rally.scoringTeam === team).length;
         }, 0)
     },
     {
@@ -224,7 +224,7 @@ advancedStateMachine.__statisticsTable__ = [
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
             return count + rally.actions.filter(action => 
-                (action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
+                action === 'Err' && rally.scoringTeam !== team).length;
         }, 0)
     },
     {
@@ -1764,7 +1764,7 @@ function calculateMatchStatistics() {
                 defenses: 0
             },
             player2: { 
-                name: appState.teams.b.players[1],
+                name: appState.teams.b.players[0],
                 pointsWon: 0,
                 aces: 0,
                 serviceErrors: 0,
