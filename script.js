@@ -185,6 +185,25 @@ const advancedStateMachine = {
     }
 };
 
+// Add helper function before the statistics table definitions
+function calculateTotalAttacks(team, rallyHistory) {
+    let count = 0;
+    Object.values(rallyHistory).forEach(rally => {
+        let isReceivingTeam = rally.actions[0].startsWith('R'); // Check if this team received first
+        let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a'); // First attack is by receiving team
+        
+        rally.actions.forEach(action => {
+            if (action.match(/^(Win|Err|Blk\d|Win\d|Err\d)$/)) {
+                if (isTeamsTurn) {
+                    count++;
+                }
+                isTeamsTurn = !isTeamsTurn; // Switch turns after each attack
+            }
+        });
+    });
+    return count;
+}
+
 // Initialize advanced mode statistics table
 advancedStateMachine.__statisticsTable__ = [
     {
@@ -231,23 +250,7 @@ advancedStateMachine.__statisticsTable__ = [
         key: 'totalAttacks',
         label: 'Total Attacks',
         showInPlayerStats: true,
-        calculate: (team, rallyHistory) => {
-            let count = 0;
-            Object.values(rallyHistory).forEach(rally => {
-                let isReceivingTeam = rally.actions[0].startsWith('R'); // Check if this team received first
-                let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a'); // First attack is by receiving team
-                
-                rally.actions.forEach(action => {
-                    if (action.match(/^(Win|Err|Win\d|Err\d)$/)) {
-                        if (isTeamsTurn) {
-                            count++;
-                        }
-                        isTeamsTurn = !isTeamsTurn; // Switch turns after each attack
-                    }
-                });
-            });
-            return count;
-        }
+        calculate: (team, rallyHistory) => calculateTotalAttacks(team, rallyHistory)
     },
     {
         key: 'attackEfficiency',
@@ -262,26 +265,9 @@ advancedStateMachine.__statisticsTable__ = [
                 return count + rally.actions.filter(action => 
                     (action === 'Err' || action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
             }, 0);
-            
-            let totalAttacks = 0;
-            Object.values(rallyHistory).forEach(rally => {
-                let isReceivingTeam = rally.actions[0].startsWith('R');
-                let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a');
-                
-                rally.actions.forEach(action => {
-                    if (action.match(/^(Win|Err|Win\d|Err\d)$/)) {
-                        if (isTeamsTurn) {
-                            totalAttacks++;
-                        }
-                        isTeamsTurn = !isTeamsTurn;
+            const totalAttacks = calculateTotalAttacks(team, rallyHistory);
+            return totalAttacks === 0 ? 'NaN' : Math.round(((points - errors) / totalAttacks) * 100);
                     }
-                });
-            });
-
-            if (totalAttacks === 0) return 'NaN';
-            let efficiency = Math.round(((points - errors) / totalAttacks) * 100);
-            return efficiency;
-        }
     },
     {
         key: 'blocks',
@@ -457,23 +443,7 @@ beginnerStateMachine.__statisticsTable__ = [
         key: 'totalAttacks',
         label: 'Total Attacks',
         showInPlayerStats: true,
-        calculate: (team, rallyHistory) => {
-            let count = 0;
-            Object.values(rallyHistory).forEach(rally => {
-                let isReceivingTeam = rally.actions[0].startsWith('R'); // Check if this team received first
-                let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a'); // First attack is by receiving team
-                
-                rally.actions.forEach(action => {
-                    if (action.match(/^(Win|Err|Win\d|Err\d)$/)) {
-                        if (isTeamsTurn) {
-                            count++;
-                        }
-                        isTeamsTurn = !isTeamsTurn; // Switch turns after each attack
-                    }
-                });
-            });
-            return count;
-        }
+        calculate: (team, rallyHistory) => calculateTotalAttacks(team, rallyHistory)
     },
     {
         key: 'attackEfficiency',
@@ -488,26 +458,9 @@ beginnerStateMachine.__statisticsTable__ = [
                 return count + rally.actions.filter(action => 
                     (action === 'Err' || action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
             }, 0);
-            
-            let totalAttacks = 0;
-            Object.values(rallyHistory).forEach(rally => {
-                let isReceivingTeam = rally.actions[0].startsWith('R');
-                let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a');
-                
-                rally.actions.forEach(action => {
-                    if (action.match(/^(Win|Err|Win\d|Err\d)$/)) {
-                        if (isTeamsTurn) {
-                            totalAttacks++;
-                        }
-                        isTeamsTurn = !isTeamsTurn;
+            const totalAttacks = calculateTotalAttacks(team, rallyHistory);
+            return totalAttacks === 0 ? 'NaN' : Math.round(((points - errors) / totalAttacks) * 100);
                     }
-                });
-            });
-
-            if (totalAttacks === 0) return 'NaN';
-            let efficiency = Math.round(((points - errors) / totalAttacks) * 100);
-            return efficiency;
-        }
     },
     {
         key: 'blocks',
