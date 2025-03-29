@@ -238,7 +238,7 @@ advancedStateMachine.__statisticsTable__ = [
                 let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a'); // First attack is by receiving team
                 
                 rally.actions.forEach(action => {
-                    if (action.match(/^(Win|Err)[12]$/)) {
+                    if (action.match(/^(Win|Err|Win\d|Err\d)$/)) {
                         if (isTeamsTurn) {
                             count++;
                         }
@@ -256,11 +256,11 @@ advancedStateMachine.__statisticsTable__ = [
         calculate: (team, rallyHistory) => {
             const points = Object.values(rallyHistory).reduce((count, rally) => {
                 return count + rally.actions.filter(action => 
-                    (action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
+                    (action === 'Win' || action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
             }, 0);
             const errors = Object.values(rallyHistory).reduce((count, rally) => {
                 return count + rally.actions.filter(action => 
-                    (action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
+                    (action === 'Err' || action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
             }, 0);
             
             let totalAttacks = 0;
@@ -269,7 +269,7 @@ advancedStateMachine.__statisticsTable__ = [
                 let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a');
                 
                 rally.actions.forEach(action => {
-                    if (action.match(/^(Win|Err)[12]$/)) {
+                    if (action.match(/^(Win|Err|Win\d|Err\d)$/)) {
                         if (isTeamsTurn) {
                             totalAttacks++;
                         }
@@ -441,7 +441,7 @@ beginnerStateMachine.__statisticsTable__ = [
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
             return count + rally.actions.filter(action => 
-                (action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
+                action === 'Win' && rally.scoringTeam === team).length;
         }, 0)
     },
     {
@@ -450,7 +450,7 @@ beginnerStateMachine.__statisticsTable__ = [
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
             return count + rally.actions.filter(action => 
-                (action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
+                action === 'Err' && rally.scoringTeam !== team).length;
         }, 0)
     },
     {
@@ -464,7 +464,7 @@ beginnerStateMachine.__statisticsTable__ = [
                 let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a'); // First attack is by receiving team
                 
                 rally.actions.forEach(action => {
-                    if (action.match(/^(Win|Err)[12]$/)) {
+                    if (action.match(/^(Win|Err|Win\d|Err\d)$/)) {
                         if (isTeamsTurn) {
                             count++;
                         }
@@ -482,11 +482,11 @@ beginnerStateMachine.__statisticsTable__ = [
         calculate: (team, rallyHistory) => {
             const points = Object.values(rallyHistory).reduce((count, rally) => {
                 return count + rally.actions.filter(action => 
-                    (action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
+                    (action === 'Win' || action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
             }, 0);
             const errors = Object.values(rallyHistory).reduce((count, rally) => {
                 return count + rally.actions.filter(action => 
-                    (action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
+                    (action === 'Err' || action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
             }, 0);
             
             let totalAttacks = 0;
@@ -495,7 +495,7 @@ beginnerStateMachine.__statisticsTable__ = [
                 let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a');
                 
                 rally.actions.forEach(action => {
-                    if (action.match(/^(Win|Err)[12]$/)) {
+                    if (action.match(/^(Win|Err|Win\d|Err\d)$/)) {
                         if (isTeamsTurn) {
                             totalAttacks++;
                         }
@@ -1594,8 +1594,8 @@ function showStatisticsModal() {
             <div class="stats-section">
                 <h4>Team Stats</h4>
                 ${stateMachine.__statisticsTable__.map(stat => `
-                    <div class="stats-row">
-                        <div class="stats-value">${stats.teamA[stat.key]}${stat.key === 'pointsWon' && stats.teamA.pointsPercentage ? ` (${stats.teamA.pointsPercentage}%)` : stat.key === 'attackEfficiency' ? '%' : ''}</div>
+                                        <div class="stats-row">
+                        <div class="stats-value">${stats.teamA[stat.key]}${stat.key === 'pointsWon' &&stats.teamA.pointsPercentage ? ` (${stats.teamA.pointsPercentage}%)` : stat.key === 'attackEfficiency' ? '%' : ''}</div>
                         <div class="stats-label">${stat.label}</div>
                         <div class="stats-value">${stats.teamB[stat.key]}${stat.key === 'pointsWon' && stats.teamB.pointsPercentage ? ` (${stats.teamB.pointsPercentage}%)` : stat.key === 'attackEfficiency' ? '%' : ''}</div>
                     </div>
