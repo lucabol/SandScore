@@ -267,7 +267,7 @@ advancedStateMachine.__statisticsTable__ = [
             }, 0);
             const totalAttacks = calculateTotalAttacks(team, rallyHistory);
             return totalAttacks === 0 ? 'NaN' : Math.round(((points - errors) / totalAttacks) * 100);
-                    }
+        }
     },
     {
         key: 'blocks',
@@ -427,7 +427,7 @@ beginnerStateMachine.__statisticsTable__ = [
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
             return count + rally.actions.filter(action => 
-                action === 'Win' && rally.scoringTeam === team).length;
+                (action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
         }, 0)
     },
     {
@@ -436,7 +436,7 @@ beginnerStateMachine.__statisticsTable__ = [
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
             return count + rally.actions.filter(action => 
-                action === 'Err' && rally.scoringTeam !== team).length;
+                (action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
         }, 0)
     },
     {
@@ -452,15 +452,15 @@ beginnerStateMachine.__statisticsTable__ = [
         calculate: (team, rallyHistory) => {
             const points = Object.values(rallyHistory).reduce((count, rally) => {
                 return count + rally.actions.filter(action => 
-                    (action === 'Win' || action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
+                    (action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
             }, 0);
             const errors = Object.values(rallyHistory).reduce((count, rally) => {
                 return count + rally.actions.filter(action => 
-                    (action === 'Err' || action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
+                    (action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
             }, 0);
             const totalAttacks = calculateTotalAttacks(team, rallyHistory);
             return totalAttacks === 0 ? 'NaN' : Math.round(((points - errors) / totalAttacks) * 100);
-                    }
+        }
     },
     {
         key: 'blocks',
@@ -1566,7 +1566,7 @@ function showStatisticsModal() {
                     <div class="stats-row">
                         <div class="stats-value">${stats.teamA.player1[stat.key]}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
                         <div class="stats-label">${stat.label}</div>
-                        <div class="stats-value">${stats.teamA.player2[stat.key]}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
+                        <div class="stats-value">${stats.teamA.player2[stat.key]}${stat.key=== 'attackEfficiency' ? '%' : ''}</div>
                     </div>
                 `).join('')}
             </div>
