@@ -146,8 +146,8 @@ const advancedStateMachine = {
         "transitions": [
             { "action": "Win", "nextState": "Point Server", "style": "point", "help": "Winning attack", "category": "atk Res" },
             { "action": "Err", "nextState": "Point Receiver", "style": "error", "help": "Attack error", "category": "atk Res" },
-            { "action": "Blk1", "nextState": "Point Receiver", "style": "regular", "help": "Blocked by player 1", "category": "atk Res" },
-            { "action": "Blk2", "nextState": "Point Receiver", "style": "regular", "help": "Blocked by player 2", "category": "atk Res" },
+            { "action": "Blk1", "nextState": "Point Receiver", "style": "point", "help": "Blocked by player 1", "category": "atk Res" },
+            { "action": "Blk2", "nextState": "Point Receiver", "style": "point", "help": "Blocked by player 2", "category": "atk Res" },
             { "action": "Def1", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 1", "category": "atk Res" },
             { "action": "Def2", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 2", "category": "atk Res" }
         ]
@@ -185,7 +185,7 @@ const advancedStateMachine = {
     }
 };
 
-// Add a statisticsTable to the stateMachine
+// Initialize advanced mode statistics table
 advancedStateMachine.__statisticsTable__ = [
     {
         key: 'pointsWon',
@@ -214,7 +214,8 @@ advancedStateMachine.__statisticsTable__ = [
         label: 'Attack Points',
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
-            return count + rally.actions.filter(action => action === 'Win' && rally.scoringTeam === team).length;
+            return count + rally.actions.filter(action => 
+                (action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
         }, 0)
     },
     {
@@ -222,7 +223,8 @@ advancedStateMachine.__statisticsTable__ = [
         label: 'Attack Errors',
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
-            return count + rally.actions.filter(action => action === 'Err' && rally.scoringTeam !== team).length;
+            return count + rally.actions.filter(action => 
+                (action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
         }, 0)
     },
     {
@@ -236,7 +238,7 @@ advancedStateMachine.__statisticsTable__ = [
                 let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a'); // First attack is by receiving team
                 
                 rally.actions.forEach(action => {
-                    if (action.startsWith('Atk')) {
+                    if (action.match(/^(Win|Err)[12]$/)) {
                         if (isTeamsTurn) {
                             count++;
                         }
@@ -253,10 +255,12 @@ advancedStateMachine.__statisticsTable__ = [
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => {
             const points = Object.values(rallyHistory).reduce((count, rally) => {
-                return count + rally.actions.filter(action => action === 'Win' && rally.scoringTeam === team).length;
+                return count + rally.actions.filter(action => 
+                    (action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
             }, 0);
             const errors = Object.values(rallyHistory).reduce((count, rally) => {
-                return count + rally.actions.filter(action => action === 'Err' && rally.scoringTeam !== team).length;
+                return count + rally.actions.filter(action => 
+                    (action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
             }, 0);
             
             let totalAttacks = 0;
@@ -265,7 +269,7 @@ advancedStateMachine.__statisticsTable__ = [
                 let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a');
                 
                 rally.actions.forEach(action => {
-                    if (action.startsWith('Atk')) {
+                    if (action.match(/^(Win|Err)[12]$/)) {
                         if (isTeamsTurn) {
                             totalAttacks++;
                         }
@@ -276,7 +280,7 @@ advancedStateMachine.__statisticsTable__ = [
 
             if (totalAttacks === 0) return 'NaN';
             let efficiency = Math.round(((points - errors) / totalAttacks) * 100);
-            return efficiency; // Don't clamp to 0, allow negative values
+            return efficiency;
         }
     },
     {
@@ -284,7 +288,8 @@ advancedStateMachine.__statisticsTable__ = [
         label: 'Blocks',
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
-            return count + rally.actions.filter(action => action.startsWith('Blk') && rally.scoringTeam === team).length;
+            return count + rally.actions.filter(action => 
+                (action === 'Blk1' || action === 'Blk2') && rally.scoringTeam === team).length;
         }, 0)
     },
     {
@@ -292,7 +297,8 @@ advancedStateMachine.__statisticsTable__ = [
         label: 'Reception Errors',
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
-            return count + rally.actions.filter(action => action.startsWith('RE') && rally.scoringTeam !== team).length;
+            return count + rally.actions.filter(action => 
+                (action === 'RE1' || action === 'RE2') && rally.scoringTeam !== team).length;
         }, 0)
     },
     {
@@ -300,7 +306,8 @@ advancedStateMachine.__statisticsTable__ = [
         label: 'Defenses',
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
-            return count + rally.actions.filter(action => action.startsWith('Def') && rally.scoringTeam === team).length;
+            return count + rally.actions.filter(action => 
+                (action === 'Def1' || action === 'Def2') && rally.scoringTeam === team).length;
         }, 0)
     },
 ];
@@ -404,12 +411,135 @@ const beginnerStateMachine = {
     }
 };
 
-beginnerStateMachine.__statisticsTable__ = advancedStateMachine.__statisticsTable__.map(stat => {
-    // Create a copy of the statistics configuration
-    return {...stat};
-});
+// Initialize beginner mode statistics table
+beginnerStateMachine.__statisticsTable__ = [
+    {
+        key: 'pointsWon',
+        label: 'Total Points',
+        showInPlayerStats: false,
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).filter(rally => rally.scoringTeam === team).length
+    },
+    {
+        key: 'aces',
+        label: 'Aces',
+        showInPlayerStats: false,
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
+            return count + rally.actions.filter(action => action === 'Ace' && rally.scoringTeam === team).length;
+        }, 0)
+    },
+    {
+        key: 'serviceErrors',
+        label: 'Service Errors',
+        showInPlayerStats: false,
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
+            return count + rally.actions.filter(action => action === 'SErr' && rally.scoringTeam !== team).length;
+        }, 0)
+    },
+    {
+        key: 'attackPoints',
+        label: 'Attack Points',
+        showInPlayerStats: true,
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
+            return count + rally.actions.filter(action => 
+                (action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
+        }, 0)
+    },
+    {
+        key: 'attackErrors',
+        label: 'Attack Errors',
+        showInPlayerStats: true,
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
+            return count + rally.actions.filter(action => 
+                (action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
+        }, 0)
+    },
+    {
+        key: 'totalAttacks',
+        label: 'Total Attacks',
+        showInPlayerStats: true,
+        calculate: (team, rallyHistory) => {
+            let count = 0;
+            Object.values(rallyHistory).forEach(rally => {
+                let isReceivingTeam = rally.actions[0].startsWith('R'); // Check if this team received first
+                let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a'); // First attack is by receiving team
+                
+                rally.actions.forEach(action => {
+                    if (action.match(/^(Win|Err)[12]$/)) {
+                        if (isTeamsTurn) {
+                            count++;
+                        }
+                        isTeamsTurn = !isTeamsTurn; // Switch turns after each attack
+                    }
+                });
+            });
+            return count;
+        }
+    },
+    {
+        key: 'attackEfficiency',
+        label: 'Attack Efficiency',
+        showInPlayerStats: true,
+        calculate: (team, rallyHistory) => {
+            const points = Object.values(rallyHistory).reduce((count, rally) => {
+                return count + rally.actions.filter(action => 
+                    (action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
+            }, 0);
+            const errors = Object.values(rallyHistory).reduce((count, rally) => {
+                return count + rally.actions.filter(action => 
+                    (action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
+            }, 0);
+            
+            let totalAttacks = 0;
+            Object.values(rallyHistory).forEach(rally => {
+                let isReceivingTeam = rally.actions[0].startsWith('R');
+                let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a');
+                
+                rally.actions.forEach(action => {
+                    if (action.match(/^(Win|Err)[12]$/)) {
+                        if (isTeamsTurn) {
+                            totalAttacks++;
+                        }
+                        isTeamsTurn = !isTeamsTurn;
+                    }
+                });
+            });
 
-stateMachine = advancedStateMachine;
+            if (totalAttacks === 0) return 'NaN';
+            let efficiency = Math.round(((points - errors) / totalAttacks) * 100);
+            return efficiency;
+        }
+    },
+    {
+        key: 'blocks',
+        label: 'Blocks',
+        showInPlayerStats: true,
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
+            return count + rally.actions.filter(action => 
+                (action === 'Blk1' || action === 'Blk2') && rally.scoringTeam === team).length;
+        }, 0)
+    },
+    {
+        key: 'receptionErrors',
+        label: 'Reception Errors',
+        showInPlayerStats: true,
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
+            return count + rally.actions.filter(action => 
+                (action === 'RE1' || action === 'RE2') && rally.scoringTeam !== team).length;
+        }, 0)
+    },
+    {
+        key: 'defenses',
+        label: 'Defenses',
+        showInPlayerStats: true,
+        calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
+            return count + rally.actions.filter(action => 
+                (action === 'Def1' || action === 'Def2') && rally.scoringTeam === team).length;
+        }, 0)
+    },
+];
+
+// Set default state machine
+let stateMachine = advancedStateMachine;
 
 // DOM Elements
 const setupScreen = document.getElementById('setup-screen');
