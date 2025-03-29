@@ -348,8 +348,8 @@ const beginnerStateMachine = {
         "transitions": [
             { "action": "Ace", "nextState": "Point Server", "style": "point", "help": "Direct point from serve", "category": "serve" },
             { "action": "SErr", "nextState": "Point Receiver", "style": "error", "help": "Service error", "category": "serve" },
-            { "action": "RE1", "nextState": "Point Receiver", "style": "error", "help": "Reception error by player 1", "category": "reception" },
-            { "action": "RE2", "nextState": "Point Receiver", "style": "error", "help": "Reception error by player 2", "category": "reception" },
+            { "action": "RE1", "nextState": "Point Server", "style": "error", "help": "Reception error by player 1", "category": "reception" },
+            { "action": "RE2", "nextState": "Point Server", "style": "error", "help": "Reception error by player 2", "category": "reception" },
             { "action": "R1", "nextState": "Attack Receiver", "style": "regular", "help": "Reception by player 1", "category": "reception" },
             { "action": "R2", "nextState": "Attack Receiver", "style": "regular", "help": "Reception by player 2", "category": "reception" }
         ]
