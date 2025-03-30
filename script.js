@@ -1530,6 +1530,180 @@ function hideLegendModal() {
     document.body.style.overflow = ''; // Restore scrolling
 }
 
+// Function to generate beginner mode team statistics
+function generateBeginnerModeStatistics() {
+    // Initialize statistics object
+    const stats = {
+        teamA: {
+            name: appState.teams.a.name,
+            pointsWon: 0,
+            aces: 0,
+            serviceErrors: 0,
+            attackPoints: 0,
+            blocks: 0,
+            receptionErrors: 0,
+            attackErrors: 0,
+            defenses: 0,
+            totalAttacks: 0,
+            attackEfficiency: 0,
+            players: [
+                {
+                    name: appState.teams.a.players[0],
+                    attacks: 0,
+                    attackPoints: 0,
+                    attackErrors: 0,
+                    blocks: 0,
+                    receptionErrors: 0,
+                    defenses: 0
+                },
+                {
+                    name: appState.teams.a.players[1],
+                    attacks: 0,
+                    attackPoints: 0,
+                    attackErrors: 0,
+                    blocks: 0,
+                    receptionErrors: 0,
+                    defenses: 0
+                }
+            ]
+        },
+        teamB: {
+            name: appState.teams.b.name,
+            pointsWon: 0,
+            aces: 0,
+            serviceErrors: 0,
+            attackPoints: 0,
+            blocks: 0,
+            receptionErrors: 0,
+            attackErrors: 0,
+            defenses: 0,
+            totalAttacks: 0,
+            attackEfficiency: 0,
+            players: [
+                {
+                    name: appState.teams.b.players[0],
+                    attacks: 0,
+                    attackPoints: 0,
+                    attackErrors: 0,
+                    blocks: 0,
+                    receptionErrors: 0,
+                    defenses: 0
+                },
+                {
+                    name: appState.teams.b.players[1],
+                    attacks: 0,
+                    attackPoints: 0,
+                    attackErrors: 0,
+                    blocks: 0,
+                    receptionErrors: 0,
+                    defenses: 0
+                }
+            ]
+        },
+        totalRallies: Object.keys(appState.rallyHistory).length,
+        longestRallyActions: 0,
+        longestRallySequence: ''
+    };
+
+    // Process each rally in the history
+    Object.values(appState.rallyHistory).forEach(rally => {
+        const scoringTeam = rally.scoringTeam;
+        const scoringTeamKey = scoringTeam === 'a' ? 'teamA' : 'teamB';
+        const oppositeTeamKey = scoringTeam === 'a' ? 'teamB' : 'teamA';
+        
+        // Count point for scoring team
+        stats[scoringTeamKey].pointsWon++;
+        
+        // Track longest rally
+        if (rally.actions.length > stats.longestRallyActions) {
+            stats.longestRallyActions = rally.actions.length;
+            stats.longestRallySequence = rally.actions.join(' ');
+        }
+        
+        // Initial conditions for tracking
+        let isTeamATurn = !rally.actions[0].startsWith('R'); // If first action is reception, team B starts
+        
+        // Process each action in the rally
+        rally.actions.forEach(action => {
+            const currentTeamKey = isTeamATurn ? 'teamA' : 'teamB';
+            const playerNum = action.match(/\d$/)?.[0]; // Get player number if present
+            
+            // Process by action type
+            if (action === 'Ace') {
+                stats[currentTeamKey].aces++;
+            } else if (action === 'SErr') {
+                stats[currentTeamKey].serviceErrors++;
+            } else if (action.startsWith('RE')) {
+                if (playerNum) {
+                    stats[currentTeamKey].receptionErrors++;
+                    stats[currentTeamKey].players[playerNum-1].receptionErrors++;
+                }
+            } else if (action.match(/^Win\d$/)) {
+                if (playerNum) {
+                    stats[currentTeamKey].attackPoints++;
+                    stats[currentTeamKey].players[playerNum-1].attackPoints++;
+                    stats[currentTeamKey].players[playerNum-1].attacks++;
+                }
+                // Switch turn after a winning attack
+                isTeamATurn = !isTeamATurn;
+            } else if (action.match(/^Err\d$/)) {
+                if (playerNum) {
+                    stats[currentTeamKey].attackErrors++;
+                    stats[currentTeamKey].players[playerNum-1].attackErrors++;
+                    stats[currentTeamKey].players[playerNum-1].attacks++;
+                }
+                // Switch turn after an attack error
+                isTeamATurn = !isTeamATurn;
+            } else if (action.match(/^Blk\d$/)) {
+                if (playerNum) {
+                    stats[currentTeamKey].blocks++;
+                    stats[currentTeamKey].players[playerNum-1].blocks++;
+                }
+            } else if (action.match(/^Def\d$/)) {
+                if (playerNum) {
+                    stats[currentTeamKey].defenses++;
+                    stats[currentTeamKey].players[playerNum-1].defenses++;
+                }
+            } else if (action.startsWith('Atk')) {
+                if (playerNum) {
+                    stats[currentTeamKey].totalAttacks++;
+                    stats[currentTeamKey].players[playerNum-1].attacks++;
+                }
+                // Switch turn after any attack
+                isTeamATurn = !isTeamATurn;
+            }
+        });
+    });
+    
+    // Calculate attack efficiency for each team
+    ['teamA', 'teamB'].forEach(teamKey => {
+        const team = stats[teamKey];
+        team.totalAttacks = team.attackPoints + team.attackErrors;
+        
+        // Calculate team efficiency
+        if (team.totalAttacks > 0) {
+            team.attackEfficiency = Math.round(
+                ((team.attackPoints - team.attackErrors) / team.totalAttacks) * 100
+            );
+        } else {
+            team.attackEfficiency = 0;
+        }
+        
+        // Calculate player efficiencies
+        team.players.forEach(player => {
+            if (player.attacks > 0) {
+                player.attackEfficiency = Math.round(
+                    ((player.attackPoints - player.attackErrors) / player.attacks) * 100
+                );
+            } else {
+                player.attackEfficiency = 0;
+            }
+        });
+    });
+    
+    return stats;
+}
+
 function showStatisticsModal() {
     const stats = calculateMatchStatistics();
     const modalContent = statisticsModal.querySelector('.modal-content');
