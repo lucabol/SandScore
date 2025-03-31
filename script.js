@@ -1781,7 +1781,7 @@ function showBeginnerStatisticsModal() {
                 </div>
                 
                 <div class="stats-row">
-                    <div class="stats-value">${gameMode === 'beginner' ? stats.longestRallyActions : stats.longestRally.actions}</div>
+                    <div class="stats-value">${stats.longestRallyActions}</div>
                     <div class="stats-label">Longest Rally Actions</div>
                     <div class="stats-value"></div>
                 </div>
