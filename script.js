@@ -583,6 +583,14 @@ function loadFromStorage() {
         if (state.states.length > 0) {
             const lastState = JSON.parse(state.states[state.states.length - 1]);
             loadState(lastState, true);
+
+            // Restore the correct state machine based on saved game mode
+            if (lastState.gameMode === 'beginner') {
+                stateMachine = beginnerStateMachine;
+            } else {
+                stateMachine = advancedStateMachine;
+            }
+
             return true;
         }
     }
@@ -891,7 +899,8 @@ function startMatch() {
         history: [],
         rallyActions: [],
         rallyHistory: {},
-        firstServingTeam: servingTeam === 'team-a' ? 'a' : 'b'
+        firstServingTeam: servingTeam === 'team-a' ? 'a' : 'b',
+        gameMode: gameMode
     };
 
     // Update the scoreboard with initial values
@@ -1151,6 +1160,7 @@ function saveMatch() {
             rallyActions: appState.rallyActions,
             rallyHistory: appState.rallyHistory,
             firstServingTeam: appState.firstServingTeam,
+            gameMode: appState.gameMode,
             undoStack: state.states  // Add the undo stack to the saved state
         };
 
