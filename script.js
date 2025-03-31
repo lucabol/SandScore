@@ -427,7 +427,7 @@ beginnerStateMachine.__statisticsTable__ = [
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
             return count + rally.actions.filter(action => 
-                (action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
+(                action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
         }, 0)
     },
     {
@@ -436,7 +436,7 @@ beginnerStateMachine.__statisticsTable__ = [
         showInPlayerStats: true,
         calculate: (team, rallyHistory) => Object.values(rallyHistory).reduce((count, rally) => {
             return count + rally.actions.filter(action => 
-                (action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
+                action === 'Err' && rally.scoringTeam !== team).length;
         }, 0)
     },
     {
@@ -452,11 +452,11 @@ beginnerStateMachine.__statisticsTable__ = [
         calculate: (team, rallyHistory) => {
             const points = Object.values(rallyHistory).reduce((count, rally) => {
                 return count + rally.actions.filter(action => 
-                    (action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
+                    (action === 'Win' || action === 'Win1' || action === 'Win2') && rally.scoringTeam === team).length;
             }, 0);
             const errors = Object.values(rallyHistory).reduce((count, rally) => {
                 return count + rally.actions.filter(action => 
-                    (action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
+                    (action === 'Err' || action === 'Err1' || action === 'Err2') && rally.scoringTeam !== team).length;
             }, 0);
             const totalAttacks = calculateTotalAttacks(team, rallyHistory);
             return totalAttacks === 0 ? 'NaN' : Math.round(((points - errors) / totalAttacks) * 100);
@@ -1292,7 +1292,7 @@ function updateHistoryDisplay() {
         if (appState.rallyHistory[rallyNum]) {
             rallyData = appState.rallyHistory[rallyNum];
             actionsForRally = rallyData.actions;
-        } else if (rallyNum === appState.currentRally) {
+        } else if (rallyNum ===appState.currentRally) {
             actionsForRally = appState.rallyActions;
         }
         
@@ -1704,12 +1704,19 @@ function generateBeginnerModeStatistics() {
     return stats;
 }
 
-// ...existing code...
-
 function showStatisticsModal() {
     // Use the appropriate statistics function based on game mode
     const gameMode = stateMachine === beginnerStateMachine ? 'beginner' : 'advanced';
-    const stats = gameMode === 'beginner' ? generateBeginnerModeStatistics() : calculateMatchStatistics();
+    
+    if (gameMode === 'beginner') {
+        showBeginnerStatisticsModal();
+    } else {
+        showAdvancedStatisticsModal();
+    }
+}
+
+function showBeginnerStatisticsModal() {
+    const stats = generateBeginnerModeStatistics();
     const modalContent = statisticsModal.querySelector('.modal-content');
     
     // Create the HTML content for the statistics
@@ -1735,64 +1742,34 @@ function showStatisticsModal() {
             
             <div class="stats-section">
                 <h4>Player Stats - ${stats.teamA.name}</h4>
-                ${gameMode === 'beginner' ? `
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamA.players[0].name}</div>
+                    <div class="stats-label">Player</div>
+                    <div class="stats-value">${stats.teamA.players[1].name}</div>
+                </div>
+                ${stateMachine.__statisticsTable__.filter(stat => stat.showInPlayerStats).map(stat => `
                     <div class="stats-row">
-                        <div class="stats-value">${stats.teamA.players[0].name}</div>
-                        <div class="stats-label">Player</div>
-                        <div class="stats-value">${stats.teamA.players[1].name}</div>
+                        <div class="stats-value">${stats.teamA.players[0][stat.key] || 0}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
+                        <div class="stats-label">${stat.label}</div>
+                        <div class="stats-value">${stats.teamA.players[1][stat.key] || 0}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
                     </div>
-                    ${stateMachine.__statisticsTable__.filter(stat => stat.showInPlayerStats).map(stat => `
-                        <div class="stats-row">
-                            <div class="stats-value">${stats.teamA.players[0][stat.key] || 0}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
-                            <div class="stats-label">${stat.label}</div>
-                            <div class="stats-value">${stats.teamA.players[1][stat.key] || 0}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
-                        </div>
-                    `).join('')}
-                ` : `
-                    <div class="stats-row">
-                        <div class="stats-value">${stats.teamA.player1.name}</div>
-                        <div class="stats-label">Player</div>
-                        <div class="stats-value">${stats.teamA.player2.name}</div>
-                    </div>
-                    ${stateMachine.__statisticsTable__.filter(stat => stat.showInPlayerStats).map(stat => `
-                        <div class="stats-row">
-                            <div class="stats-value">${stats.teamA.player1[stat.key]}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
-                            <div class="stats-label">${stat.label}</div>
-                            <div class="stats-value">${stats.teamA.player2[stat.key]}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
-                        </div>
-                    `).join('')}
-                `}
+                `).join('')}
             </div>
             
             <div class="stats-section">
                 <h4>Player Stats - ${stats.teamB.name}</h4>
-                ${gameMode === 'beginner' ? `
+                <div class="stats-row">
+                    <div class="stats-value">${stats.teamB.players[0].name}</div>
+                    <div class="stats-label">Player</div>
+                    <div class="stats-value">${stats.teamB.players[1].name}</div>
+                </div>
+                ${stateMachine.__statisticsTable__.filter(stat => stat.showInPlayerStats).map(stat => `
                     <div class="stats-row">
-                        <div class="stats-value">${stats.teamB.players[0].name}</div>
-                        <div class="stats-label">Player</div>
-                        <div class="stats-value">${stats.teamB.players[1].name}</div>
+                        <div class="stats-value">${stats.teamB.players[0][stat.key] || 0}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
+                        <div class="stats-label">${stat.label}</div>
+                        <div class="stats-value">${stats.teamB.players[1][stat.key] || 0}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
                     </div>
-                    ${stateMachine.__statisticsTable__.filter(stat => stat.showInPlayerStats).map(stat => `
-                        <div class="stats-row">
-                            <div class="stats-value">${stats.teamB.players[0][stat.key] || 0}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
-                            <div class="stats-label">${stat.label}</div>
-                            <div class="stats-value">${stats.teamB.players[1][stat.key] || 0}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
-                        </div>
-                    `).join('')}
-                ` : `
-                    <div class="stats-row">
-                        <div class="stats-value">${stats.teamB.player1.name}</div>
-                        <div class="stats-label">Player</div>
-                        <div class="stats-value">${stats.teamB.player2.name}</div>
-                    </div>
-                    ${stateMachine.__statisticsTable__.filter(stat => stat.showInPlayerStats).map(stat => `
-                        <div class="stats-row">
-                            <div class="stats-value">${stats.teamB.player1[stat.key]}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
-                            <div class="stats-label">${stat.label}</div>
-                            <div class="stats-value">${stats.teamB.player2[stat.key]}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
-                        </div>
-                    `).join('')}
-                `}
+                `).join('')}
             </div>
             
             <div class="stats-section">
@@ -1810,7 +1787,7 @@ function showStatisticsModal() {
                 </div>
                 
                 <div class="stats-row">
-                    <div class="stats-value stats-sequence">${gameMode === 'beginner' ? stats.longestRallySequence : stats.longestRally.sequence}</div>
+                    <div class="stats-value stats-sequence">${stats.longestRallySequence}</div>
                     <div class="stats-label">Longest Rally Sequence</div>
                     <div class="stats-value"></div>
                 </div>
@@ -1824,29 +1801,21 @@ function showStatisticsModal() {
             
             <div class="stats-section">
                 <h4>Set Scores</h4>
-                ${stats.setScores ? stats.setScores.map(set => `
-                    <div class="stats-row">
-                        <div class="stats-value ${set.winner === 'a' ? 'winning-score' : ''}">${set.scoreA}</div>
-                        <div class="stats-label">Set ${set.set}</div>
-                        <div class="stats-value ${set.winner === 'b' ? 'winning-score' : ''}">${set.scoreB}</div>
-                    </div>
-                `).join('') : `
-                    <div class="stats-row">
-                        <div class="stats-value ${appState.teams.a.setScores[0] > appState.teams.b.setScores[0] ? 'winning-score' : ''}">${appState.teams.a.setScores[0]}</div>
-                        <div class="stats-label">Set 1</div>
-                        <div class="stats-value ${appState.teams.b.setScores[0] > appState.teams.a.setScores[0] ? 'winning-score' : ''}">${appState.teams.b.setScores[0]}</div>
-                    </div>
-                    <div class="stats-row">
-                        <div class="stats-value ${appState.teams.a.setScores[1] > appState.teams.b.setScores[1] ? 'winning-score' : ''}">${appState.teams.a.setScores[1]}</div>
-                        <div class="stats-label">Set 2</div>
-                        <div class="stats-value ${appState.teams.b.setScores[1] > appState.teams.a.setScores[1] ? 'winning-score' : ''}">${appState.teams.b.setScores[1]}</div>
-                    </div>
-                    <div class="stats-row">
-                        <div class="stats-value ${appState.teams.a.setScores[2] > appState.teams.b.setScores[2] ? 'winning-score' : ''}">${appState.teams.a.setScores[2]}</div>
-                        <div class="stats-label">Set 3</div>
-                        <div class="stats-value ${appState.teams.b.setScores[2] > appState.teams.a.setScores[2] ? 'winning-score' : ''}">${appState.teams.b.setScores[2]}</div>
-                    </div>
-                `}
+                <div class="stats-row">
+                    <div class="stats-value ${appState.teams.a.setScores[0] > appState.teams.b.setScores[0] ? 'winning-score' : ''}">${appState.teams.a.setScores[0]}</div>
+                    <div class="stats-label">Set 1</div>
+                    <div class="stats-value ${appState.teams.b.setScores[0] > appState.teams.a.setScores[0] ? 'winning-score' : ''}">${appState.teams.b.setScores[0]}</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-value ${appState.teams.a.setScores[1] > appState.teams.b.setScores[1] ? 'winning-score' : ''}">${appState.teams.a.setScores[1]}</div>
+                    <div class="stats-label">Set 2</div>
+                    <div class="stats-value ${appState.teams.b.setScores[1] > appState.teams.a.setScores[1] ? 'winning-score' : ''}">${appState.teams.b.setScores[1]}</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-value ${appState.teams.a.setScores[2] > appState.teams.b.setScores[2] ? 'winning-score' : ''}">${appState.teams.a.setScores[2]}</div>
+                    <div class="stats-label">Set 3</div>
+                    <div class="stats-value ${appState.teams.b.setScores[2] > appState.teams.a.setScores[2] ? 'winning-score' : ''}">${appState.teams.b.setScores[2]}</div>
+                </div>
             </div>
         </div>
         <button class="close-modal">×</button>
@@ -1859,8 +1828,7 @@ function showStatisticsModal() {
     document.body.style.overflow = 'hidden';
 }
 
-// ...existing code...
-function showStatisticsModal1() {
+function showAdvancedStatisticsModal() {
     const stats = calculateMatchStatistics();
     const modalContent = statisticsModal.querySelector('.modal-content');
     
@@ -1877,7 +1845,7 @@ function showStatisticsModal1() {
             <div class="stats-section">
                 <h4>Team Stats</h4>
                 ${stateMachine.__statisticsTable__.map(stat => `
-                                        <div class="stats-row">
+                    <div class="stats-row">
                         <div class="stats-value">${stats.teamA[stat.key]}${stat.key === 'pointsWon' &&stats.teamA.pointsPercentage ? ` (${stats.teamA.pointsPercentage}%)` : stat.key === 'attackEfficiency' ? '%' : ''}</div>
                         <div class="stats-label">${stat.label}</div>
                         <div class="stats-value">${stats.teamB[stat.key]}${stat.key === 'pointsWon' && stats.teamB.pointsPercentage ? ` (${stats.teamB.pointsPercentage}%)` : stat.key === 'attackEfficiency' ? '%' : ''}</div>
@@ -1896,7 +1864,7 @@ function showStatisticsModal1() {
                     <div class="stats-row">
                         <div class="stats-value">${stats.teamA.player1[stat.key]}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
                         <div class="stats-label">${stat.label}</div>
-                        <div class="stats-value">${stats.teamA.player2[stat.key]}${stat.key=== 'attackEfficiency' ? '%' : ''}</div>
+                        <div class="stats-value">${stats.teamA.player2[stat.key]}${stat.key === 'attackEfficiency' ? '%' : ''}</div>
                     </div>
                 `).join('')}
             </div>
