@@ -55,8 +55,8 @@ const advancedStateMachine = {
         "transitions": [
             { "action": "Atk1", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 1", "category": "set" },
             { "action": "Atk2", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 2", "category": "set" },
-            { "action": "SetE1", "nextState": "Point Server", "style": "point", "help": "Set err by player 1", "category": "set" },
-            { "action": "SetE2", "nextState": "Point Server", "style": "point", "help": "Set err by player 2", "category": "set" }
+            { "action": "SetE1", "nextState": "Point Server", "style": "error", "help": "Set err by player 1", "category": "set" },
+            { "action": "SetE2", "nextState": "Point Server", "style": "error", "help": "Set err by player 2", "category": "set" }
         ]
     },
     "Zone of Attack Rec": {
@@ -95,8 +95,8 @@ const advancedStateMachine = {
         "transitions": [
             { "action": "Win", "nextState": "Point Receiver", "style": "point", "help": "Winning attack", "category": "atk Result" },
             { "action": "Err", "nextState": "Point Server", "style": "error", "help": "Attack error", "category": "atk Result" },
-            { "action": "Blk1", "nextState": "Point Server", "style": "point", "help": "Blocked by player 1", "category": "atk Result" },
-            { "action": "Blk2", "nextState": "Point Server", "style": "point", "help": "Blocked by player 2", "category": "atk Result" },
+            { "action": "Blk1", "nextState": "Point Server", "style": "error", "help": "Blocked by player 1", "category": "atk Result" },
+            { "action": "Blk2", "nextState": "Point Server", "style": "error", "help": "Blocked by player 2", "category": "atk Result" },
             { "action": "Def1", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 1", "category": "atk Res" },
             { "action": "Def2", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 2", "category": "atk Res" }
         ]
@@ -106,8 +106,8 @@ const advancedStateMachine = {
         "transitions": [
             { "action": "Atk1", "nextState": "Zone of Attack Srv", "help": "Attack by player 1", "category": "set" },
             { "action": "Atk2", "nextState": "Zone of Attack Srv", "help": "Attack by player 2", "category": "set" },
-            { "action": "SetE1", "nextState": "Point Receiver", "style": "point", "help": "Set err by player 1", "category": "set" },
-            { "action": "SetE2", "nextState": "Point Receiver", "style": "point", "help": "Set err by player 2", "category": "set" }
+            { "action": "SetE1", "nextState": "Point Receiver", "style": "error", "help": "Set err by player 1", "category": "set" },
+            { "action": "SetE2", "nextState": "Point Receiver", "style": "error", "help": "Set err by player 2", "category": "set" }
         ]
     },
     "Zone of Attack Srv": {
@@ -146,8 +146,8 @@ const advancedStateMachine = {
         "transitions": [
             { "action": "Win", "nextState": "Point Server", "style": "point", "help": "Winning attack", "category": "atk Res" },
             { "action": "Err", "nextState": "Point Receiver", "style": "error", "help": "Attack error", "category": "atk Res" },
-            { "action": "Blk1", "nextState": "Point Receiver", "style": "point", "help": "Blocked by player 1", "category": "atk Res" },
-            { "action": "Blk2", "nextState": "Point Receiver", "style": "point", "help": "Blocked by player 2", "category": "atk Res" },
+            { "action": "Blk1", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 1", "category": "atk Res" },
+            { "action": "Blk2", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 2", "category": "atk Res" },
             { "action": "Def1", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 1", "category": "atk Res" },
             { "action": "Def2", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 2", "category": "atk Res" }
         ]
@@ -157,8 +157,8 @@ const advancedStateMachine = {
         "transitions": [
             { "action": "Atk1", "nextState": "Zone of Attack Rec", "help": "Attack by player 1", "category": "set" },
             { "action": "Atk2", "nextState": "Zone of Attack Rec", "help": "Attack by player 2", "category": "set" },
-            { "action": "SetE1", "nextState": "Point Server", "style": "point", "help": "Set err by player 1", "category": "set" },
-            { "action": "SetE2", "nextState": "Point Server", "style": "point", "help": "Set err by player 2", "category": "set" }
+            { "action": "SetE1", "nextState": "Point Server", "style": "error", "help": "Set err by player 1", "category": "set" },
+            { "action": "SetE2", "nextState": "Point Server", "style": "error", "help": "Set err by player 2", "category": "set" }
         ]
     },
     "Point Server": {
@@ -940,9 +940,34 @@ function updateScoreboard() {
         document.getElementById(`team-b-set${i+1}`).textContent = appState.teams.b.setScores[i];
     }
 }
-
-// Update action buttons based on current state
 function updateActionButtons() {
+    actionButtonsEl.innerHTML = '';
+
+    const currentStateEl = document.getElementById('current-state');
+    currentStateEl.textContent = getStateDisplayName(appState.currentState);
+
+    const transitions = stateMachine[appState.currentState]?.transitions || [];
+    const styles = stateMachine.__rules__.actionStyles;
+
+    transitions.forEach(transition => {
+        const button = document.createElement('button');
+        button.textContent = transition.action;
+        button.classList.add('action-button');
+
+        // Correctly apply the style class from actionStyles
+        if (transition.style && styles[transition.style]) {
+            button.classList.add(`button-${styles[transition.style]}`);
+        }
+
+        button.addEventListener('click', () => {
+            handleAction(transition.action, transition.nextState);
+        });
+
+        actionButtonsEl.appendChild(button);
+    });
+}
+// Update action buttons based on current state
+function updateActionButtons1() {
     // Clear existing buttons
     actionButtonsEl.innerHTML = '';
     
