@@ -93,10 +93,10 @@ const advancedStateMachine = {
     "Attack by Receiving Team": {
         "displayName": "Attack by {receivingTeam}",
         "transitions": [
-            { "action": "Win", "nextState": "Point Receiver", "style": "point", "help": "Winning attack", "category": "atk Result", "changeTurn": true },
-            { "action": "Err", "nextState": "Point Server", "style": "error", "help": "Attack error", "category": "atk Result", "changeTurn": true },
-            { "action": "Blk1", "nextState": "Point Server", "style": "error", "help": "Blocked by player 1", "category": "atk Result", "changeTurn": true },
-            { "action": "Blk2", "nextState": "Point Server", "style": "error", "help": "Blocked by player 2", "category": "atk Result", "changeTurn": true },
+            { "action": "Win", "nextState": "Point Receiver", "style": "point", "help": "Winning attack", "category": "atk Result", "changeTurn": false },
+            { "action": "Err", "nextState": "Point Server", "style": "error", "help": "Attack error", "category": "atk Result", "changeTurn": false },
+            { "action": "Blk1", "nextState": "Point Server", "style": "error", "help": "Blocked by player 1", "category": "atk Result", "changeTurn": false },
+            { "action": "Blk2", "nextState": "Point Server", "style": "error", "help": "Blocked by player 2", "category": "atk Result", "changeTurn": false },
             { "action": "Def1", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 1", "category": "atk Res", "changeTurn": true },
             { "action": "Def2", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 2", "category": "atk Res", "changeTurn": true }
         ]
@@ -144,10 +144,10 @@ const advancedStateMachine = {
     "Attack by Serving Team": {
         "displayName": "Attack by {servingTeam}",
         "transitions": [
-            { "action": "Win", "nextState": "Point Server", "style": "point", "help": "Winning attack", "category": "atk Res", "changeTurn": true },
-            { "action": "Err", "nextState": "Point Receiver", "style": "error", "help": "Attack error", "category": "atk Res", "changeTurn": true },
-            { "action": "Blk1", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 1", "category": "atk Res", "changeTurn": true },
-            { "action": "Blk2", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 2", "category": "atk Res", "changeTurn": true },
+            { "action": "Win", "nextState": "Point Server", "style": "point", "help": "Winning attack", "category": "atk Res", "changeTurn": false },
+            { "action": "Err", "nextState": "Point Receiver", "style": "error", "help": "Attack error", "category": "atk Res", "changeTurn": false },
+            { "action": "Blk1", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 1", "category": "atk Res", "changeTurn": false },
+            { "action": "Blk2", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 2", "category": "atk Res", "changeTurn": false },
             { "action": "Def1", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 1", "category": "atk Res", "changeTurn": true },
             { "action": "Def2", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 2", "category": "atk Res", "changeTurn": true }
         ]
