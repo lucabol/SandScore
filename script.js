@@ -38,127 +38,127 @@ const advancedStateMachine = {
     "Serve": {
         "displayName": "{servingTeam} Serve",
         "transitions": [
-            { "action": "Ace", "nextState": "Point Server", "style": "point", "help": "Direct point from serve", "category": "serve" },
-            { "action": "SErr", "nextState": "Point Receiver", "style": "error", "help": "Service error", "category": "serve" },
-            { "action": "RE1", "nextState": "Point Server", "style": "error", "help": "Recept error by player 1", "category": "reception" },
-            { "action": "RE2", "nextState": "Point Server", "style": "error", "help": "Recept error by player 2", "category": "reception" },
-            { "action": "R-1", "nextState": "Reception", "style": "regular", "help": "Poor reception by player 1", "category": "reception" },
-            { "action": "R-2", "nextState": "Reception", "style": "regular", "help": "Poor reception by player 2", "category": "reception" },
-            { "action": "R=1", "nextState": "Reception", "style": "regular", "help": "Medium reception by player 1", "category": "reception" },
-            { "action": "R=2", "nextState": "Reception", "style": "regular", "help": "Medium reception by player 2", "category": "reception" },
-            { "action": "R+1", "nextState": "Reception", "style": "regular", "help": "Good reception by player 1", "category": "reception" },
-            { "action": "R+2", "nextState": "Reception", "style": "regular", "help": "Good reception by player 2", "category": "reception" }
+            { "action": "Ace", "nextState": "Point Server", "style": "point", "help": "Direct point from serve", "category": "serve", "changeTurn": false },
+            { "action": "SErr", "nextState": "Point Receiver", "style": "error", "help": "Service error", "category": "serve", "changeTurn": false },
+            { "action": "RE1", "nextState": "Point Server", "style": "error", "help": "Recept error by player 1", "category": "reception", "changeTurn": false },
+            { "action": "RE2", "nextState": "Point Server", "style": "error", "help": "Recept error by player 2", "category": "reception", "changeTurn": false },
+            { "action": "R-1", "nextState": "Reception", "style": "regular", "help": "Poor reception by player 1", "category": "reception", "changeTurn": true },
+            { "action": "R-2", "nextState": "Reception", "style": "regular", "help": "Poor reception by player 2", "category": "reception", "changeTurn": true },
+            { "action": "R=1", "nextState": "Reception", "style": "regular", "help": "Medium reception by player 1", "category": "reception", "changeTurn": true },
+            { "action": "R=2", "nextState": "Reception", "style": "regular", "help": "Medium reception by player 2", "category": "reception", "changeTurn": true },
+            { "action": "R+1", "nextState": "Reception", "style": "regular", "help": "Good reception by player 1", "category": "reception", "changeTurn": true },
+            { "action": "R+2", "nextState": "Reception", "style": "regular", "help": "Good reception by player 2", "category": "reception", "changeTurn": true }
         ]
     },
     "Reception": {
         "displayName": "{receivingTeam} Received",
         "transitions": [
-            { "action": "Atk1", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 1", "category": "set" },
-            { "action": "Atk2", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 2", "category": "set" },
-            { "action": "SetE1", "nextState": "Point Server", "style": "error", "help": "Set err by player 1", "category": "set" },
-            { "action": "SetE2", "nextState": "Point Server", "style": "error", "help": "Set err by player 2", "category": "set" }
+            { "action": "Atk1", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 1", "category": "set", "changeTurn": false },
+            { "action": "Atk2", "nextState": "Zone of Attack Rec", "style": "regular", "help": "Attack by player 2", "category": "set", "changeTurn": false },
+            { "action": "SetE1", "nextState": "Point Server", "style": "error", "help": "Set err by player 1", "category": "set", "changeTurn": false },
+            { "action": "SetE2", "nextState": "Point Server", "style": "error", "help": "Set err by player 2", "category": "set", "changeTurn": false }
         ]
     },
     "Zone of Attack Rec": {
         "displayName": "Attack Zone for {receivingTeam}",
         "transitions": [
-            { "action": "V1", "nextState": "Trajectory Rec", "help": "High ball position 1", "category": "atk Zone" },
-            { "action": "V2", "nextState": "Trajectory Rec", "help": "High ball position 2", "category": "atk Zone" },
-            { "action": "V3", "nextState": "Trajectory Rec", "help": "High ball position 3", "category": "atk Zone" },
-            { "action": "V4", "nextState": "Trajectory Rec", "help": "High ball position 4", "category": "atk Zone" },
-            { "action": "V5", "nextState": "Trajectory Rec", "help": "High ball position 5", "category": "atk Zone" },
-            { "action": "X1", "nextState": "Trajectory Rec", "help": "Low ball position 1", "category": "atk Zone" },
-            { "action": "X2", "nextState": "Trajectory Rec", "help": "Low ball position 2", "category": "atk Zone" },
-            { "action": "X3", "nextState": "Trajectory Rec", "help": "Low ball position 3", "category": "atk Zone" },
-            { "action": "X4", "nextState": "Trajectory Rec", "help": "Low ball position 4", "category": "atk Zone" },
-            { "action": "X5", "nextState": "Trajectory Rec", "help": "Low ball position 5", "category": "atk Zone" },
-            { "action": "I1", "nextState": "Trajectory Rec", "help": "Around setter position 1", "category": "atk Zone" },
-            { "action": "I2", "nextState": "Trajectory Rec", "help": "Around setter position 2", "category": "atk Zone" },
-            { "action": "I3", "nextState": "Trajectory Rec", "help": "Around setter position 3", "category": "atk Zone" },
-            { "action": "I4", "nextState": "Trajectory Rec", "help": "Around setter position 4", "category": "atk Zone" },
-            { "action": "I5", "nextState": "Trajectory Rec", "help": "Around setter position 5", "category": "atk Zone" }
+            { "action": "V1", "nextState": "Trajectory Rec", "help": "High ball position 1", "category": "atk Zone", "changeTurn": false },
+            { "action": "V2", "nextState": "Trajectory Rec", "help": "High ball position 2", "category": "atk Zone", "changeTurn": false },
+            { "action": "V3", "nextState": "Trajectory Rec", "help": "High ball position 3", "category": "atk Zone", "changeTurn": false },
+            { "action": "V4", "nextState": "Trajectory Rec", "help": "High ball position 4", "category": "atk Zone", "changeTurn": false },
+            { "action": "V5", "nextState": "Trajectory Rec", "help": "High ball position 5", "category": "atk Zone", "changeTurn": false },
+            { "action": "X1", "nextState": "Trajectory Rec", "help": "Low ball position 1", "category": "atk Zone", "changeTurn": false },
+            { "action": "X2", "nextState": "Trajectory Rec", "help": "Low ball position 2", "category": "atk Zone", "changeTurn": false },
+            { "action": "X3", "nextState": "Trajectory Rec", "help": "Low ball position 3", "category": "atk Zone", "changeTurn": false },
+            { "action": "X4", "nextState": "Trajectory Rec", "help": "Low ball position 4", "category": "atk Zone", "changeTurn": false },
+            { "action": "X5", "nextState": "Trajectory Rec", "help": "Low ball position 5", "category": "atk Zone", "changeTurn": false },
+            { "action": "I1", "nextState": "Trajectory Rec", "help": "Around setter position 1", "category": "atk Zone", "changeTurn": false },
+            { "action": "I2", "nextState": "Trajectory Rec", "help": "Around setter position 2", "category": "atk Zone", "changeTurn": false },
+            { "action": "I3", "nextState": "Trajectory Rec", "help": "Around setter position 3", "category": "atk Zone", "changeTurn": false },
+            { "action": "I4", "nextState": "Trajectory Rec", "help": "Around setter position 4", "category": "atk Zone", "changeTurn": false },
+            { "action": "I5", "nextState": "Trajectory Rec", "help": "Around setter position 5", "category": "atk Zone", "changeTurn": false }
         ]
     },
     "Trajectory Rec": {
         "displayName": "Trajectory {receivingTeam}",
         "transitions": [
-            { "action": "Diag", "nextState": "Attack by Receiving Team", "help": "Diagonal attack", "category": "atk Traj" },
-            { "action": "DiagL", "nextState": "Attack by Receiving Team", "help": "Long diagonal attack", "category": "atk Traj" },
-            { "action": "DiagS", "nextState": "Attack by Receiving Team", "help": "Short diagonal attack", "category": "atk Traj" },
-            { "action": "Line", "nextState": "Attack by Receiving Team", "help": "Line attack", "category": "atk Traj" },
-            { "action": "LineS", "nextState": "Attack by Receiving Team", "help": "Short line attack", "category": "atk Traj" },
-            { "action": "Cut", "nextState": "Attack by Receiving Team", "help": "Cut shot", "category": "atk Traj" }
+            { "action": "Diag", "nextState": "Attack by Receiving Team", "help": "Diagonal attack", "category": "atk Traj", "changeTurn": false },
+            { "action": "DiagL", "nextState": "Attack by Receiving Team", "help": "Long diagonal attack", "category": "atk Traj", "changeTurn": false },
+            { "action": "DiagS", "nextState": "Attack by Receiving Team", "help": "Short diagonal attack", "category": "atk Traj", "changeTurn": false },
+            { "action": "Line", "nextState": "Attack by Receiving Team", "help": "Line attack", "category": "atk Traj", "changeTurn": false },
+            { "action": "LineS", "nextState": "Attack by Receiving Team", "help": "Short line attack", "category": "atk Traj", "changeTurn": false },
+            { "action": "Cut", "nextState": "Attack by Receiving Team", "help": "Cut shot", "category": "atk Traj", "changeTurn": false }
         ]
     },
     "Attack by Receiving Team": {
         "displayName": "Attack by {receivingTeam}",
         "transitions": [
-            { "action": "Win", "nextState": "Point Receiver", "style": "point", "help": "Winning attack", "category": "atk Result" },
-            { "action": "Err", "nextState": "Point Server", "style": "error", "help": "Attack error", "category": "atk Result" },
-            { "action": "Blk1", "nextState": "Point Server", "style": "error", "help": "Blocked by player 1", "category": "atk Result" },
-            { "action": "Blk2", "nextState": "Point Server", "style": "error", "help": "Blocked by player 2", "category": "atk Result" },
-            { "action": "Def1", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 1", "category": "atk Res" },
-            { "action": "Def2", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 2", "category": "atk Res" }
+            { "action": "Win", "nextState": "Point Receiver", "style": "point", "help": "Winning attack", "category": "atk Result", "changeTurn": true },
+            { "action": "Err", "nextState": "Point Server", "style": "error", "help": "Attack error", "category": "atk Result", "changeTurn": true },
+            { "action": "Blk1", "nextState": "Point Server", "style": "error", "help": "Blocked by player 1", "category": "atk Result", "changeTurn": true },
+            { "action": "Blk2", "nextState": "Point Server", "style": "error", "help": "Blocked by player 2", "category": "atk Result", "changeTurn": true },
+            { "action": "Def1", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 1", "category": "atk Res", "changeTurn": true },
+            { "action": "Def2", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 2", "category": "atk Res", "changeTurn": true }
         ]
     },
     "Defense By Serving Team": {
         "displayName": "Defense by {servingTeam}",
         "transitions": [
-            { "action": "Atk1", "nextState": "Zone of Attack Srv", "help": "Attack by player 1", "category": "set" },
-            { "action": "Atk2", "nextState": "Zone of Attack Srv", "help": "Attack by player 2", "category": "set" },
-            { "action": "SetE1", "nextState": "Point Receiver", "style": "error", "help": "Set err by player 1", "category": "set" },
-            { "action": "SetE2", "nextState": "Point Receiver", "style": "error", "help": "Set err by player 2", "category": "set" }
+            { "action": "Atk1", "nextState": "Zone of Attack Srv", "help": "Attack by player 1", "category": "set", "changeTurn": false },
+            { "action": "Atk2", "nextState": "Zone of Attack Srv", "help": "Attack by player 2", "category": "set", "changeTurn": false },
+            { "action": "SetE1", "nextState": "Point Receiver", "style": "error", "help": "Set err by player 1", "category": "set", "changeTurn": false },
+            { "action": "SetE2", "nextState": "Point Receiver", "style": "error", "help": "Set err by player 2", "category": "set", "changeTurn": false }
         ]
     },
     "Zone of Attack Srv": {
         "displayName": "Attack Zone for {servingTeam}",
         "transitions": [
-            { "action": "V1", "nextState": "Trajectory Srv", "help": "High ball position 1", "category": "atk Zone" },
-            { "action": "V2", "nextState": "Trajectory Srv", "help": "High ball position 2", "category": "atk Zone" },
-            { "action": "V3", "nextState": "Trajectory Srv", "help": "High ball position 3", "category": "atk Zone" },
-            { "action": "V4", "nextState": "Trajectory Srv", "help": "High ball position 4", "category": "atk Zone" },
-            { "action": "V5", "nextState": "Trajectory Srv", "help": "High ball position 5", "category": "atk Zone" },
-            { "action": "X1", "nextState": "Trajectory Srv", "help": "Low ball position 1", "category": "atk Zone" },
-            { "action": "X2", "nextState": "Trajectory Srv", "help": "Low ball position 2", "category": "atk Zone" },
-            { "action": "X3", "nextState": "Trajectory Srv", "help": "Low ball position 3", "category": "atk Zone" },
-            { "action": "X4", "nextState": "Trajectory Srv", "help": "Low ball position 4", "category": "atk Zone" },
-            { "action": "X5", "nextState": "Trajectory Srv", "help": "Low ball position 5", "category": "atk Zone" },
-            { "action": "I1", "nextState": "Trajectory Srv", "help": "Around setter position 1", "category": "atk Zone" },
-            { "action": "I2", "nextState": "Trajectory Srv", "help": "Around setter position 2", "category": "atk Zone" },
-            { "action": "I3", "nextState": "Trajectory Srv", "help": "Around setter position 3", "category": "atk Zone" },
-            { "action": "I4", "nextState": "Trajectory Srv", "help": "Around setter position 4", "category": "atk Zone" },
-            { "action": "I5", "nextState": "Trajectory Srv", "help": "Around setter position 5", "category": "atk Zone" }
+            { "action": "V1", "nextState": "Trajectory Srv", "help": "High ball position 1", "category": "atk Zone", "changeTurn": false },
+            { "action": "V2", "nextState": "Trajectory Srv", "help": "High ball position 2", "category": "atk Zone", "changeTurn": false },
+            { "action": "V3", "nextState": "Trajectory Srv", "help": "High ball position 3", "category": "atk Zone", "changeTurn": false },
+            { "action": "V4", "nextState": "Trajectory Srv", "help": "High ball position 4", "category": "atk Zone", "changeTurn": false },
+            { "action": "V5", "nextState": "Trajectory Srv", "help": "High ball position 5", "category": "atk Zone", "changeTurn": false },
+            { "action": "X1", "nextState": "Trajectory Srv", "help": "Low ball position 1", "category": "atk Zone", "changeTurn": false },
+            { "action": "X2", "nextState": "Trajectory Srv", "help": "Low ball position 2", "category": "atk Zone", "changeTurn": false },
+            { "action": "X3", "nextState": "Trajectory Srv", "help": "Low ball position 3", "category": "atk Zone", "changeTurn": false },
+            { "action": "X4", "nextState": "Trajectory Srv", "help": "Low ball position 4", "category": "atk Zone", "changeTurn": false },
+            { "action": "X5", "nextState": "Trajectory Srv", "help": "Low ball position 5", "category": "atk Zone", "changeTurn": false },
+            { "action": "I1", "nextState": "Trajectory Srv", "help": "Around setter position 1", "category": "atk Zone", "changeTurn": false },
+            { "action": "I2", "nextState": "Trajectory Srv", "help": "Around setter position 2", "category": "atk Zone", "changeTurn": false },
+            { "action": "I3", "nextState": "Trajectory Srv", "help": "Around setter position 3", "category": "atk Zone", "changeTurn": false },
+            { "action": "I4", "nextState": "Trajectory Srv", "help": "Around setter position 4", "category": "atk Zone", "changeTurn": false },
+            { "action": "I5", "nextState": "Trajectory Srv", "help": "Around setter position 5", "category": "atk Zone", "changeTurn": false }
         ]
     },
     "Trajectory Srv": {
         "displayName": "Trajectory {servingTeam}",
         "transitions": [
-            { "action": "Diag", "nextState": "Attack by Serving Team", "help": "Diagonal attack", "category": "atk Traj" },
-            { "action": "DiagL", "nextState": "Attack by Serving Team", "help": "Long diagonal attack", "category": "atk Traj" },
-            { "action": "DiagS", "nextState": "Attack by Serving Team", "help": "Short diagonal attack", "category": "atk Traj" },
-            { "action": "Line", "nextState": "Attack by Serving Team", "help": "Line attack", "category": "atk Traj" },
-            { "action": "LineS", "nextState": "Attack by Serving Team", "help": "Short line attack", "category": "atk Traj" },
-            { "action": "Cut", "nextState": "Attack by Serving Team", "help": "Cut shot", "category": "atk Traj" }
+            { "action": "Diag", "nextState": "Attack by Serving Team", "help": "Diagonal attack", "category": "atk Traj", "changeTurn": false },
+            { "action": "DiagL", "nextState": "Attack by Serving Team", "help": "Long diagonal attack", "category": "atk Traj", "changeTurn": false },
+            { "action": "DiagS", "nextState": "Attack by Serving Team", "help": "Short diagonal attack", "category": "atk Traj", "changeTurn": false },
+            { "action": "Line", "nextState": "Attack by Serving Team", "help": "Line attack", "category": "atk Traj", "changeTurn": false },
+            { "action": "LineS", "nextState": "Attack by Serving Team", "help": "Short line attack", "category": "atk Traj", "changeTurn": false },
+            { "action": "Cut", "nextState": "Attack by Serving Team", "help": "Cut shot", "category": "atk Traj", "changeTurn": false }
         ]
     },
     "Attack by Serving Team": {
         "displayName": "Attack by {servingTeam}",
         "transitions": [
-            { "action": "Win", "nextState": "Point Server", "style": "point", "help": "Winning attack", "category": "atk Res" },
-            { "action": "Err", "nextState": "Point Receiver", "style": "error", "help": "Attack error", "category": "atk Res" },
-            { "action": "Blk1", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 1", "category": "atk Res" },
-            { "action": "Blk2", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 2", "category": "atk Res" },
-            { "action": "Def1", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 1", "category": "atk Res" },
-            { "action": "Def2", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 2", "category": "atk Res" }
+            { "action": "Win", "nextState": "Point Server", "style": "point", "help": "Winning attack", "category": "atk Res", "changeTurn": true },
+            { "action": "Err", "nextState": "Point Receiver", "style": "error", "help": "Attack error", "category": "atk Res", "changeTurn": true },
+            { "action": "Blk1", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 1", "category": "atk Res", "changeTurn": true },
+            { "action": "Blk2", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 2", "category": "atk Res", "changeTurn": true },
+            { "action": "Def1", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 1", "category": "atk Res", "changeTurn": true },
+            { "action": "Def2", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 2", "category": "atk Res", "changeTurn": true }
         ]
     },
     "Defense By Receiving Team": {
         "displayName": "Defense by {receivingTeam}",
         "transitions": [
-            { "action": "Atk1", "nextState": "Zone of Attack Rec", "help": "Attack by player 1", "category": "set" },
-            { "action": "Atk2", "nextState": "Zone of Attack Rec", "help": "Attack by player 2", "category": "set" },
-            { "action": "SetE1", "nextState": "Point Server", "style": "error", "help": "Set err by player 1", "category": "set" },
-            { "action": "SetE2", "nextState": "Point Server", "style": "error", "help": "Set err by player 2", "category": "set" }
+            { "action": "Atk1", "nextState": "Zone of Attack Rec", "help": "Attack by player 1", "category": "set", "changeTurn": false },
+            { "action": "Atk2", "nextState": "Zone of Attack Rec", "help": "Attack by player 2", "category": "set", "changeTurn": false },
+            { "action": "SetE1", "nextState": "Point Server", "style": "error", "help": "Set err by player 1", "category": "set", "changeTurn": false },
+            { "action": "SetE2", "nextState": "Point Server", "style": "error", "help": "Set err by player 2", "category": "set", "changeTurn": false }
         ]
     },
     "Point Server": {
@@ -189,15 +189,38 @@ const advancedStateMachine = {
 function calculateTotalAttacks(team, rallyHistory) {
     let count = 0;
     Object.values(rallyHistory).forEach(rally => {
-        let isReceivingTeam = rally.actions[0].startsWith('R'); // Check if this team received first
-        let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a'); // First attack is by receiving team
+        // Determine which team's turn it is initially
+        let isReceivingTeam = rally.actions[0].startsWith('R');
+        let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a');
         
+        // Go through each action in the rally
         rally.actions.forEach(action => {
-            if (action.match(/^(Win|Err|Blk\d|Win\d|Err\d)$/)) {
+            // Find this action in any state's transitions to check if it changes turn
+            let transition = null;
+            for (const stateName in stateMachine) {
+                if (stateName.startsWith('__')) continue; // Skip metadata
+                
+                const stateTransitions = stateMachine[stateName]?.transitions || [];
+                const foundTransition = stateTransitions.find(t => t.action === action);
+                
+                if (foundTransition) {
+                    transition = foundTransition;
+                    break;
+                }
+            }
+
+            // Check if this is an attack action & it's this team's turn
+            if (transition && 
+                (action === 'Win' || action === 'Err' || action.startsWith('Blk') || 
+                 action === 'Win1' || action === 'Win2' || action === 'Err1' || action === 'Err2')) {
                 if (isTeamsTurn) {
                     count++;
                 }
-                isTeamsTurn = !isTeamsTurn; // Switch turns after each attack
+            }
+            
+            // Use changeTurn property to determine if we need to switch turns
+            if (transition && transition.changeTurn) {
+                isTeamsTurn = !isTeamsTurn;
             }
         });
     });
@@ -339,38 +362,38 @@ const beginnerStateMachine = {
     "Serve": {
         "displayName": "{servingTeam} Serve",
         "transitions": [
-            { "action": "Ace", "nextState": "Point Server", "style": "point", "help": "Direct point from serve", "category": "serve" },
-            { "action": "SErr", "nextState": "Point Receiver", "style": "error", "help": "Service error", "category": "serve" },
-            { "action": "RE1", "nextState": "Point Server", "style": "error", "help": "Reception error by player 1", "category": "reception" },
-            { "action": "RE2", "nextState": "Point Server", "style": "error", "help": "Reception error by player 2", "category": "reception" },
-            { "action": "R1", "nextState": "Attack Receiver", "style": "regular", "help": "Reception by player 1", "category": "reception" },
-            { "action": "R2", "nextState": "Attack Receiver", "style": "regular", "help": "Reception by player 2", "category": "reception" }
+            { "action": "Ace", "nextState": "Point Server", "style": "point", "help": "Direct point from serve", "category": "serve", "changeTurn": false },
+            { "action": "SErr", "nextState": "Point Receiver", "style": "error", "help": "Service error", "category": "serve", "changeTurn": false },
+            { "action": "RE1", "nextState": "Point Server", "style": "error", "help": "Reception error by player 1", "category": "reception", "changeTurn": false },
+            { "action": "RE2", "nextState": "Point Server", "style": "error", "help": "Reception error by player 2", "category": "reception", "changeTurn": false },
+            { "action": "R1", "nextState": "Attack Receiver", "style": "regular", "help": "Reception by player 1", "category": "reception", "changeTurn": true },
+            { "action": "R2", "nextState": "Attack Receiver", "style": "regular", "help": "Reception by player 2", "category": "reception", "changeTurn": true }
         ]
     },
     "Attack Receiver": {
         "displayName": "{receivingTeam} Attack",
         "transitions": [
-            { "action": "Win1", "nextState": "Point Receiver", "style": "point", "help": "Winning attack by player 1", "category": "attack" },
-            { "action": "Win2", "nextState": "Point Receiver", "style": "point", "help": "Winning attack by player 2", "category": "attack" },
-            { "action": "Err1", "nextState": "Point Server", "style": "error", "help": "Attack error by player 1", "category": "attack" },
-            { "action": "Err2", "nextState": "Point Server", "style": "error", "help": "Attack error by player 2", "category": "attack" },
-            { "action": "Blk1", "nextState": "Point Server", "style": "point", "help": "Blocked by player 1", "category": "attack" },
-            { "action": "Blk2", "nextState": "Point Server", "style": "point", "help": "Blocked by player 2", "category": "attack" },
-            { "action": "Def1", "nextState": "Attack Server", "style": "regular", "help": "Defended by player 1", "category": "defense" },
-            { "action": "Def2", "nextState": "Attack Server", "style": "regular", "help": "Defended by player 2", "category": "defense" }
+            { "action": "Win1", "nextState": "Point Receiver", "style": "point", "help": "Winning attack by player 1", "category": "attack", "changeTurn": true },
+            { "action": "Win2", "nextState": "Point Receiver", "style": "point", "help": "Winning attack by player 2", "category": "attack", "changeTurn": true },
+            { "action": "Err1", "nextState": "Point Server", "style": "error", "help": "Attack error by player 1", "category": "attack", "changeTurn": true },
+            { "action": "Err2", "nextState": "Point Server", "style": "error", "help": "Attack error by player 2", "category": "attack", "changeTurn": true },
+            { "action": "Blk1", "nextState": "Point Server", "style": "point", "help": "Blocked by player 1", "category": "attack", "changeTurn": true },
+            { "action": "Blk2", "nextState": "Point Server", "style": "point", "help": "Blocked by player 2", "category": "attack", "changeTurn": true },
+            { "action": "Def1", "nextState": "Attack Server", "style": "regular", "help": "Defended by player 1", "category": "defense", "changeTurn": true },
+            { "action": "Def2", "nextState": "Attack Server", "style": "regular", "help": "Defended by player 2", "category": "defense", "changeTurn": true }
         ]
     },
     "Attack Server": {
         "displayName": "{servingTeam} Attack",
         "transitions": [
-            { "action": "Win1", "nextState": "Point Server", "style": "point", "help": "Winning attack by player 1", "category": "attack" },
-            { "action": "Win2", "nextState": "Point Server", "style": "point", "help": "Winning attack by player 2", "category": "attack" },
-            { "action": "Err1", "nextState": "Point Receiver", "style": "error", "help": "Attack error by player 1", "category": "attack" },
-            { "action": "Err2", "nextState": "Point Receiver", "style": "error", "help": "Attack error by player 2", "category": "attack" },
-            { "action": "Blk1", "nextState": "Point Receiver", "style": "point", "help": "Blocked by player 1", "category": "attack" },
-            { "action": "Blk2", "nextState": "Point Receiver", "style": "point", "help": "Blocked by player 2", "category": "attack" },
-            { "action": "Def1", "nextState": "Attack Receiver", "style": "regular", "help": "Defended by player 1", "category": "defense" },
-            { "action": "Def2", "nextState": "Attack Receiver", "style": "regular", "help": "Defended by player 2", "category": "defense" }
+            { "action": "Win1", "nextState": "Point Server", "style": "point", "help": "Winning attack by player 1", "category": "attack", "changeTurn": true },
+            { "action": "Win2", "nextState": "Point Server", "style": "point", "help": "Winning attack by player 2", "category": "attack", "changeTurn": true },
+            { "action": "Err1", "nextState": "Point Receiver", "style": "error", "help": "Attack error by player 1", "category": "attack", "changeTurn": true },
+            { "action": "Err2", "nextState": "Point Receiver", "style": "error", "help": "Attack error by player 2", "category": "attack", "changeTurn": true },
+            { "action": "Blk1", "nextState": "Point Receiver", "style": "point", "help": "Blocked by player 1", "category": "attack", "changeTurn": true },
+            { "action": "Blk2", "nextState": "Point Receiver", "style": "point", "help": "Blocked by player 2", "category": "attack", "changeTurn": true },
+            { "action": "Def1", "nextState": "Attack Receiver", "style": "regular", "help": "Defended by player 1", "category": "defense", "changeTurn": true },
+            { "action": "Def2", "nextState": "Attack Receiver", "style": "regular", "help": "Defended by player 2", "category": "defense", "changeTurn": true }
         ]
     },
     "Point Server": {
@@ -2402,7 +2425,7 @@ function generateCategoryStats() {
             // Find the transition for this action to get its category
             let category = null;
             for (const state in stateMachine) {
-                if (state.startsWith('__')) continue;
+                if (state.startsWith('__')) continue; // Skip metadata
                 const transitions = stateMachine[state].transitions || [];
                 const transition = transitions.find(t => t.action === action);
                 if (transition?.category) {
