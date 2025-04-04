@@ -2419,7 +2419,8 @@ function generateCategoryStats() {
         const actions = rally.actions;
         
         // For team stats, we need to know which team performed each action
-        let isTeamATurn = true; // Assuming team A serves first in the rally
+        // Initialize isTeamATurn based on which team is serving
+        let isTeamATurn = appState.teams.a.isServing;
         
         actions.forEach(action => {
             // Find the transition for this action to get its category
