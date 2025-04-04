@@ -375,8 +375,8 @@ const beginnerStateMachine = {
             { "action": "Win2", "nextState": "Point Receiver", "style": "point", "help": "Winning attack by player 2", "category": "attack", "statTeam": "Receiving", "statPlayer": "2" },
             { "action": "Err1", "nextState": "Point Server", "style": "error", "help": "Attack error by player 1", "category": "attack", "statTeam": "Receiving", "statPlayer": "1" },
             { "action": "Err2", "nextState": "Point Server", "style": "error", "help": "Attack error by player 2", "category": "attack", "statTeam": "Receiving", "statPlayer": "2" },
-            { "action": "Blk1", "nextState": "Point Server", "style": "point", "help": "Blocked by player 1", "category": "attack", "statTeam": "Serving", "statPlayer": "1" },
-            { "action": "Blk2", "nextState": "Point Server", "style": "point", "help": "Blocked by player 2", "category": "attack", "statTeam": "Serving", "statPlayer": "2" },
+            { "action": "Blk1", "nextState": "Point Server", "style": "error", "help": "Blocked by player 1", "category": "attack", "statTeam": "Serving", "statPlayer": "1" },
+            { "action": "Blk2", "nextState": "Point Server", "style": "error", "help": "Blocked by player 2", "category": "attack", "statTeam": "Serving", "statPlayer": "2" },
             { "action": "Def1", "nextState": "Attack Server", "style": "regular", "help": "Defended by player 1", "category": "defense", "statTeam": "Serving", "statPlayer": "1" },
             { "action": "Def2", "nextState": "Attack Server", "style": "regular", "help": "Defended by player 2", "category": "defense", "statTeam": "Serving", "statPlayer": "2" }
         ]
@@ -388,8 +388,8 @@ const beginnerStateMachine = {
             { "action": "Win2", "nextState": "Point Server", "style": "point", "help": "Winning attack by player 2", "category": "attack", "statTeam": "Serving", "statPlayer": "2" },
             { "action": "Err1", "nextState": "Point Receiver", "style": "error", "help": "Attack error by player 1", "category": "attack", "statTeam": "Serving", "statPlayer": "1" },
             { "action": "Err2", "nextState": "Point Receiver", "style": "error", "help": "Attack error by player 2", "category": "attack", "statTeam": "Serving", "statPlayer": "2" },
-            { "action": "Blk1", "nextState": "Point Receiver", "style": "point", "help": "Blocked by player 1", "category": "attack", "statTeam": "Receiving", "statPlayer": "1" },
-            { "action": "Blk2", "nextState": "Point Receiver", "style": "point", "help": "Blocked by player 2", "category": "attack", "statTeam": "Receiving", "statPlayer": "2" },
+            { "action": "Blk1", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 1", "category": "attack", "statTeam": "Receiving", "statPlayer": "1" },
+            { "action": "Blk2", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 2", "category": "attack", "statTeam": "Receiving", "statPlayer": "2" },
             { "action": "Def1", "nextState": "Attack Receiver", "style": "regular", "help": "Defended by player 1", "category": "defense", "statTeam": "Receiving", "statPlayer": "1" },
             { "action": "Def2", "nextState": "Attack Receiver", "style": "regular", "help": "Defended by player 2", "category": "defense", "statTeam": "Receiving", "statPlayer": "2" }
         ]
@@ -2391,9 +2391,111 @@ function generatePlayerStatsRows(categoryPlayerStats, categoryKey) {
     
     return html;
 }
-
 // Generate category stats from rally history
 function generateCategoryStats() {
+    // Initialize stats structure
+    const stats = {
+        team: {},
+        playerA: {},
+        playerB: {}
+    };
+    
+    // Dynamically get categories
+    const categories = getAllCategories();
+    
+    // Initialize categories
+    Object.keys(categories).forEach(category => {
+        stats.team[category] = {};
+        stats.playerA[category] = {};
+        stats.playerB[category] = {};
+    });
+    
+    // Process all rallies
+    Object.values(appState.rallyHistory).forEach(rally => {
+        const actions = rally.actions;
+        
+        // For team stats, we need to know which team performed each action
+        // Initialize isTeamATurn based on which team is serving
+        let isTeamATurn = appState.teams.a.isServing;
+
+        // Process each action in the rally
+        actions.forEach((action, actionIndex) => {
+            // Find the transition for this action to get its category and stat properties
+            let category = null;
+            let statTeam = null;
+            let statPlayer = null;
+            
+            for (const state in stateMachine) {
+                if (state.startsWith('__')) continue; // Skip metadata
+                const transitions = stateMachine[state].transitions || [];
+                const transition = transitions.find(t => t.action === action);
+                if (transition) {
+                    category = transition.category;
+                    statTeam = transition.statTeam;
+                    statPlayer = transition.statPlayer;
+                    break;
+                }
+            }
+            
+            if (category && statTeam) {
+                // Determine which team performed the action based on statTeam
+                const isServingTeamAction = statTeam === 'Serving';
+                const team = isServingTeamAction 
+                    ? (appState.teams.a.isServing ? 'a' : 'b')
+                    : (appState.teams.a.isServing ? 'b' : 'a');
+                
+                // Initialize team stats for this action if needed
+                if (!stats.team[category][action]) {
+                    stats.team[category][action] = { a: 0, b: 0 };
+                }
+                stats.team[category][action][team]++;
+                
+                // Handle player stats based on statPlayer value
+                const teamStats = team === 'a' ? stats.playerA : stats.playerB;
+                if (!teamStats[category][action]) {
+                    teamStats[category][action] = { 1: 0, 2: 0 };
+                }
+                
+                // Determine which player to attribute the stat to
+                if (statPlayer === '1' || statPlayer === '2') {
+                    // Direct player attribution
+                    const playerNum = parseInt(statPlayer);
+                    teamStats[category][action][playerNum]++;
+                } else if (statPlayer === '0') {
+                    // Team-only stat, attribute to both players
+                    teamStats[category][action][1]++;
+                    teamStats[category][action][2]++;
+                } else if (statPlayer === '-1') {
+                    // Find last player to touch the ball by looking backwards
+                    let playerNum = null;
+                    for (let i = actionIndex - 1; i >= 0; i--) {
+                        const prevAction = actions[i];
+                        const playerMatch = prevAction.match(/(\d)$/);
+                        if (playerMatch) {
+                            playerNum = parseInt(playerMatch[1]);
+                            if (playerNum === 1 || playerNum === 2) {
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // If we found a player, attribute the stat to them
+                    if (playerNum === 1 || playerNum === 2) {
+                        teamStats[category][action][playerNum]++;
+                    } else {
+                        // If we couldn't find a specific player, attribute to both
+                        teamStats[category][action][1]++;
+                        teamStats[category][action][2]++;
+                    }
+                }
+            }
+        });
+    });
+    
+    return stats;
+}
+// Generate category stats from rally history
+function generateCategoryStats1() {
     // Initialize stats structure
     const stats = {
         team: {},
