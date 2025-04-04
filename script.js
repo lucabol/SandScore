@@ -966,32 +966,6 @@ function updateActionButtons() {
         actionButtonsEl.appendChild(button);
     });
 }
-// Update action buttons based on current state
-function updateActionButtons1() {
-    // Clear existing buttons
-    actionButtonsEl.innerHTML = '';
-    
-    // Update the state display
-    const currentStateEl = document.getElementById('current-state');
-    currentStateEl.textContent = getStateDisplayName(appState.currentState);
-    
-    // Show action buttons for the current state
-    const transitions = stateMachine[appState.currentState]?.transitions || [];
-    const styles = stateMachine.__rules__.actionStyles;
-    
-    transitions.forEach(transition => {
-        const button = document.createElement('button');
-        button.textContent = transition.action;
-        button.classList.add('action-button');
-        if (transition.style && styles[transition.style]) {
-            button.classList.add(`button-${styles[transition.style]}`);
-        }
-        button.addEventListener('click', () => {
-            handleAction(transition.action, transition.nextState);
-        });
-        actionButtonsEl.appendChild(button);
-    });
-}
 
 // Handle action button click
 async function handleAction(action, nextState) {
