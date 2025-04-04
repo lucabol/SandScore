@@ -2053,9 +2053,8 @@ function calculateMatchStatistics() {
         const teamKey = scoringTeam === 'a' ? 'teamA' : 'teamB';
         const opponentKey = scoringTeam === 'a' ? 'teamB' : 'teamA';
 
-        // Track which team's turn it is to attack, starting with the receiving team
-        let isReceivingTeam = rally.actions[0].startsWith('R');
-        let isTeamATurn = isReceivingTeam ? false : true; // First attack is by receiving team
+        // Track which team's turn it is to attack, starting with the serving team
+        let isTeamATurn = appState.teams.a.isServing;
 
         rally.actions.forEach((action, index) => {
             if (action.startsWith('Atk')) {
