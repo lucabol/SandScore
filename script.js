@@ -2415,54 +2415,57 @@ function generateCategoryStats() {
     Object.values(appState.rallyHistory).forEach(rally => {
         const actions = rally.actions;
         
-        // For team stats, we need to know which team performed each action
-        // Initialize isTeamATurn based on which team is serving
-        let isTeamATurn = appState.teams.a.isServing;
-        
+        // For each action in the rally
         actions.forEach(action => {
-            // Find the transition for this action to get its category
-            let category = null;
+            // Find the transition for this action
+            let transition = null;
             for (const state in stateMachine) {
-                if (state.startsWith('__')) continue; // Skip metadata
-                const transitions = stateMachine[state].transitions || [];
-                const transition = transitions.find(t => t.action === action);
-                if (transition?.category) {
-                    category = transition.category;
+                if (state.startsWith('__')) continue;
+                const stateTransitions = stateMachine[state]?.transitions || [];
+                const foundTransition = stateTransitions.find(t => t.action === action);
+                if (foundTransition) {
+                    transition = foundTransition;
                     break;
                 }
             }
             
-            if (category) {
-                // Team stats
-                if (!stats.team[category][action]) {
-                    stats.team[category][action] = { a: 0, b: 0 };
-                }
-                stats.team[category][action][isTeamATurn ? 'a' : 'b']++;
+            // Skip if we couldn't find the transition or it has no category
+            if (!transition || !transition.category) return;
+            
+            const category = transition.category;
+            
+            // Determine which team to attribute to based on statTeam
+            let teamKey = '';
+            if (transition.statTeam === "Serving") {
+                teamKey = appState.teams.a.isServing ? 'a' : 'b';
+            } else if (transition.statTeam === "Receiving") {
+                teamKey = appState.teams.a.isServing ? 'b' : 'a';
+            } else {
+                // If statTeam not specified, skip
+                return;
+            }
+            
+            // Update team stats
+            if (!stats.team[category][action]) {
+                stats.team[category][action] = { a: 0, b: 0 };
+            }
+            stats.team[category][action][teamKey]++;
+            
+            // Update player stats if statPlayer is specified
+            if (transition.statPlayer && transition.statPlayer !== '-1') {
+                const playerStats = teamKey === 'a' ? stats.playerA : stats.playerB;
                 
-                // Player stats - extract player number from action if available
-                const playerMatch = action.match(/(\d)$/);
-                if (playerMatch) {
-                    const playerNum = parseInt(playerMatch[1]);
-                    if (playerNum === 1 || playerNum === 2) {
-                        const teamStats = isTeamATurn ? stats.playerA : stats.playerB;
-                        if (!teamStats[category][action]) {
-                            teamStats[category][action] = { 1: 0, 2: 0 };
-                        }
-                        teamStats[category][action][playerNum]++;
-                    }
-                } else {
-                    // For actions without player numbers, attribute to both players
-                    const teamStats = isTeamATurn ? stats.playerA : stats.playerB;
-                    if (!teamStats[category][action]) {
-                        teamStats[category][action] = { 1: 0, 2: 0 };
-                    }
-                    teamStats[category][action][1]++;
-                    teamStats[category][action][2]++;
+                if (!playerStats[category][action]) {
+                    playerStats[category][action] = { 1: 0, 2: 0 };
                 }
                 
-                // Switch turns for certain actions
-                if (action.startsWith('Atk') || action === 'Win' || action === 'Err') {
-                    isTeamATurn = !isTeamATurn;
+                // statPlayer "0" means not attributed to a specific player
+                if (transition.statPlayer === "0") {
+                    // Skip player attribution
+                } else if (transition.statPlayer === "1" || transition.statPlayer === "2") {
+                    // Attribute to specific player
+                    const playerNum = parseInt(transition.statPlayer);
+                    playerStats[category][action][playerNum]++;
                 }
             }
         });
