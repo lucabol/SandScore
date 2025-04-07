@@ -190,8 +190,8 @@ function calculateTotalAttacks(team, rallyHistory) {
     let count = 0;
     Object.values(rallyHistory).forEach(rally => {
         // Determine which team's turn it is initially
-        let isReceivingTeam = rally.actions[0].startsWith('R');
-        let isTeamsTurn = team === (isReceivingTeam ? 'b' : 'a');
+        const isTeamAServing = rally.servingTeam === 'a';
+        let isTeamsTurn = team === (isTeamAServing ? 'a' : 'b');
         
         // Go through each action in the rally
         rally.actions.forEach(action => {
@@ -2418,7 +2418,7 @@ function generateCategoryStats() {
         
         // For team stats, we need to know which team performed each action
         // Initialize isTeamATurn based on which team is serving
-        let isTeamATurn = rally.servingTeam === 'a';
+        let isTeamAServing = rally.servingTeam === 'a';
 
         // Process each action in the rally
         actions.forEach((action, actionIndex) => {
@@ -2443,8 +2443,8 @@ function generateCategoryStats() {
                 // Determine which team performed the action based on statTeam
                 const isServingTeamAction = statTeam === 'Serving';
                 const team = isServingTeamAction 
-                    ? (appState.teams.a.isServing ? 'a' : 'b')
-                    : (appState.teams.a.isServing ? 'b' : 'a');
+                    ? (isTeamAServing ? 'a' : 'b')
+                    : (isTeamAServing ? 'b' : 'a');
                 
                 // Initialize team stats for this action if needed
                 if (!stats.team[category][action]) {
