@@ -375,10 +375,10 @@ const beginnerStateMachine = {
             { "action": "Win2", "nextState": "Point Receiver", "style": "point", "help": "Winning attack by player 2", "category": "attack", "statTeam": "Receiving", "statPlayer": "2" },
             { "action": "Err1", "nextState": "Point Server", "style": "error", "help": "Attack error by player 1", "category": "attack", "statTeam": "Receiving", "statPlayer": "1" },
             { "action": "Err2", "nextState": "Point Server", "style": "error", "help": "Attack error by player 2", "category": "attack", "statTeam": "Receiving", "statPlayer": "2" },
-            { "action": "Blk1", "nextState": "Point Server", "style": "error", "help": "Blocked by player 1", "category": "attack", "statTeam": "Serving", "statPlayer": "1" },
-            { "action": "Blk2", "nextState": "Point Server", "style": "error", "help": "Blocked by player 2", "category": "attack", "statTeam": "Serving", "statPlayer": "2" },
-            { "action": "Def1", "nextState": "Attack Server", "style": "regular", "help": "Defended by player 1", "category": "defense", "statTeam": "Serving", "statPlayer": "1" },
-            { "action": "Def2", "nextState": "Attack Server", "style": "regular", "help": "Defended by player 2", "category": "defense", "statTeam": "Serving", "statPlayer": "2" }
+            { "action": "Blk1", "nextState": "Point Server", "style": "error", "help": "Blocked player 1", "category": "attack", "statTeam": "Receiving", "statPlayer": "1" },
+            { "action": "Blk2", "nextState": "Point Server", "style": "error", "help": "Blocked player 2", "category": "attack", "statTeam": "Receiving", "statPlayer": "2" },
+            { "action": "Def1", "nextState": "Attack Server", "style": "regular", "help": "Defended player 1", "category": "attack", "statTeam": "Receiving", "statPlayer": "1" },
+            { "action": "Def2", "nextState": "Attack Server", "style": "regular", "help": "Defended player 2", "category": "attack", "statTeam": "Receiving", "statPlayer": "2" }
         ]
     },
     "Attack Server": {
@@ -388,10 +388,10 @@ const beginnerStateMachine = {
             { "action": "Win2", "nextState": "Point Server", "style": "point", "help": "Winning attack by player 2", "category": "attack", "statTeam": "Serving", "statPlayer": "2" },
             { "action": "Err1", "nextState": "Point Receiver", "style": "error", "help": "Attack error by player 1", "category": "attack", "statTeam": "Serving", "statPlayer": "1" },
             { "action": "Err2", "nextState": "Point Receiver", "style": "error", "help": "Attack error by player 2", "category": "attack", "statTeam": "Serving", "statPlayer": "2" },
-            { "action": "Blk1", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 1", "category": "attack", "statTeam": "Receiving", "statPlayer": "1" },
-            { "action": "Blk2", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 2", "category": "attack", "statTeam": "Receiving", "statPlayer": "2" },
-            { "action": "Def1", "nextState": "Attack Receiver", "style": "regular", "help": "Defended by player 1", "category": "defense", "statTeam": "Receiving", "statPlayer": "1" },
-            { "action": "Def2", "nextState": "Attack Receiver", "style": "regular", "help": "Defended by player 2", "category": "defense", "statTeam": "Receiving", "statPlayer": "2" }
+            { "action": "Blk1", "nextState": "Point Receiver", "style": "error", "help": "Blocked player 1", "category": "attack", "statTeam": "Serving", "statPlayer": "1" },
+            { "action": "Blk2", "nextState": "Point Receiver", "style": "error", "help": "Blocked player 2", "category": "attack", "statTeam": "Serving", "statPlayer": "2" },
+            { "action": "Def1", "nextState": "Attack Receiver", "style": "regular", "help": "Defended player 1", "category": "attack", "statTeam": "Serving", "statPlayer": "1" },
+            { "action": "Def2", "nextState": "Attack Receiver", "style": "regular", "help": "Defended player 2", "category": "attack", "statTeam": "Serving", "statPlayer": "2" }
         ]
     },
     "Point Server": {
