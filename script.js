@@ -2416,6 +2416,106 @@ function generateCategoryStats() {
     Object.values(appState.rallyHistory).forEach(rally => {
         const actions = rally.actions;
         
+        // Initial conditions for this rally
+        let isTeamAServing = rally.servingTeam === 'a';
+        let currentState = stateMachine.__rules__.initialState; // Start from initial state (usually "Serve")
+        
+        // Process each action in the rally
+        actions.forEach((action, actionIndex) => {
+            // Find the transition from the current state that matches this action
+            const transitions = stateMachine[currentState]?.transitions || [];
+            const transition = transitions.find(t => t.action === action);
+            
+            if (transition) {
+                const category = transition.category;
+                const statTeam = transition.statTeam;
+                const statPlayer = transition.statPlayer;
+                
+                if (category && statTeam) {
+                    // Determine which team performed the action based on statTeam
+                    const isServingTeamAction = statTeam === 'Serving';
+                    const team = isServingTeamAction 
+                        ? (isTeamAServing ? 'a' : 'b')
+                        : (isTeamAServing ? 'b' : 'a');
+                    
+                    // Initialize team stats for this action if needed
+                    if (!stats.team[category][action]) {
+                        stats.team[category][action] = { a: 0, b: 0 };
+                    }
+                    stats.team[category][action][team]++;
+                    
+                    // Handle player stats based on statPlayer value
+                    const teamStats = team === 'a' ? stats.playerA : stats.playerB;
+                    if (!teamStats[category][action]) {
+                        teamStats[category][action] = { 1: 0, 2: 0 };
+                    }
+                    
+                    // Determine which player to attribute the stat to
+                    if (statPlayer === '1' || statPlayer === '2') {
+                        // Direct player attribution
+                        const playerNum = parseInt(statPlayer);
+                        teamStats[category][action][playerNum]++;
+                    } else if (statPlayer === '0') {
+                        // Team-only stat, attribute to both players
+                        teamStats[category][action][1]++;
+                        teamStats[category][action][2]++;
+                    } else if (statPlayer === '-1') {
+                        // Find last player to touch the ball by looking backwards
+                        let playerNum = null;
+                        for (let i = actionIndex - 1; i >= 0; i--) {
+                            const prevAction = actions[i];
+                            const playerMatch = prevAction.match(/(\d)$/);
+                            if (playerMatch) {
+                                playerNum = parseInt(playerMatch[1]);
+                                if (playerNum === 1 || playerNum === 2) {
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // If we found a player, attribute the stat to them
+                        if (playerNum === 1 || playerNum === 2) {
+                            teamStats[category][action][playerNum]++;
+                        } else {
+                            // If we couldn't find a specific player, attribute to both
+                            teamStats[category][action][1]++;
+                            teamStats[category][action][2]++;
+                        }
+                    }
+                }
+                
+                // Update state for next action
+                currentState = transition.nextState;
+            }
+        });
+    });
+    
+    return stats;
+}
+
+// Generate category stats from rally history
+function generateCategoryStats1() {
+    // Initialize stats structure
+    const stats = {
+        team: {},
+        playerA: {},
+        playerB: {}
+    };
+    
+    // Dynamically get categories
+    const categories = getAllCategories();
+    
+    // Initialize categories
+    Object.keys(categories).forEach(category => {
+        stats.team[category] = {};
+        stats.playerA[category] = {};
+        stats.playerB[category] = {};
+    });
+    
+    // Process all rallies
+    Object.values(appState.rallyHistory).forEach(rally => {
+        const actions = rally.actions;
+        
         // For team stats, we need to know which team performed each action
         // Initialize isTeamATurn based on which team is serving
         let isTeamAServing = rally.servingTeam === 'a';
