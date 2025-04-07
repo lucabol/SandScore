@@ -1018,7 +1018,8 @@ async function handleAction(action, nextState) {
             actions: [...appState.rallyActions],
             scoreA: appState.teams.a.currentScore,
             scoreB: appState.teams.b.currentScore,
-            scoringTeam: scoringTeam
+            scoringTeam: scoringTeam,
+            servingTeam: appState.teams.a.isServing ? 'a' : 'b'
         };
 
         const oppositeTeam = scoringTeam === 'a' ? 'b' : 'a';
@@ -1070,7 +1071,8 @@ function handleSetCompletion(scoringTeam, oppositeTeam) {
             actions: [...appState.rallyActions],
             scoreA: appState.teams.a.currentScore,
             scoreB: appState.teams.b.currentScore,
-            scoringTeam: scoringTeam
+            scoringTeam: scoringTeam,
+            servingTeam: appState.teams.a.isServing ? 'a' : 'b'
         };
     }
     
@@ -2416,7 +2418,7 @@ function generateCategoryStats() {
         
         // For team stats, we need to know which team performed each action
         // Initialize isTeamATurn based on which team is serving
-        let isTeamATurn = appState.teams.a.isServing;
+        let isTeamATurn = rally.servingTeam === 'a';
 
         // Process each action in the rally
         actions.forEach((action, actionIndex) => {
