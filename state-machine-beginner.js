@@ -53,8 +53,8 @@ const beginnerStateMachine = {
             { "action": "Err2", "nextState": "Point Server", "style": "error", "help": "Attack error by player 2", "category": "attack", "statTeam": "Receiving", "statPlayer": "2" },
             { "action": "Blk1", "nextState": "Point Server", "style": "error", "help": "Blocked player 1 (by Server P1)", "category": "attack", "statTeam": "Receiving", "statPlayer": "1" }, // Atk player stat
             { "action": "Blk2", "nextState": "Point Server", "style": "error", "help": "Blocked player 2 (by Server P2)", "category": "attack", "statTeam": "Receiving", "statPlayer": "2" }, // Atk player stat
-            { "action": "Def1", "nextState": "Attack Server", "style": "regular", "help": "Defended by player 1 (Server P1)", "category": "defense", "statTeam": "Serving", "statPlayer": "1" }, // Def player stat
-            { "action": "Def2", "nextState": "Attack Server", "style": "regular", "help": "Defended by player 2 (Server P2)", "category": "defense", "statTeam": "Serving", "statPlayer": "2" }  // Def player stat
+            { "action": "Def1", "nextState": "Attack Server", "style": "regular", "help": "Defended player 1 (Server P1)", "category": "attack", "statTeam": "Receiving", "statPlayer": "1" }, // Def player stat
+            { "action": "Def2", "nextState": "Attack Server", "style": "regular", "help": "Defended player 2 (Server P2)", "category": "attack", "statTeam": "Receiving", "statPlayer": "2" }  // Def player stat
         ]
     },
     "Attack Server": {
@@ -66,8 +66,8 @@ const beginnerStateMachine = {
             { "action": "Err2", "nextState": "Point Receiver", "style": "error", "help": "Attack error by player 2", "category": "attack", "statTeam": "Serving", "statPlayer": "2" },
             { "action": "Blk1", "nextState": "Point Receiver", "style": "error", "help": "Blocked player 1 (by Receiver P1)", "category": "attack", "statTeam": "Serving", "statPlayer": "1" }, // Atk player stat
             { "action": "Blk2", "nextState": "Point Receiver", "style": "error", "help": "Blocked player 2 (by Receiver P2)", "category": "attack", "statTeam": "Serving", "statPlayer": "2" }, // Atk player stat
-            { "action": "Def1", "nextState": "Attack Receiver", "style": "regular", "help": "Defended player 1 (Receiver P1)", "category": "defense", "statTeam": "Receiving", "statPlayer": "1" }, // Def player stat
-            { "action": "Def2", "nextState": "Attack Receiver", "style": "regular", "help": "Defended player 2 (Receiver P2)", "category": "defense", "statTeam": "Receiving", "statPlayer": "2" }  // Def player stat
+            { "action": "Def1", "nextState": "Attack Receiver", "style": "regular", "help": "Defended player 1 (Receiver P1)", "category": "attack", "statTeam": "Serving", "statPlayer": "1" }, // Def player stat
+            { "action": "Def2", "nextState": "Attack Receiver", "style": "regular", "help": "Defended player 2 (Receiver P2)", "category": "attack", "statTeam": "Serving", "statPlayer": "2" }  // Def player stat
         ]
     },
     "Point Server": {
