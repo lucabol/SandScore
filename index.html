@@ -214,6 +214,26 @@
             <button class="close-modal">×</button>
         </div>
     </div>
-    <script src="script.js"></script>
+        <!-- Configuration -->
+    <script src="state-machine-advanced.js"></script>
+    <script src="state-machine-beginner.js"></script>
+
+    <!-- State Management -->
+    <script src="app-state.js"></script>
+    <script src="persistence.js"></script> <!-- Depends on app-state.js -->
+
+    <!-- Statistics -->
+    <script src="stats-reporting.js"></script> <!-- Depends on state machines, app-state -->
+
+    <!-- UI -->
+    <script src="dom-elements.js"></script>
+    <script src="ui-updates.js"></script> <!-- Depends on dom-elements, app-state, state machines -->
+    <script src="modals.js"></script> <!-- Depends on dom-elements, app-state, stats-reporting -->
+
+    <!-- Core Logic -->
+    <script src="match-flow.js"></script> <!-- Depends on everything above (state, ui, config) -->
+
+    <!-- Main Initializer/Event Setup -->
+    <script src="main.js"></script> <!-- Depends on all other files -->
 </body>
 </html>
