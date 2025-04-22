@@ -322,15 +322,12 @@ function showAllStatsModal() {
      }
 
     const categoryStats = generateCategoryStats(); // Assumes generateCategoryStats is available (from stats/stats-reporting.js)
-    let html = `
-        <div class="all-stats-content">
-        <h2>Detailed Action Statistics</h2>
+
+let html = `
+    <div class="all-stats-content">
+        <h1>All Stats</h1>
         <div class="stats-section">
-            <div class="stats-row stats-header">
-                <div>${appState.teams.a.name}</div>
-                <div>Action</div>
-                <div>${appState.teams.b.name}</div>
-            </div>
+    
     `;
 
     const categories = getAllCategories(); // Get categories dynamically
@@ -428,4 +425,5 @@ function handleEscapeKey(event) {
         }
     }
 }
+
 
