@@ -269,14 +269,15 @@ function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) 
 
     // Player header row - show only player names without team names
     // Player header row
-    html += `
-         <div class="stats-row player-header">
-             <div>${playerNames[0]}</div>
-             <div>Action</div>
-             <div></div>
-             <div>${playerNames[1]}</div>
-         </div>
-     `;
+
+html += `
+    <div class="stats-row player-header">
+        <div></div>
+        <div>Action</div>
+        <div></div>
+    </div>
+`;
+    
 
     // Sort actions alphabetically
     const sortedActions = Object.keys(playerStats).sort();
@@ -473,3 +474,4 @@ function handleEscapeKey(event) {
         }
     }
 }
+
