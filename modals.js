@@ -250,13 +250,14 @@ function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
             <div>${totalB}</div>
         </div>
     `;
-    
+
 
     return html;
 }
 
 function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) {
     if (!playerStats || Object.keys(playerStats).length === 0) {
+        return `<div class="no-data">No data available</div>`;
         return `<div class="no-data">No ${getCategoryDisplayName(categoryKey)} data</div>`;
     }
 
@@ -272,6 +273,7 @@ function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) 
     html += `
          <div class="stats-row player-header">
              <div>${playerNames[0]}</div>
+             <div>Action</div>
              <div></div>
              <div>${playerNames[1]}</div>
          </div>
@@ -307,7 +309,7 @@ function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) 
             <div>${totalP2}</div>
         </div>
     `;
-    
+
 
     return html;
 }
@@ -325,76 +327,107 @@ function getActionHelpText(action) {
      return action; // Return action itself if no help text found
 }
 
+
 function showAllStatsModal() {
     if (!allStatsContainer || !allStatsModal) {
-         console.error("All Stats modal elements not found."); return;
-     }
+         console.error("All Stats modal elements not found."); 
+         return;
+    }
 
     const categoryStats = generateCategoryStats(); // Assumes generateCategoryStats is available (from stats/stats-reporting.js)
-
-
-let html = `
-    <div class="all-stats-content">
-        <h1 class="stats-title">All Stats</h1>
-        <div class="stats-section">
-`;
-    
-
     const categories = getAllCategories(); // Get categories dynamically
     const sortedCategories = Object.keys(categories).sort();
 
+    let html = `
+        <div class="all-stats-content">
+            <h1 class="stats-title">All Stats</h1>
+            
+            <!-- Team Statistics Section -->
+            <div class="stats-main-section team-stats-section">
+                <h2 class="section-header">Team Statistics</h2>
+                <div class="stats-section">
+    `;
+
+    // Generate team statistics sections
     sortedCategories.forEach(categoryKey => {
         const categoryName = getCategoryDisplayName(categoryKey);
         const teamCatStats = categoryStats.team[categoryKey];
-        const playerACatStats = categoryStats.playerA[categoryKey];
-        const playerBCatStats = categoryStats.playerB[categoryKey];
-
-        // Only show sections if there's data
-        const hasTeamData = teamCatStats && Object.keys(teamCatStats).length > 0;
-        const hasPlayerAData = playerACatStats && Object.keys(playerACatStats).length > 0;
-        const hasPlayerBData = playerBCatStats && Object.keys(playerBCatStats).length > 0;
         
-        // Check if this category is marked as team-only
-        const isTeamOnlyCategory = categoryStats.teamOnlyCategories && categoryStats.teamOnlyCategories[categoryKey];
-
-        if (hasTeamData) {
+        // Only show section if there's team data
+        if (teamCatStats && Object.keys(teamCatStats).length > 0) {
             html += `
-                 <div class="stats-block">
-                      <h3>${categoryName} - Team</h3>
-                       ${generateCategoryTeamStatsRows(teamCatStats, categoryKey)}
-                 </div>
-             `;
+                <div class="stats-block">
+                    <h3>${categoryName}</h3>
+                    ${generateCategoryTeamStatsRows(teamCatStats, categoryKey)}
+                </div>
+            `;
         }
-        
-        // Only show player statistics if the category is not team-only
-        if (hasPlayerAData && !isTeamOnlyCategory) {
-              html += `
-                 <div class="stats-block">
-                      <h3>${categoryName} - ${appState.teams.a.name}</h3>
-                       ${generateCategoryPlayerStatsRows(playerACatStats, categoryKey, appState.teams.a.players)}
-                  </div>
-              `;
-          }
-          
-        if (hasPlayerBData && !isTeamOnlyCategory) {
-               html += `
-                  <div class="stats-block">
-                      <h3>${categoryName} - ${appState.teams.b.name}</h3>
-                     ${generateCategoryPlayerStatsRows(playerBCatStats, categoryKey, appState.teams.b.players)}
-                 </div>
-             `;
-         }
     });
 
-    html += `</div></div>`; // Close stats-container
+    html += `
+                </div>
+            </div>
+            
+            <!-- Player Statistics Section -->
+            <div class="stats-main-section player-stats-section">
+                <h2 class="section-header">Player Statistics</h2>
+                <div class="stats-section">
+                    <div class="team-player-stats">
+                        <h3 class="team-header">${appState.teams.a.name} Players</h3>
+    `;
+
+    // Team A player statistics
+    sortedCategories.forEach(categoryKey => {
+        const categoryName = getCategoryDisplayName(categoryKey);
+        const playerACatStats = categoryStats.playerA[categoryKey];
+        const isTeamOnlyCategory = categoryStats.teamOnlyCategories && categoryStats.teamOnlyCategories[categoryKey];
+        
+        if (playerACatStats && Object.keys(playerACatStats).length > 0 && !isTeamOnlyCategory) {
+            html += `
+                        <div class="stats-block">
+                            <h4>${categoryName}</h4>
+                            ${generateCategoryPlayerStatsRows(playerACatStats, categoryKey, appState.teams.a.players)}
+                        </div>
+            `;
+        }
+    });
+
+    html += `
+                    </div>
+                    <div class="team-player-stats">
+                        <h3 class="team-header">${appState.teams.b.name} Players</h3>
+    `;
+
+    // Team B player statistics
+    sortedCategories.forEach(categoryKey => {
+        const categoryName = getCategoryDisplayName(categoryKey);
+        const playerBCatStats = categoryStats.playerB[categoryKey];
+        const isTeamOnlyCategory = categoryStats.teamOnlyCategories && categoryStats.teamOnlyCategories[categoryKey];
+        
+        if (playerBCatStats && Object.keys(playerBCatStats).length > 0 && !isTeamOnlyCategory) {
+            html += `
+                        <div class="stats-block">
+                            <h4>${categoryName}</h4>
+                            ${generateCategoryPlayerStatsRows(playerBCatStats, categoryKey, appState.teams.b.players)}
+                        </div>
+            `;
+        }
+    });
+
+    html += `
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
     allStatsContainer.innerHTML = html;
 
     // Re-attach listener for the new close button
     const closeBtn = allStatsContainer.querySelector('.close-modal');
     if (closeBtn) {
          closeBtn.addEventListener('click', hideAllStatsModal);
-     }
-
+    }
 
     showModal(allStatsModal);
 }
@@ -402,6 +435,7 @@ let html = `
 function hideAllStatsModal() {
     hideModal(allStatsModal);
 }
+    
 
 // --- Set 3 Server Modal ---
 function showSet3ServerModal() {
@@ -415,6 +449,7 @@ function showSet3ServerModal() {
 
     showModal(set3ServerModal);
 }
+
 
 function hideSet3ServerModal() {
     hideModal(set3ServerModal);

@@ -13,10 +13,10 @@ function calculateTotalAttacks(team, rallyHistory) {
         
         let isTeamsTurn; // Determine whose turn it is based on serving/receiving at the start
         const isTeamAServing = rally.servingTeam === 'a';
- 
+  
         // Phase 1: Serve/Reception
         isTeamsTurn = (teamKey === rally.servingTeam); // Server's turn initially
- 
+  
         let currentState = stateMachine.__rules__.initialState; // Assumes 'Serve'
         
         // Process each action in this rally
@@ -28,11 +28,11 @@ function calculateTotalAttacks(team, rallyHistory) {
             // Find the transition to understand the action's context
             const transitions = stateMachine[currentState]?.transitions || [];
             const transition = transitions.find(t => t.action === action);
- 
+  
             if (transition) {
                 const category = transition.category;
                 const statTeamRef = transition.statTeam; // "Serving" or "Receiving"
- 
+  
                 // Determine the actual team ('a' or 'b') performing the action
                 let performingTeam = null;
                 if (statTeamRef === "Serving") {
@@ -40,7 +40,7 @@ function calculateTotalAttacks(team, rallyHistory) {
                 } else if (statTeamRef === "Receiving") {
                     performingTeam = isTeamAServing ? 'b' : 'a';
                 }
- 
+  
                 // Check if this action qualifies as an attack attempt by the specified team
                 // Advanced mode: Win, Err, Blk actions at the end of attack sequences
                 // Beginner mode: Win[1/2], Err[1/2], Blk[1/2] actions
@@ -51,14 +51,14 @@ function calculateTotalAttacks(team, rallyHistory) {
                 } else {
                     isAttackAction = category === 'attack'; // Includes Win1/2, Err1/2, Blk1/2
                 }
- 
+  
                 if (isAttackAction && performingTeam === teamKey) {
                     count++;
                 }
- 
+  
                 // Update current state for the next action
                 currentState = transition.nextState;
- 
+  
                 // Basic turn switching logic (might need refinement for complex scenarios)
                 // Generally, after reception or defense, the turn switches.
                 if (category === 'reception' || category === 'defense' || category === 'set') {
@@ -103,8 +103,7 @@ function calculateTotalAttacks(team, rallyHistory) {
     
     return count;
 }
- 
- 
+  
 // Helper function to find the last serving player (simplified)
 function findLastServingPlayer(actions) {
     // In advanced mode, the server is P1 of the serving team
@@ -112,8 +111,7 @@ function findLastServingPlayer(actions) {
     // This function might need more context if player rotation is tracked
     return '1'; // Placeholder - assumes player 1 serves if specific player needed
 }
- 
- 
+  
 // Helper function to find the last attacking player (from Atk actions)
 function findLastAttackingPlayer(actions) {
     for (let i = actions.length - 1; i >= 0; i--) {
@@ -127,22 +125,20 @@ function findLastAttackingPlayer(actions) {
     }
     return null; // No attacking player identified
 }
- 
- 
+  
 // Helper function to get player number from the final action (if applicable)
 function getPlayerNumberFromLastAction(action) {
     // Works for actions like RE1, RE2, Win1, Win2, Err1, Err2, Blk1, Blk2, Def1, Def2, SetE1, SetE2, Atk1, Atk2
     const match = action.match(/[12]$/);
     return match ? match[0] : null;
 }
- 
- 
+  
 // --- Statistics Calculation (Combined Logic) ---
- 
+  
 function calculateMatchStatistics(gameMode = 'advanced') {
     const currentStateMachine = gameMode === 'beginner' ? beginnerStateMachine : advancedStateMachine;
     const statsTable = currentStateMachine.__statisticsTable__;
- 
+  
     // Initialize stats structure
     const stats = {
         teamA: { name: appState.teams.a.name, players: [], pointsPercentage: 0 },
@@ -152,13 +148,13 @@ function calculateMatchStatistics(gameMode = 'advanced') {
         currentSet: appState.currentSet,
         setScores: []
     };
- 
+  
     // Initialize team-level stats and player structures
     statsTable.forEach(statDef => {
         stats.teamA[statDef.key] = 0;
         stats.teamB[statDef.key] = 0;
     });
- 
+  
     [0, 1].forEach(i => {
         stats.teamA.players[i] = { name: appState.teams.a.players[i] };
         stats.teamB.players[i] = { name: appState.teams.b.players[i] };
@@ -167,13 +163,13 @@ function calculateMatchStatistics(gameMode = 'advanced') {
             stats.teamB.players[i][statDef.key] = 0;
         });
     });
- 
+  
     // 1. Calculate all base statistics using the __statisticsTable__ definitions
     statsTable.forEach(statDef => {
         // Calculate team totals
         stats.teamA[statDef.key] = statDef.calculate('a', appState.rallyHistory);
         stats.teamB[statDef.key] = statDef.calculate('b', appState.rallyHistory);
- 
+  
         // Calculate player stats if applicable
         if (statDef.showInPlayerStats) {
               // Check if the calculate function accepts a playerIndex
@@ -191,14 +187,14 @@ function calculateMatchStatistics(gameMode = 'advanced') {
               }
         }
     });
- 
+  
      // 2. Calculate derived statistics (like percentages)
      const totalPoints = (stats.teamA.pointsWon || 0) + (stats.teamB.pointsWon || 0);
      stats.teamA.pointsPercentage = totalPoints > 0 ? Math.round(((stats.teamA.pointsWon || 0) / totalPoints) * 100) : 0;
      stats.teamB.pointsPercentage = totalPoints > 0 ? Math.round(((stats.teamB.pointsWon || 0) / totalPoints) * 100) : 0;
- 
+  
     // Player efficiencies are calculated within their definitions in __statisticsTable__
- 
+  
     // 3. Process Rallies for Longest Rally
     Object.values(appState.rallyHistory).forEach(rally => {
         if (rally.actions.length > stats.longestRally.actions) {
@@ -206,7 +202,7 @@ function calculateMatchStatistics(gameMode = 'advanced') {
             stats.longestRally.sequence = rally.actions.join(' ');
         }
     });
- 
+  
     // 4. Populate Set Scores
     for (let i = 0; i <= appState.currentSet; i++) {
          // Use setScores for completed sets, currentScore for the ongoing set
@@ -215,7 +211,7 @@ function calculateMatchStatistics(gameMode = 'advanced') {
          // Ensure scores are numbers
          const numScoreA = Number(scoreA) || 0;
          const numScoreB = Number(scoreB) || 0;
- 
+  
          stats.setScores.push({
              set: i + 1,
              scoreA: numScoreA,
@@ -223,11 +219,10 @@ function calculateMatchStatistics(gameMode = 'advanced') {
              winner: numScoreA > numScoreB ? 'a' : (numScoreB > numScoreA ? 'b' : null)
          });
      }
- 
+  
      return stats;
 }
- 
- 
+  
 // Manual calculation for player stats if calculate function doesn't support playerIndex
 // This needs to be implemented specifically for each stat key required.
 function calculatePlayerSpecificStatManual(statsObject, statKey) {
@@ -248,14 +243,13 @@ function calculatePlayerSpecificStatManual(statsObject, statKey) {
     // Add similar logic for other keys like 'attackErrors', 'blocks', 'receptionErrors', 'defenses'
     // This duplicates logic from the stat table but split by player.
 }
- 
- 
+  
 // --- Category Stats (For All Stats Modal) ---
- 
+  
 function getAllCategories() {
     const categories = {};
     const currentStateMachine = appState.gameMode === 'beginner' ? beginnerStateMachine : advancedStateMachine;
- 
+  
     for (const stateName in currentStateMachine) {
         if (stateName.startsWith('__')) continue;
         const state = currentStateMachine[stateName];
@@ -268,21 +262,20 @@ function getAllCategories() {
     }
     return categories; // Returns object like {'serve': true, 'reception': true, ...}
 }
- 
- 
+  
 function getCategoryDisplayName(categoryKey) {
      // Simple conversion: 'atkRes' -> 'Atk Res', 'serve' -> 'Serve'
      return categoryKey
          .replace(/([A-Z])/g, ' $1') // Add space before capitals
          .replace(/^./, str => str.toUpperCase()); // Capitalize first letter
 }
- 
+  
 function generateCategoryStats() {
     const stats = { 
         team: {}, 
         playerA: {}, 
         playerB: {},
-        teamOnlyCategories: {}
+        teamOnlyCategories: {} // Track categories with team-only actions
     };
     const categories = getAllCategories();
     const currentStateMachine = appState.gameMode === 'beginner' ? beginnerStateMachine : advancedStateMachine;
@@ -293,7 +286,7 @@ function generateCategoryStats() {
         stats.playerA[category] = {}; // Action counts: { action: { 1: 0, 2: 0 }}
         stats.playerB[category] = {}; // Action counts: { action: { 1: 0, 2: 0 }}
     });    
-     
+    
     // Process all historical rallies
     const rallies = Object.values(appState.rallyHistory);
     for (let r = 0; r < rallies.length; r++) {
@@ -345,9 +338,12 @@ function generateCategoryStats() {
                             if(lastPlayer.team === actingTeam && lastPlayer.num) {
                                 targetPlayerNum = lastPlayer.num;
                             } else {
+                                // If we can't determine the player, distribute evenly
                                 playerStatsTarget[action][1]++;
                                 playerStatsTarget[action][2]++;
                                 console.warn(`Could not determine player for action ${action} (statPlayer: -1), assigned to both.`);
+                                // Continue to next action since we've already handled this case
+                                continue;
                             }
                         }
  
@@ -392,6 +388,25 @@ function generateCategoryStats() {
             continue;
         }
     }
+ 
+    // Clean up empty categories and actions
+    Object.keys(stats.team).forEach(category => {
+        if (Object.keys(stats.team[category]).length === 0) {
+            delete stats.team[category];
+        }
+    });
+    
+    Object.keys(stats.playerA).forEach(category => {
+        if (Object.keys(stats.playerA[category]).length === 0) {
+            delete stats.playerA[category];
+        }
+    });
+    
+    Object.keys(stats.playerB).forEach(category => {
+        if (Object.keys(stats.playerB[category]).length === 0) {
+            delete stats.playerB[category];
+        }
+    });
  
     return stats;
 }

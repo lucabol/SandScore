@@ -182,7 +182,235 @@ h3 {
     border-bottom: 2px solid #e3f2fd;
 }
 
+/* Main sections for team and player statistics */
+.stats-main-section {
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.section-header {
+    color: #0d47a1;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e3f2fd;
+}
+
+.team-stats-section {
+    border-left: 4px solid #1976d2;
+}
+
+.player-stats-section {
+    border-left: 4px solid #2e7d32;
+}
+
+.team-player-stats {
+    margin-bottom: 25px;
+}
+
+.team-player-stats:last-child {
+    margin-bottom: 0;
+}
+
+.team-header {
+    color: #0d47a1;
+    font-size: 1.3rem;
+    margin: 0 0 15px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e3f2fd;
+    text-align: center;
+}
+
+/* New All Stats styling enhancements */
+.stats-title {
+    color: #0d47a1;
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e3f2fd;
+}
+
+/* Main sections for team and player statistics */
+.stats-main-section {
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.section-header {
+    color: #0d47a1;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e3f2fd;
+}
+
+.team-stats-section {
+    border-left: 4px solid #1976d2;
+}
+
+.player-stats-section {
+    border-left: 4px solid #2e7d32;
+}
+
+.team-player-stats {
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.team-player-stats:last-child {
+    margin-bottom: 0;
+}
+
+.team-header {
+    color: #0d47a1;
+    font-size: 1.3rem;
+    margin: 0 0 15px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e3f2fd;
+    text-align: center;
+}
+
+/* Enhanced styling for stats blocks */
+.all-stats-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.stats-block {
+    margin-bottom: 20px;
+    background-color: white;
+    border-radius: 6px;
+    padding: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+
+.stats-block:hover {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.stats-block h3 {
+    color: #0d47a1;
+    margin: 0 0 15px 0;
+    font-size: 1.2rem;
+    text-align: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e3f2fd;
+}
+
+.stats-block h4 {
+    color: #1976d2;
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+    text-align: center;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e3f2fd;
+}
+
+/* Improved styling for stats rows */
+.stats-row {
+    display: grid;
+    grid-template-columns: minmax(80px, 1fr) minmax(120px, auto) minmax(80px, 1fr);
+    align-items: center;
+    padding: 6px 0;
+    gap: 10px;
+    min-height: 30px;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+.stats-row:last-child {
+    border-bottom: none;
+}
+
+/* Responsive adjustments for All Stats screen */
+@media (max-width: 768px) {
+    .stats-main-section {
+        padding: 12px;
+        margin-bottom: 25px;
+    }
+    
+    .section-header {
+        font-size: 1.4rem;
+        margin-bottom: 12px;
+    }
+    
+    .team-player-stats {
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .team-header {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+    }
+    
+    .stats-block {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .stats-block h3 {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+    }
+    
+    .stats-block h4 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-main-section {
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .section-header {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+    
+    .team-player-stats {
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .team-header {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+    
+    .stats-block {
+        padding: 10px;
+        margin-bottom: 12px;
+    }
+    
+    .stats-row {
+        grid-template-columns: minmax(60px, 1fr) minmax(100px, auto) minmax(60px, 1fr);
+        padding: 5px 0;
+        gap: 8px;
+        min-height: 28px;
+    }
+}
+
 /* Responsive adjustment for app title */
+@media (max-width: 480px) {
+    /* ... existing code ... */
+}
+    
 @media (max-width: 480px) {
     .app-title {
         font-size: 1.6rem;
@@ -1327,3 +1555,5 @@ button {
     transition: background-color 0.2s ease;
     font-size: 14px;
 }
+
+
