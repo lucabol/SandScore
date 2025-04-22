@@ -323,12 +323,13 @@ function showAllStatsModal() {
 
     const categoryStats = generateCategoryStats(); // Assumes generateCategoryStats is available (from stats/stats-reporting.js)
 
+
 let html = `
     <div class="all-stats-content">
-        <h1>All Stats</h1>
+        <h1 class="stats-title">All Stats</h1>
         <div class="stats-section">
+`;
     
-    `;
 
     const categories = getAllCategories(); // Get categories dynamically
     const sortedCategories = Object.keys(categories).sort();
@@ -384,6 +385,7 @@ let html = `
     if (closeBtn) {
          closeBtn.addEventListener('click', hideAllStatsModal);
      }
+
 
     showModal(allStatsModal);
 }
