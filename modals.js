@@ -232,14 +232,16 @@ function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
         `;
     });
 
-    // Add total row
+
+    // Add total row with simplified label
     html += `
-         <div class="stats-row total">
-             <div>${totalA}</div>
-             <div>Total ${getCategoryDisplayName(categoryKey)}</div>
-             <div>${totalB}</div>
-         </div>
-     `;
+        <div class="stats-row total">
+            <div>${totalA}</div>
+            <div>Total</div>
+            <div>${totalB}</div>
+        </div>
+    `;
+    
 
     return html;
 }
@@ -287,14 +289,16 @@ function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) 
         `;
     });
 
-     // Add total row
-      html += `
-          <div class="stats-row total">
-              <div>${totalP1}</div>
-              <div>Total ${getCategoryDisplayName(categoryKey)} Actions</div>
-              <div>${totalP2}</div>
-          </div>
-      `;
+
+    // Add total row with simplified label
+    html += `
+        <div class="stats-row total">
+            <div>${totalP1}</div>
+            <div>Total</div>
+            <div>${totalP2}</div>
+        </div>
+    `;
+    
 
     return html;
 }
@@ -424,3 +428,4 @@ function handleEscapeKey(event) {
         }
     }
 }
+

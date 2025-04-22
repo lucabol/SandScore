@@ -1178,7 +1178,34 @@ button {
     padding-bottom: 0;
 }
 
-/* For the last two rows in each section */
+.stats-block {
+    margin-bottom: 20px;
+    background-color: white;
+    border-radius: 6px;
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.stats-block h3 {
+    color: #0d47a1;
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    text-align: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e3f2fd;
+}
+
+.stats-row.total {
+    font-weight: bold;
+    border-top: 1px solid #e3f2fd;
+    margin-top: 10px;
+    padding-top: 8px;
+}
+
+.stats-row.total .stats-value {
+    color: #0d47a1;
+}
+
 .stats-row:nth-last-child(-n+2) {
     border-top: 1px solid #e3f2fd;
     margin-top: 4px;
