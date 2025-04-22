@@ -93,89 +93,89 @@ function generateStatisticsModalContent(stats) {
      const player2Key = 'player2'; // Or potentially derive from stats object structure if needed
 
      let html = `<div class="stats-modal-content">
-          <h2>Match Statistics</h2>
-          <div class="stats-section">
-              <div class="stats-row stats-header">
-                  <div>${stats.teamA.name}</div>
-                  <div>Stat</div>
-                  <div>${stats.teamB.name}</div>
-              </div>
-              <div class="stats-block">
-              <h3>Team Stats</h3>
-                  ${statsTable.map(statDef => `
-                      <div class="stats-row">
-                          <div>${stats.teamA[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}${statDef.key === 'pointsWon' ? ` (${stats.teamA.pointsPercentage}%)` : ''}</div>
-                          <div>${statDef.label}</div>
-                          <div>${stats.teamB[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}${statDef.key === 'pointsWon' ? ` (${stats.teamB.pointsPercentage}%)` : ''}</div>
-                      </div>
-                  `).join('')}
-              </div>
-              <div class="stats-block">
-              <h3>Player Stats - ${stats.teamA.name}</h3>
-                  ${stats.teamA.players && stats.teamA.players.length === 2 ? `
-                  <div class="stats-row player-header">
-                      <div>${stats.teamA.players[0]?.name || 'Player 1'}</div>
-                      <div></div>
-                      <div>${stats.teamA.players[1]?.name || 'Player 2'}</div>
-                  </div>
-                  ${statsTable.filter(sd => sd.showInPlayerStats).map(statDef => `
-                      <div class="stats-row">
-                          <div>${stats.teamA.players[0]?.[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}</div>
-                          <div>${statDef.label}</div>
-                          <div>${stats.teamA.players[1]?.[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}</div>
-                      </div>
-                  `).join('')}` : `<div class="no-data">Player stats not available.</div>`}
-              </div>
-              <div class="stats-block">
-               <h3>Player Stats - ${stats.teamB.name}</h3>
-                  ${stats.teamB.players && stats.teamB.players.length === 2 ? `
+           <h2>Match Statistics</h2>
+           <div class="stats-section">
+               <div class="stats-row stats-header">
+                   <div>${stats.teamA.name}</div>
+                   <div>Stat</div>
+                   <div>${stats.teamB.name}</div>
+               </div>
+               <div class="stats-block">
+               <h3>Team Stats</h3>
+                   ${statsTable.map(statDef => `
+                       <div class="stats-row">
+                           <div>${stats.teamA[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}${statDef.key === 'pointsWon' ? ` (${stats.teamA.pointsPercentage}%)` : ''}</div>
+                           <div>${statDef.label}</div>
+                           <div>${stats.teamB[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}${statDef.key === 'pointsWon' ? ` (${stats.teamB.pointsPercentage}%)` : ''}</div>
+                       </div>
+                   `).join('')}
+               </div>
+               <div class="stats-block">
+               <h3>Player Stats - ${stats.teamA.name}</h3>
+                   ${stats.teamA.players && stats.teamA.players.length === 2 ? `
                    <div class="stats-row player-header">
-                       <div>${stats.teamB.players[0]?.name || 'Player 1'}</div>
+                       <div>${stats.teamA.players[0]?.name || 'Player 1'}</div>
                        <div></div>
-                       <div>${stats.teamB.players[1]?.name || 'Player 2'}</div>
+                       <div>${stats.teamA.players[1]?.name || 'Player 2'}</div>
                    </div>
                    ${statsTable.filter(sd => sd.showInPlayerStats).map(statDef => `
                        <div class="stats-row">
-                           <div>${stats.teamB.players[0]?.[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}</div>
+                           <div>${stats.teamA.players[0]?.[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}</div>
                            <div>${statDef.label}</div>
-                           <div>${stats.teamB.players[1]?.[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}</div>
+                           <div>${stats.teamA.players[1]?.[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}</div>
                        </div>
                    `).join('')}` : `<div class="no-data">Player stats not available.</div>`}
-              </div>
-              <div class="stats-block">
-              <h3>Match Info</h3>
-                  <div class="info-item">
-                      <div>${stats.totalRallies ?? 0}</div>
-                      <div>Total Rallies Completed</div>
-                  </div>
-                  <div class="info-item">
-                       <div>${stats.longestRally?.actions ?? 0}</div>
-                       <div>Longest Rally (Actions)</div>
-                  </div>
-                  <div class="info-item">
-                        <div>Longest Rally Sequence</div>
-                        <div>${stats.longestRally?.sequence || '-'}</div>
-                  </div>
-                  <div class="info-item">
-                      <div>Set ${stats.currentSet + 1}</div>
-                      <div>Current Set</div>
-                  </div>
-              </div>
-              <div class="stats-block">
-              <h3>Set Scores</h3>
-                  ${stats.setScores?.map(set => `
-                      <div class="stats-row">
-                          <div>${set.scoreA}</div>
-                          <div>Set ${set.set}</div>
-                          <div>${set.scoreB}</div>
-                      </div>
-                  `).join('') || `<div class="no-data">No sets completed yet.</div>`}
-              </div>
-          </div>
-      </div>`;
+               </div>
+               <div class="stats-block">
+                <h3>Player Stats - ${stats.teamB.name}</h3>
+                   ${stats.teamB.players && stats.teamB.players.length === 2 ? `
+                    <div class="stats-row player-header">
+                        <div>${stats.teamB.players[0]?.name || 'Player 1'}</div>
+                        <div></div>
+                        <div>${stats.teamB.players[1]?.name || 'Player 2'}</div>
+                    </div>
+                    ${statsTable.filter(sd => sd.showInPlayerStats).map(statDef => `
+                        <div class="stats-row">
+                            <div>${stats.teamB.players[0]?.[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}</div>
+                            <div>${statDef.label}</div>
+                            <div>${stats.teamB.players[1]?.[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}</div>
+                        </div>
+                    `).join('')}` : `<div class="no-data">Player stats not available.</div>`}
+               </div>
+               <div class="stats-block">
+               <h3>Match Info</h3>
+                   <div class="info-item">
+                       <div>${stats.totalRallies ?? 0}</div>
+                       <div>Total Rallies Completed</div>
+                   </div>
+                   <div class="info-item">
+                        <div>${stats.longestRally?.actions ?? 0}</div>
+                        <div>Longest Rally (Actions)</div>
+                   </div>
+                   <div class="info-item">
+                         <div>Longest Rally Sequence</div>
+                         <div>${stats.longestRally?.sequence || '-'}</div>
+                   </div>
+                   <div class="info-item">
+                       <div>Set ${stats.currentSet + 1}</div>
+                       <div>Current Set</div>
+                   </div>
+               </div>
+               <div class="stats-block">
+               <h3>Set Scores</h3>
+                   ${stats.setScores?.map(set => `
+                       <div class="stats-row">
+                           <div>${set.scoreA}</div>
+                           <div>Set ${set.set}</div>
+                           <div>${set.scoreB}</div>
+                       </div>
+                   `).join('') || `<div class="no-data">No sets completed yet.</div>`}
+               </div>
+           </div>
+       </div>`;
      statsContainer.innerHTML = html;
 
-      // Re-attach listener for the new close button
+     // Re-attach listener for the new close button
      const closeBtn = statsContainer.querySelector('.close-modal');
      if (closeBtn) {
          closeBtn.addEventListener('click', hideStatisticsModal);
@@ -211,12 +211,12 @@ function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
         totalB += counts.b || 0;
     });
 
-    // Add team names header
+    // Action header row (without team names)
     html += `
-        <div class="stats-row team-header">
-            <div>${appState.teams.a.name}</div>
+        <div class="stats-row action-header">
+            <div>Value</div>
             <div>Action</div>
-            <div>${appState.teams.b.name}</div>
+            <div>Value</div>
         </div>
     `;
 
@@ -241,7 +241,6 @@ function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
         `;
     });
 
-
     // Add total row with simplified label
     html += `
         <div class="stats-row total">
@@ -250,7 +249,6 @@ function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
             <div>${totalB}</div>
         </div>
     `;
-
 
     return html;
 }
@@ -269,6 +267,7 @@ function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) 
         totalP2 += counts['2'] || 0;
     });
 
+    // Player header row - show only player names without team names
     // Player header row
     html += `
          <div class="stats-row player-header">
@@ -300,16 +299,14 @@ function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) 
         `;
     });
 
-
     // Add total row with simplified label
     html += `
-        <div class="stats-row total">
-            <div>${totalP1}</div>
-            <div>Total</div>
-            <div>${totalP2}</div>
-        </div>
-    `;
-
+         <div class="stats-row total">
+             <div>${totalP1}</div>
+             <div>Total</div>
+             <div>${totalP2}</div>
+         </div>
+     `;
 
     return html;
 }
@@ -327,7 +324,6 @@ function getActionHelpText(action) {
      return action; // Return action itself if no help text found
 }
 
-
 function showAllStatsModal() {
     if (!allStatsContainer || !allStatsModal) {
          console.error("All Stats modal elements not found."); 
@@ -339,14 +335,21 @@ function showAllStatsModal() {
     const sortedCategories = Object.keys(categories).sort();
 
     let html = `
-        <div class="all-stats-content">
-            <h1 class="stats-title">All Stats</h1>
-            
-            <!-- Team Statistics Section -->
-            <div class="stats-main-section team-stats-section">
-                <h2 class="section-header">Team Statistics</h2>
-                <div class="stats-section">
-    `;
+         <div class="all-stats-content">
+             <h1 class="stats-title">All Stats</h1>
+             
+             <!-- Team Statistics Section -->
+             <div class="stats-main-section team-stats-section">
+                 <h2 class="section-header">Team Statistics</h2>
+                 
+                 <!-- Team Names Header Row -->
+                 <div class="team-names-header">
+                     <div class="team-name-left">${appState.teams.a.name}</div>
+                     <div class="team-name-right">${appState.teams.b.name}</div>
+                 </div>
+                 
+                 <div class="stats-section">
+     `;
 
     // Generate team statistics sections
     sortedCategories.forEach(categoryKey => {
@@ -365,16 +368,16 @@ function showAllStatsModal() {
     });
 
     html += `
-                </div>
-            </div>
-            
-            <!-- Player Statistics Section -->
-            <div class="stats-main-section player-stats-section">
-                <h2 class="section-header">Player Statistics</h2>
-                <div class="stats-section">
-                    <div class="team-player-stats">
-                        <h3 class="team-header">${appState.teams.a.name} Players</h3>
-    `;
+                 </div>
+             </div>
+             
+             <!-- Player Statistics Section -->
+             <div class="stats-main-section player-stats-section">
+                 <h2 class="section-header">Player Statistics</h2>
+                 <div class="stats-section">
+                     <div class="team-player-stats">
+                         <h3 class="team-header">${appState.teams.a.name} Players</h3>
+     `;
 
     // Team A player statistics
     sortedCategories.forEach(categoryKey => {
@@ -393,10 +396,10 @@ function showAllStatsModal() {
     });
 
     html += `
-                    </div>
-                    <div class="team-player-stats">
-                        <h3 class="team-header">${appState.teams.b.name} Players</h3>
-    `;
+                     </div>
+                     <div class="team-player-stats">
+                         <h3 class="team-header">${appState.teams.b.name} Players</h3>
+     `;
 
     // Team B player statistics
     sortedCategories.forEach(categoryKey => {
@@ -415,11 +418,11 @@ function showAllStatsModal() {
     });
 
     html += `
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+                     </div>
+                 </div>
+             </div>
+         </div>
+     `;
 
     allStatsContainer.innerHTML = html;
 
@@ -436,7 +439,6 @@ function hideAllStatsModal() {
     hideModal(allStatsModal);
 }
     
-
 // --- Set 3 Server Modal ---
 function showSet3ServerModal() {
     if (!set3TeamAName || !set3TeamBName) return;
@@ -471,5 +473,3 @@ function handleEscapeKey(event) {
         }
     }
 }
-
-
