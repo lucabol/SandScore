@@ -211,6 +211,15 @@ function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
         totalB += counts.b || 0;
     });
 
+    // Add team names header
+    html += `
+        <div class="stats-row team-header">
+            <div>${appState.teams.a.name}</div>
+            <div>Action</div>
+            <div>${appState.teams.b.name}</div>
+        </div>
+    `;
+
     // Sort actions alphabetically
     const sortedActions = Object.keys(categoryStats).sort();
 

@@ -1,3 +1,4 @@
+
 /* Base Styles */
 * {
     box-sizing: border-box;
@@ -151,7 +152,6 @@ body {
     }
 }
 
-
 /* Regular heading styles - removed the display: none */
 h1 {
     font-size: 1.6rem;
@@ -181,7 +181,6 @@ h3 {
     padding-bottom: 10px;
     border-bottom: 2px solid #e3f2fd;
 }
-    
 
 /* Responsive adjustment for app title */
 @media (max-width: 480px) {
@@ -909,36 +908,36 @@ button {
         height: 20px;
         font-size: 0.8rem;
     }
-
+ 
     .compact-scoreboard {
         padding: 8px;
     }
-
+ 
     .team-name {
         font-size: 0.9rem;
     }
-
+ 
     .score {
         font-size: 1.8rem;
     }
-
+ 
     .set-scores {
         font-size: 0.8rem;
     }
-
+ 
     .action-button {
         font-size: 0.8rem;
         padding: 6px 10px;
         min-width: 70px;
     }
-
+ 
     .control-btn {
         font-size: 1.1rem;
         min-width: 44px;  /* Increased from 36px */
         width: 44px;      /* Increased from 36px */
         height: 44px;     /* Increased from 36px */
     }
-
+ 
     .summary-sets span {
         font-size: 1.6rem;
         min-width: 25px;
@@ -947,7 +946,7 @@ button {
     .winner-announcement {
         font-size: 1rem;
     }
-
+    
     .set-pair {
         font-size: 1.6rem;
     }
@@ -972,6 +971,7 @@ button {
     margin: 0;
 }
 
+/* Serve Checkbox */
 .serve-checkbox {
     font-size: 0.9rem;
     color: #666;
@@ -1217,9 +1217,12 @@ button {
     color: #0d47a1;
 }
 
-.stats-row:nth-last-child(-n+2) {
-    border-top: 1px solid #e3f2fd;
-    margin-top: 4px;
+.stats-row.team-header {
+    font-weight: bold;
+    color: #0d47a1;
+    border-bottom: 1px solid #e3f2fd;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
 }
 
 @media (max-width: 480px) {
@@ -1236,7 +1239,7 @@ button {
     .stats-section h4 {
         font-size: 1rem;
     }
-
+    
     .stats-header,
     .stats-row {
         grid-template-columns: minmax(60px, 1fr) minmax(100px, auto) minmax(60px, 1fr);
@@ -1280,12 +1283,10 @@ button {
     background-color: #28a745; /* green */
     color: white;
 }
-
 .button-danger {
     background-color: #dc3545; /* red */
     color: white;
 }
-
 .button-primary {
     background-color: #007bff; /* blue */
     color: white;
@@ -1296,33 +1297,27 @@ button {
     color: white;
     border: none;
 }
-
 .button-success:hover {
     background-color: #218838; /* darker green */
 }
-
 /* Danger (red) button */
 .button-danger {
     background-color: #dc3545;
     color: white;
     border: none;
 }
-
 .button-danger:hover {
     background-color: #c82333; /* darker red */
 }
-
 /* Primary (blue) button */
 .button-primary {
     background-color: #007bff;
     color: white;
     border: none;
 }
-
 .button-primary:hover {
     background-color: #0069d9; /* darker blue */
 }
-
 /* General button styling for consistency */
 .action-button {
     padding: 8px 12px;
@@ -1332,4 +1327,3 @@ button {
     transition: background-color 0.2s ease;
     font-size: 14px;
 }
-
