@@ -222,10 +222,62 @@ function calculateMatchStatistics(gameMode = 'advanced') {
   
      return stats;
 }
-  
+
 // Manual calculation for player stats if calculate function doesn't support playerIndex
 // This needs to be implemented specifically for each stat key required.
 function calculatePlayerSpecificStatManual(statsObject, statKey) {
+    // Handle 'attackPoints' in both beginner and advanced modes
+    if (statKey === 'attackPoints') {
+        // For beginner mode (Win1/Win2)
+        if (stateMachine === beginnerStateMachine) {
+            Object.values(appState.rallyHistory).forEach(rally => {
+                rally.actions.forEach(action => {
+                    if (action === 'Win1') {
+                        if (rally.scoringTeam === 'a') statsObject.teamA.players[0][statKey]++;
+                        if (rally.scoringTeam === 'b') statsObject.teamB.players[0][statKey]++;
+                    } else if (action === 'Win2') {
+                        if (rally.scoringTeam === 'a') statsObject.teamA.players[1][statKey]++;
+                        if (rally.scoringTeam === 'b') statsObject.teamB.players[1][statKey]++;
+                    }
+                });
+            });
+        } 
+        // For advanced mode (need to find the last attacking player)
+        else if (stateMachine === advancedStateMachine) {
+            Object.values(appState.rallyHistory).forEach(rally => {
+                // Find the last attacking player before a Win action
+                let lastAttackingPlayer = { team: null, player: null };
+                
+                for (let i = 0; i < rally.actions.length; i++) {
+                    const action = rally.actions[i];
+                    
+                    // Track attacking players (Atk1, Atk2)
+                    if (action === 'Atk1' || action === 'Atk2') {
+                        const playerNum = action.charAt(action.length - 1);
+                        // Determine which team is attacking based on rally state
+                        const isTeamAServing = rally.servingTeam === 'a';
+                        const attackingTeam = isTeamAServing ? 'a' : 'b'; // Simplified - in reality this depends on rally state
+                        
+                        lastAttackingPlayer = { 
+                            team: attackingTeam, 
+                            player: parseInt(playerNum) - 1 // Convert to 0-based index
+                        };
+                    }
+                    
+                    // If this is a Win action and we have tracked an attacking player
+                    if (action === 'Win' && lastAttackingPlayer.team && lastAttackingPlayer.player !== null) {
+                        if (lastAttackingPlayer.team === 'a') {
+                            statsObject.teamA.players[lastAttackingPlayer.player][statKey]++;
+                        } else if (lastAttackingPlayer.team === 'b') {
+                            statsObject.teamB.players[lastAttackingPlayer.player][statKey]++;
+                        }
+                    }
+                }
+            });
+        }
+        return; // Successfully handled this stat
+    }
+    
      // Example for 'attackPoints' in beginner mode (Win1/Win2)
      if (stateMachine === beginnerStateMachine && statKey === 'attackPoints') {
          Object.values(appState.rallyHistory).forEach(rally => {
@@ -242,10 +294,13 @@ function calculatePlayerSpecificStatManual(statsObject, statKey) {
      }
     // Add similar logic for other keys like 'attackErrors', 'blocks', 'receptionErrors', 'defenses'
     // This duplicates logic from the stat table but split by player.
+    
+    // If we reach here, the stat wasn't handled
+    console.warn(`Stat '${statKey}' cannot be automatically calculated per player without specific logic.`);
 }
-  
+
 // --- Category Stats (For All Stats Modal) ---
-  
+
 function getAllCategories() {
     const categories = {};
     const currentStateMachine = appState.gameMode === 'beginner' ? beginnerStateMachine : advancedStateMachine;
