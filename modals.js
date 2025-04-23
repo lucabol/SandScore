@@ -61,6 +61,8 @@ function generateLegendContent() {
          titleEl.textContent = getCategoryDisplayName(categoryKey); // Use helper
          sectionEl.appendChild(titleEl);
 
+    // Player header row removed
+    
          sortedActions.forEach(action => {
              const help = categoryActions[action];
              const paraEl = document.createElement('p');
@@ -261,12 +263,9 @@ function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) 
         totalP2 += counts['2'] || 0;
     });
 
-    // Player header row - show only Action label
-    html += `<div class="stats-row player-header">
-        <div></div>
-        <div>Action</div>
-        <div></div>
-    </div>`;
+
+    // (Player header row removed)
+    
 
     // Sort actions alphabetically
     const sortedActions = Object.keys(playerStats).sort();
@@ -308,6 +307,7 @@ function getActionHelpText(action) {
      }
      return action; // Return action itself if no help text found
 }
+
 
 
 
