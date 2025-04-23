@@ -1,11 +1,18 @@
+
 import os
 import shutil
 import re
+import platform
 
 # Define file paths
 html_file = 'index.html'
 css_file = 'styles.css'
-output_file = r'P:\Public Folder\SandScore.html'
+
+# Set output file path based on operating system
+if platform.system() == 'Linux':
+    output_file = '/mnt/c/Users/lucabol/Downloads/SandScore.html'
+else:
+    output_file = r'P:\Public Folder\SandScore.html'
 
 # Order of JavaScript files (matching the order in the HTML)
 js_files = [
