@@ -61,8 +61,8 @@ function generateLegendContent() {
          titleEl.textContent = getCategoryDisplayName(categoryKey); // Use helper
          sectionEl.appendChild(titleEl);
 
-    // Player header row removed
-    
+         // Player header row removed
+         
          sortedActions.forEach(action => {
              const help = categoryActions[action];
              const paraEl = document.createElement('p');
@@ -146,32 +146,32 @@ function generateStatisticsModalContent(stats) {
                </div>
                <div class="stats-block">
                <h3>Match Info</h3>
-                   <div class="info-item">
-                       <div>${stats.totalRallies ?? 0}</div>
-                       <div>Total Rallies Completed</div>
-                   </div>
-                   <div class="info-item">
-                        <div>${stats.longestRally?.actions ?? 0}</div>
-                        <div>Longest Rally (Actions)</div>
-                   </div>
-                   <div class="info-item">
-                         <div>Longest Rally Sequence</div>
-                         <div>${stats.longestRally?.sequence || '-'}</div>
-                   </div>
-                   <div class="info-item">
-                       <div>Set ${stats.currentSet + 1}</div>
-                       <div>Current Set</div>
-                   </div>
+                    <div class="info-item">
+                        <div>${stats.totalRallies ?? 0}</div>
+                        <div>Total Rallies Completed</div>
+                    </div>
+                    <div class="info-item">
+                         <div>${stats.longestRally?.actions ?? 0}</div>
+                         <div>Longest Rally (Actions)</div>
+                    </div>
+                    <div class="info-item">
+                          <div>Longest Rally Sequence</div>
+                          <div>${stats.longestRally?.sequence || '-'}</div>
+                    </div>
+                    <div class="info-item">
+                        <div>Set ${stats.currentSet + 1}</div>
+                        <div>Current Set</div>
+                    </div>
                </div>
                <div class="stats-block">
                <h3>Set Scores</h3>
-                   ${stats.setScores?.map(set => `
-                       <div class="stats-row">
-                           <div>${set.scoreA}</div>
-                           <div>Set ${set.set}</div>
-                           <div>${set.scoreB}</div>
-                       </div>
-                   `).join('') || `<div class="no-data">No sets completed yet.</div>`}
+                    ${stats.setScores?.map(set => `
+                        <div class="stats-row">
+                            <div>${set.scoreA}</div>
+                            <div>Set ${set.set}</div>
+                            <div>${set.scoreB}</div>
+                        </div>
+                    `).join('') || `<div class="no-data">No sets completed yet.</div>`}
                </div>
            </div>
        </div>`;
@@ -231,8 +231,7 @@ function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
         const percentA = totalA > 0 ? Math.round((countA / totalA) * 100) : 0;
         const percentB = totalB > 0 ? Math.round((countB / totalB) * 100) : 0;
 
-
-html += `<div class="stats-row">
+        html += `<div class="stats-row">
             <div>${countA} <span class="stats-percent">(${percentA}%)</span></div>
             <div>${action}</div>
             <div>${countB} <span class="stats-percent">(${percentB}%)</span></div>
@@ -250,9 +249,6 @@ html += `<div class="stats-row">
     return html;
 }
     
-
-
-
 function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) {
     if (!playerStats || Object.keys(playerStats).length === 0) {
         return `<div class="no-data">No data available</div>`;
@@ -265,8 +261,6 @@ function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) 
         totalP1 += counts['1'] || 0;
         totalP2 += counts['2'] || 0;
     });
-    
-    // Player header row removed
     
     // Sort actions alphabetically
     const sortedActions = Object.keys(playerStats).sort();
@@ -295,8 +289,6 @@ function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) 
     return html;
 }
     
-    
-
 function getActionHelpText(action) {
     const currentStateMachine = appState.gameMode === 'beginner' ? beginnerStateMachine : advancedStateMachine;
     for (const stateName in currentStateMachine) {
@@ -309,12 +301,6 @@ function getActionHelpText(action) {
      }
      return action; // Return action itself if no help text found
 }
-
-
-
-
-
-
 
 function showAllStatsModal() {
     if (!allStatsContainer || !allStatsModal) {
@@ -344,27 +330,44 @@ function showAllStatsModal() {
         if (teamCatStats && Object.keys(teamCatStats).length > 0) {
             html += `<div class="stats-category-block">
                 <h3 class="category-header">${categoryName}</h3>
+                
                 <div class="team-stats-section">
                     ${generateCategoryTeamStatsRows(teamCatStats, categoryKey)}
                 </div>`;
-            if (!isTeamOnlyCategory && playerACatStats && Object.keys(playerACatStats).length > 0 &&
-                playerBCatStats && Object.keys(playerBCatStats).length > 0) {
-                html += `<div class="player-stats-toggle" data-category="${categoryKey}">
+            
+            if (!isTeamOnlyCategory && 
+                ((playerACatStats && Object.keys(playerACatStats).length > 0) ||
+                 (playerBCatStats && Object.keys(playerBCatStats).length > 0))) {
+                
+                html += `
+                <div class="player-stats-toggle" data-category="${categoryKey}">
                     <span class="toggle-icon">+</span> Show Player Stats
                 </div>
-                <div class="player-stats-section hidden" id="player-stats-${categoryKey}">
+                
+                <div class="player-stats-section hidden" id="player-stats-${categoryKey}">`;
+                
+                if (playerACatStats && Object.keys(playerACatStats).length > 0) {
+                    html += `
                     <div class="player-team-section">
                         <h4 class="player-team-header">${appState.teams.a.name}</h4>
                         ${generateCategoryPlayerStatsRows(playerACatStats, categoryKey, appState.teams.a.players)}
-                    </div>
+                    </div>`;
+                }
+                
+                if (playerBCatStats && Object.keys(playerBCatStats).length > 0) {
+                    html += `
                     <div class="player-team-section">
                         <h4 class="player-team-header">${appState.teams.b.name}</h4>
                         ${generateCategoryPlayerStatsRows(playerBCatStats, categoryKey, appState.teams.b.players)}
-                    </div>
-                </div>`;
+                    </div>`;
+                }
+                
+                html += `</div>`;
             }
+            
             html += `</div>`;
         }
+
     });
 
     html += `</div></div>`;
@@ -396,12 +399,10 @@ function showAllStatsModal() {
     showModal(allStatsModal);
 }
     
-    
-
 function hideAllStatsModal() {
     hideModal(allStatsModal);
 }
-    
+
 // --- Set 3 Server Modal ---
 function showSet3ServerModal() {
     if (!set3TeamAName || !set3TeamBName) return;
@@ -414,8 +415,6 @@ function showSet3ServerModal() {
 
     showModal(set3ServerModal);
 }
-
-
 
 function hideSet3ServerModal() {
     hideModal(set3ServerModal);
@@ -437,5 +436,3 @@ function handleEscapeKey(event) {
         }
     }
 }
-
-
