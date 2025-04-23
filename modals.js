@@ -231,11 +231,13 @@ function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
         const percentA = totalA > 0 ? Math.round((countA / totalA) * 100) : 0;
         const percentB = totalB > 0 ? Math.round((countB / totalB) * 100) : 0;
 
-        html += `<div class="stats-row">
-            <div>${countA} (${percentA}%)</div>
+
+html += `<div class="stats-row">
+            <div>${countA} <span class="stats-percent">(${percentA}%)</span></div>
             <div>${action}</div>
-            <div>${countB} (${percentB}%)</div>
+            <div>${countB} <span class="stats-percent">(${percentB}%)</span></div>
         </div>`;
+    
     });
 
     // Add total row with simplified label
@@ -250,11 +252,12 @@ function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
     
 
 
+
 function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) {
     if (!playerStats || Object.keys(playerStats).length === 0) {
         return `<div class="no-data">No data available</div>`;
     }
-
+    
     let html = '';
     let totalP1 = 0;
     let totalP2 = 0;
@@ -262,37 +265,36 @@ function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) 
         totalP1 += counts['1'] || 0;
         totalP2 += counts['2'] || 0;
     });
-
-
-    // (Player header row removed)
     
-
+    // Player header row removed
+    
     // Sort actions alphabetically
     const sortedActions = Object.keys(playerStats).sort();
-
+    
     sortedActions.forEach(action => {
         const counts = playerStats[action];
         const countP1 = counts['1'] || 0;
         const countP2 = counts['2'] || 0;
         const percentP1 = totalP1 > 0 ? Math.round((countP1 / totalP1) * 100) : 0;
         const percentP2 = totalP2 > 0 ? Math.round((countP2 / totalP2) * 100) : 0;
-
+        
         html += `<div class="stats-row">
-            <div>${countP1} (${percentP1}%)</div>
+            <div>${countP1} <span class="stats-percent">(${percentP1}%)</span></div>
             <div>${action}</div>
-            <div>${countP2} (${percentP2}%)</div>
+            <div>${countP2} <span class="stats-percent">(${percentP2}%)</span></div>
         </div>`;
     });
-
+    
     // Add total row with simplified label
     html += `<div class="stats-row total">
         <div>${totalP1}</div>
         <div>Total</div>
         <div>${totalP2}</div>
     </div>`;
-
+    
     return html;
 }
+    
     
 
 function getActionHelpText(action) {
@@ -307,6 +309,8 @@ function getActionHelpText(action) {
      }
      return action; // Return action itself if no help text found
 }
+
+
 
 
 
