@@ -216,9 +216,9 @@ function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
 
     // Action header row (without team names)
     html += `<div class="stats-row action-header">
-        <div>Value</div>
+        <div></div>
         <div>Action</div>
-        <div>Value</div>
+        <div></div>
     </div>`;
 
     // Sort actions alphabetically
@@ -350,11 +350,11 @@ function showAllStatsModal() {
                 </div>
                 <div class="player-stats-section hidden" id="player-stats-${categoryKey}">
                     <div class="player-team-section">
-                        <h4 class="player-team-header">${appState.teams.a.name} Players</h4>
+                        <h4 class="player-team-header">${appState.teams.a.name}</h4>
                         ${generateCategoryPlayerStatsRows(playerACatStats, categoryKey, appState.teams.a.players)}
                     </div>
                     <div class="player-team-section">
-                        <h4 class="player-team-header">${appState.teams.b.name} Players</h4>
+                        <h4 class="player-team-header">${appState.teams.b.name}</h4>
                         ${generateCategoryPlayerStatsRows(playerBCatStats, categoryKey, appState.teams.b.players)}
                     </div>
                 </div>`;
