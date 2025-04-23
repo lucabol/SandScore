@@ -198,6 +198,7 @@ function hideStatisticsModal() {
 }
 
 // --- All Stats Modal (Category Stats) ---
+
 function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
     if (!categoryStats || Object.keys(categoryStats).length === 0) {
         return `<div class="no-data">No data</div>`;
@@ -212,13 +213,11 @@ function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
     });
 
     // Action header row (without team names)
-    html += `
-        <div class="stats-row action-header">
-            <div>Value</div>
-            <div>Action</div>
-            <div>Value</div>
-        </div>
-    `;
+    html += `<div class="stats-row action-header">
+        <div>Value</div>
+        <div>Action</div>
+        <div>Value</div>
+    </div>`;
 
     // Sort actions alphabetically
     const sortedActions = Object.keys(categoryStats).sort();
@@ -230,33 +229,28 @@ function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
         const percentA = totalA > 0 ? Math.round((countA / totalA) * 100) : 0;
         const percentB = totalB > 0 ? Math.round((countB / totalB) * 100) : 0;
 
-        let helpText = getActionHelpText(action); // Get help text
-
-        html += `
-            <div class="stats-row">
-                <div>${countA} (${percentA}%)</div>
-                <div>${action}</div>
-                <div>${countB} (${percentB}%)</div>
-            </div>
-        `;
+        html += `<div class="stats-row">
+            <div>${countA} (${percentA}%)</div>
+            <div>${action}</div>
+            <div>${countB} (${percentB}%)</div>
+        </div>`;
     });
 
     // Add total row with simplified label
-    html += `
-        <div class="stats-row total">
-            <div>${totalA}</div>
-            <div>Total</div>
-            <div>${totalB}</div>
-        </div>
-    `;
+    html += `<div class="stats-row total">
+        <div>${totalA}</div>
+        <div>Total</div>
+        <div>${totalB}</div>
+    </div>`;
 
     return html;
 }
+    
+
 
 function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) {
     if (!playerStats || Object.keys(playerStats).length === 0) {
         return `<div class="no-data">No data available</div>`;
-        return `<div class="no-data">No ${getCategoryDisplayName(categoryKey)} data</div>`;
     }
 
     let html = '';
@@ -267,17 +261,12 @@ function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) 
         totalP2 += counts['2'] || 0;
     });
 
-    // Player header row - show only player names without team names
-    // Player header row
-
-html += `
-    <div class="stats-row player-header">
+    // Player header row - show only Action label
+    html += `<div class="stats-row player-header">
         <div></div>
         <div>Action</div>
         <div></div>
-    </div>
-`;
-    
+    </div>`;
 
     // Sort actions alphabetically
     const sortedActions = Object.keys(playerStats).sort();
@@ -289,28 +278,23 @@ html += `
         const percentP1 = totalP1 > 0 ? Math.round((countP1 / totalP1) * 100) : 0;
         const percentP2 = totalP2 > 0 ? Math.round((countP2 / totalP2) * 100) : 0;
 
-        let helpText = getActionHelpText(action); // Get help text
-
-        html += `
-            <div class="stats-row">
-                <div>${countP1} (${percentP1}%)</div>
-                <div>${action}</div>
-                <div>${countP2} (${percentP2}%)</div>
-            </div>
-        `;
+        html += `<div class="stats-row">
+            <div>${countP1} (${percentP1}%)</div>
+            <div>${action}</div>
+            <div>${countP2} (${percentP2}%)</div>
+        </div>`;
     });
 
     // Add total row with simplified label
-    html += `
-         <div class="stats-row total">
-             <div>${totalP1}</div>
-             <div>Total</div>
-             <div>${totalP2}</div>
-         </div>
-     `;
+    html += `<div class="stats-row total">
+        <div>${totalP1}</div>
+        <div>Total</div>
+        <div>${totalP2}</div>
+    </div>`;
 
     return html;
 }
+    
 
 function getActionHelpText(action) {
     const currentStateMachine = appState.gameMode === 'beginner' ? beginnerStateMachine : advancedStateMachine;
@@ -325,116 +309,90 @@ function getActionHelpText(action) {
      return action; // Return action itself if no help text found
 }
 
+
+
+
 function showAllStatsModal() {
     if (!allStatsContainer || !allStatsModal) {
          console.error("All Stats modal elements not found."); 
          return;
     }
 
-    const categoryStats = generateCategoryStats(); // Assumes generateCategoryStats is available (from stats/stats-reporting.js)
-    const categories = getAllCategories(); // Get categories dynamically
+    const categoryStats = generateCategoryStats();
+    const categories = getAllCategories();
     const sortedCategories = Object.keys(categories).sort();
 
-    let html = `
-         <div class="all-stats-content">
-             <h1 class="stats-title">All Stats</h1>
-             
-             <!-- Team Statistics Section -->
-             <div class="stats-main-section team-stats-section">
-                 <h2 class="section-header">Team Statistics</h2>
-                 
-                 <!-- Team Names Header Row -->
-                 <div class="team-names-header">
-                     <div class="team-name-left">${appState.teams.a.name}</div>
-                     <div class="team-name-right">${appState.teams.b.name}</div>
-                 </div>
-                 
-                 <div class="stats-section">
-     `;
+    let html = `<div class="all-stats-content">
+        <h1 class="stats-title">All Stats</h1>
+        <div class="stats-consolidated-view">
+            <div class="team-names-header">
+                <div class="team-name-left">${appState.teams.a.name}</div>
+                <div class="team-name-right">${appState.teams.b.name}</div>
+            </div>`;
 
-    // Generate team statistics sections
     sortedCategories.forEach(categoryKey => {
         const categoryName = getCategoryDisplayName(categoryKey);
         const teamCatStats = categoryStats.team[categoryKey];
-        
-        // Only show section if there's team data
-        if (teamCatStats && Object.keys(teamCatStats).length > 0) {
-            html += `
-                <div class="stats-block">
-                    <h3>${categoryName}</h3>
-                    ${generateCategoryTeamStatsRows(teamCatStats, categoryKey)}
-                </div>
-            `;
-        }
-    });
-
-    html += `
-                 </div>
-             </div>
-             
-             <!-- Player Statistics Section -->
-             <div class="stats-main-section player-stats-section">
-                 <h2 class="section-header">Player Statistics</h2>
-                 <div class="stats-section">
-                     <div class="team-player-stats">
-                         <h3 class="team-header">${appState.teams.a.name} Players</h3>
-     `;
-
-    // Team A player statistics
-    sortedCategories.forEach(categoryKey => {
-        const categoryName = getCategoryDisplayName(categoryKey);
         const playerACatStats = categoryStats.playerA[categoryKey];
-        const isTeamOnlyCategory = categoryStats.teamOnlyCategories && categoryStats.teamOnlyCategories[categoryKey];
-        
-        if (playerACatStats && Object.keys(playerACatStats).length > 0 && !isTeamOnlyCategory) {
-            html += `
-                        <div class="stats-block">
-                            <h4>${categoryName}</h4>
-                            ${generateCategoryPlayerStatsRows(playerACatStats, categoryKey, appState.teams.a.players)}
-                        </div>
-            `;
-        }
-    });
-
-    html += `
-                     </div>
-                     <div class="team-player-stats">
-                         <h3 class="team-header">${appState.teams.b.name} Players</h3>
-     `;
-
-    // Team B player statistics
-    sortedCategories.forEach(categoryKey => {
-        const categoryName = getCategoryDisplayName(categoryKey);
         const playerBCatStats = categoryStats.playerB[categoryKey];
         const isTeamOnlyCategory = categoryStats.teamOnlyCategories && categoryStats.teamOnlyCategories[categoryKey];
-        
-        if (playerBCatStats && Object.keys(playerBCatStats).length > 0 && !isTeamOnlyCategory) {
-            html += `
-                        <div class="stats-block">
-                            <h4>${categoryName}</h4>
-                            ${generateCategoryPlayerStatsRows(playerBCatStats, categoryKey, appState.teams.b.players)}
-                        </div>
-            `;
+
+        if (teamCatStats && Object.keys(teamCatStats).length > 0) {
+            html += `<div class="stats-category-block">
+                <h3 class="category-header">${categoryName}</h3>
+                <div class="team-stats-section">
+                    ${generateCategoryTeamStatsRows(teamCatStats, categoryKey)}
+                </div>`;
+            if (!isTeamOnlyCategory && playerACatStats && Object.keys(playerACatStats).length > 0 &&
+                playerBCatStats && Object.keys(playerBCatStats).length > 0) {
+                html += `<div class="player-stats-toggle" data-category="${categoryKey}">
+                    <span class="toggle-icon">+</span> Show Player Stats
+                </div>
+                <div class="player-stats-section hidden" id="player-stats-${categoryKey}">
+                    <div class="player-team-section">
+                        <h4 class="player-team-header">${appState.teams.a.name} Players</h4>
+                        ${generateCategoryPlayerStatsRows(playerACatStats, categoryKey, appState.teams.a.players)}
+                    </div>
+                    <div class="player-team-section">
+                        <h4 class="player-team-header">${appState.teams.b.name} Players</h4>
+                        ${generateCategoryPlayerStatsRows(playerBCatStats, categoryKey, appState.teams.b.players)}
+                    </div>
+                </div>`;
+            }
+            html += `</div>`;
         }
     });
 
-    html += `
-                     </div>
-                 </div>
-             </div>
-         </div>
-     `;
-
+    html += `</div></div>`;
     allStatsContainer.innerHTML = html;
 
-    // Re-attach listener for the new close button
+    const toggles = allStatsContainer.querySelectorAll('.player-stats-toggle');
+    toggles.forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            const playerStatsSection = document.getElementById(`player-stats-${category}`);
+            const toggleIcon = this.querySelector('.toggle-icon');
+
+            if (playerStatsSection.classList.contains('hidden')) {
+                playerStatsSection.classList.remove('hidden');
+                toggleIcon.textContent = '-';
+                this.innerHTML = this.innerHTML.replace('Show Player Stats', 'Hide Player Stats');
+            } else {
+                playerStatsSection.classList.add('hidden');
+                toggleIcon.textContent = '+';
+                this.innerHTML = this.innerHTML.replace('Hide Player Stats', 'Show Player Stats');
+            }
+        });
+    });
+
     const closeBtn = allStatsContainer.querySelector('.close-modal');
     if (closeBtn) {
          closeBtn.addEventListener('click', hideAllStatsModal);
     }
-
     showModal(allStatsModal);
 }
+    
+    
 
 function hideAllStatsModal() {
     hideModal(allStatsModal);
@@ -452,6 +410,7 @@ function showSet3ServerModal() {
 
     showModal(set3ServerModal);
 }
+
 
 
 function hideSet3ServerModal() {
@@ -474,4 +433,5 @@ function handleEscapeKey(event) {
         }
     }
 }
+
 
