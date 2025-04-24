@@ -97,8 +97,8 @@ const advancedStateMachine = {
             { "action": "Err", "nextState": "Point Server", "style": "error", "help": "Attack error", "category": "atk Result", "statTeam": "Receiving", "statPlayer": "-1" },
             { "action": "Blk1", "nextState": "Point Server", "style": "error", "help": "Blocked by player 1", "category": "atk Result", "statTeam": "Serving", "statPlayer": "1" },
             { "action": "Blk2", "nextState": "Point Server", "style": "error", "help": "Blocked by player 2", "category": "atk Result", "statTeam": "Serving", "statPlayer": "2" },
-            { "action": "Def1", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 1", "category": "atk Result", "statTeam": "Serving", "statPlayer": "1" },
-            { "action": "Def2", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 2", "category": "atk Result", "statTeam": "Serving", "statPlayer": "2" }
+            { "action": "Def1", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 1", "category": "defense", "statTeam": "Serving", "statPlayer": "1" },
+            { "action": "Def2", "nextState": "Defense By Serving Team", "style": "regular", "help": "Defended by player 2", "category": "defense", "statTeam": "Serving", "statPlayer": "2" }
         ]
     },
     "Defense By Serving Team": {
@@ -148,8 +148,8 @@ const advancedStateMachine = {
             { "action": "Err", "nextState": "Point Receiver", "style": "error", "help": "Attack error", "category": "atk Result", "statTeam": "Serving", "statPlayer": "-1" },
             { "action": "Blk1", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 1", "category": "atk Result", "statTeam": "Receiving", "statPlayer": "1" },
             { "action": "Blk2", "nextState": "Point Receiver", "style": "error", "help": "Blocked by player 2", "category": "atk Result", "statTeam": "Receiving", "statPlayer": "2" },
-            { "action": "Def1", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 1", "category": "atk Result", "statTeam": "Receiving", "statPlayer": "1" },
-            { "action": "Def2", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 2", "category": "atk Result", "statTeam": "Receiving", "statPlayer": "2" }
+            { "action": "Def1", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 1", "category": "defense", "statTeam": "Receiving", "statPlayer": "1" },
+            { "action": "Def2", "nextState": "Defense By Receiving Team", "style": "regular", "help": "Defended by player 2", "category": "defense", "statTeam": "Receiving", "statPlayer": "2" }
         ]
     },
     "Defense By Receiving Team": {
