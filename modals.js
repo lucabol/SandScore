@@ -262,6 +262,13 @@ function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) 
         totalP2 += counts['2'] || 0;
     });
     
+    // Add player names header row
+    html += `<div class="stats-row player-header">
+        <div>${playerNames && playerNames[0] ? playerNames[0] : 'Player 1'}</div>
+        <div>Action</div>
+        <div>${playerNames && playerNames[1] ? playerNames[1] : 'Player 2'}</div>
+    </div>`;
+    
     // Sort actions alphabetically
     const sortedActions = Object.keys(playerStats).sort();
     
@@ -436,3 +443,4 @@ function handleEscapeKey(event) {
         }
     }
 }
+
