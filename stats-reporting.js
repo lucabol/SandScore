@@ -581,25 +581,7 @@ function safelyCalculatePlayerStat(calculationFn, statKey, statsObject, team, pl
         return teamObj.players[playerIndex][statKey];
     }
 }
- 
-// --- Statistics Calculation (Combined Logic) ---
   
-
-function calculateMatchStatistics(gameMode = 'advanced') {
-    try {
-        const currentStateMachine = gameMode === 'beginner' ? beginnerStateMachine : advancedStateMachine;
-        const statsTable = currentStateMachine.__statisticsTable__;
-      
-        // Initialize stats structure
-        const stats = {
-            teamA: { name: appState.teams.a.name, players: [], pointsPercentage: 0 },
-            teamB: { name: appState.teams.b.name, players: [], pointsPercentage: 0 },
-            totalRallies: Object.keys(appState.rallyHistory).length,
-            longestRally: { actions: 0, sequence: '' },
-            currentSet: appState.currentSet,
-            setScores: [],
-            calculationErrors: [] // Track any calculation errors
-        };
       
         // Initialize team-level stats and player structures
         statsTable.forEach(statDef => {

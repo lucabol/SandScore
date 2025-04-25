@@ -83,122 +83,6 @@ function hideLegendModal() {
     hideModal(legendModal);
 }
 
-// --- Statistics Modal ---
-function generateStatisticsModalContent(stats) {
-     if (!statsContainer) { console.error("Stats modal content container not found"); return ''; }
-
-     const currentStateMachine = appState.gameMode === 'beginner' ? beginnerStateMachine : advancedStateMachine;
-     const statsTable = currentStateMachine.__statisticsTable__;
-
-     // Determine player keys dynamically
-     const player1Key = 'player1'; // Assuming player keys are consistent if generalizing
-     const player2Key = 'player2'; // Or potentially derive from stats object structure if needed
-
-     let html = `<div class="stats-modal-content">
-           <h2>Match Statistics</h2>
-           <div class="stats-section">
-               <div class="stats-row stats-header">
-                   <div>${stats.teamA.name}</div>
-                   <div>Stat</div>
-                   <div>${stats.teamB.name}</div>
-               </div>
-               <div class="stats-block">
-               <h3>Team Stats</h3>
-                   ${statsTable.map(statDef => `
-                       <div class="stats-row">
-                           <div>${stats.teamA[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}${statDef.key === 'pointsWon' ? ` (${stats.teamA.pointsPercentage}%)` : ''}</div>
-                           <div>${statDef.label}</div>
-                           <div>${stats.teamB[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}${statDef.key === 'pointsWon' ? ` (${stats.teamB.pointsPercentage}%)` : ''}</div>
-                       </div>
-                   `).join('')}
-               </div>
-               <div class="stats-block">
-               <h3>Player Stats - ${stats.teamA.name}</h3>
-                   ${stats.teamA.players && stats.teamA.players.length === 2 ? `
-                   <div class="stats-row player-header">
-                       <div>${stats.teamA.players[0]?.name || 'Player 1'}</div>
-                       <div></div>
-                       <div>${stats.teamA.players[1]?.name || 'Player 2'}</div>
-                   </div>
-                   ${statsTable.filter(sd => sd.showInPlayerStats).map(statDef => `
-                       <div class="stats-row">
-                           <div>${stats.teamA.players[0]?.[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}</div>
-                           <div>${statDef.label}</div>
-                           <div>${stats.teamA.players[1]?.[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}</div>
-                       </div>
-                   `).join('')}` : `<div class="no-data">Player stats not available.</div>`}
-               </div>
-               <div class="stats-block">
-                <h3>Player Stats - ${stats.teamB.name}</h3>
-                   ${stats.teamB.players && stats.teamB.players.length === 2 ? `
-                    <div class="stats-row player-header">
-                        <div>${stats.teamB.players[0]?.name || 'Player 1'}</div>
-                        <div></div>
-                        <div>${stats.teamB.players[1]?.name || 'Player 2'}</div>
-                    </div>
-                    ${statsTable.filter(sd => sd.showInPlayerStats).map(statDef => `
-                        <div class="stats-row">
-                            <div>${stats.teamB.players[0]?.[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}</div>
-                            <div>${statDef.label}</div>
-                            <div>${stats.teamB.players[1]?.[statDef.key] ?? '-'}${statDef.key === 'attackEfficiency' ? '%' : ''}</div>
-                        </div>
-                    `).join('')}` : `<div class="no-data">Player stats not available.</div>`}
-               </div>
-               <div class="stats-block">
-               <h3>Match Info</h3>
-                    <div class="info-item">
-                        <div>${stats.totalRallies ?? 0}</div>
-                        <div>Total Rallies Completed</div>
-                    </div>
-                    <div class="info-item">
-                         <div>${stats.longestRally?.actions ?? 0}</div>
-                         <div>Longest Rally (Actions)</div>
-                    </div>
-                    <div class="info-item">
-                          <div>Longest Rally Sequence</div>
-                          <div>${stats.longestRally?.sequence || '-'}</div>
-                    </div>
-                    <div class="info-item">
-                        <div>Set ${stats.currentSet + 1}</div>
-                        <div>Current Set</div>
-                    </div>
-               </div>
-               <div class="stats-block">
-               <h3>Set Scores</h3>
-                    ${stats.setScores?.map(set => `
-                        <div class="stats-row">
-                            <div>${set.scoreA}</div>
-                            <div>Set ${set.set}</div>
-                            <div>${set.scoreB}</div>
-                        </div>
-                    `).join('') || `<div class="no-data">No sets completed yet.</div>`}
-               </div>
-           </div>
-       </div>`;
-     statsContainer.innerHTML = html;
-
-     // Re-attach listener for the new close button
-     const closeBtn = statsContainer.querySelector('.close-modal');
-     if (closeBtn) {
-         closeBtn.addEventListener('click', hideStatisticsModal);
-     }
-}
-
-function showStatisticsModal() {
-    try {
-         const stats = calculateMatchStatistics(appState.gameMode);
-         generateStatisticsModalContent(stats);
-         showModal(statisticsModal);
-     } catch (error) {
-         console.error("Error generating or showing statistics modal:", error);
-         alert("Could not display statistics. Please check the console for errors.");
-     }
-}
-
-function hideStatisticsModal() {
-    hideModal(statisticsModal);
-}
-
 // --- All Stats Modal (Category Stats) ---
 
 function generateCategoryTeamStatsRows(categoryStats, categoryKey) {
@@ -433,8 +317,6 @@ function handleEscapeKey(event) {
         // Check modals in reverse order of likely appearance
         if (!allStatsModal.classList.contains('hidden')) {
             hideAllStatsModal();
-        } else if (!statisticsModal.classList.contains('hidden')) {
-            hideStatisticsModal();
         } else if (!legendModal.classList.contains('hidden')) {
             hideLegendModal();
         } else if (!set3ServerModal.classList.contains('hidden')) {

@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (saveBtn) saveBtn.addEventListener('click', saveMatch);
     if (restartBtn) restartBtn.addEventListener('click', restartApp);
     if (infoButtonMatch) infoButtonMatch.addEventListener('click', showLegendModal);
-    if (statButtonMatch) statButtonMatch.addEventListener('click', showStatisticsModal);
     if (detailsButtonMatch) detailsButtonMatch.addEventListener('click', showAllStatsModal);
 
     // Summary Screen Buttons
@@ -53,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (saveBtnSummary) saveBtnSummary.addEventListener('click', saveMatch);
     if (loadBtnSummary) loadBtnSummary.addEventListener('click', triggerLoadDialog);
     if (restartBtnSummary) restartBtnSummary.addEventListener('click', restartApp);
-    if (statButtonSummary) statButtonSummary.addEventListener('click', showStatisticsModal);
     if (detailsButtonSummary) detailsButtonSummary.addEventListener('click', showAllStatsModal);
 
     // Modal Close Buttons (using querySelectorAll)
@@ -65,10 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideModal(modalToClose); // Use generic hide function
             }
         });
-    });
-
-     // Click outside modal to close
-     [legendModal, statisticsModal, allStatsModal, set3ServerModal].forEach(modal => {
+    });     // Click outside modal to close
+     [legendModal, allStatsModal, set3ServerModal].forEach(modal => {
          if (modal) {
              modal.addEventListener('click', (e) => {
                  // If the click target is the modal background itself
