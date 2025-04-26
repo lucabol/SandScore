@@ -14,6 +14,7 @@ const undoBtn = document.getElementById('undo-btn');
 const saveBtn = document.getElementById('save-btn');
 const restartBtn = document.getElementById('restart-btn'); // Restart during match
 const infoButtonMatch = document.getElementById('info-button-match'); // Info during match
+const summaryButtonMatch = document.getElementById('summary-button-match'); // Summary Stats during match
 const detailsButtonMatch = document.getElementById('details-button-match'); // All Stats during match
 
 // Button Elements (Summary)

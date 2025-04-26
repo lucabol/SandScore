@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (saveBtn) saveBtn.addEventListener('click', saveMatch);
     if (restartBtn) restartBtn.addEventListener('click', restartApp);
     if (infoButtonMatch) infoButtonMatch.addEventListener('click', showLegendModal);
+    if (summaryButtonMatch) summaryButtonMatch.addEventListener('click', showSummaryStats);
     if (detailsButtonMatch) detailsButtonMatch.addEventListener('click', showAllStatsModal);
 
     // Summary Screen Buttons
