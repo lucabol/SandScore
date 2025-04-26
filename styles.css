@@ -1,4 +1,3 @@
-
 /* Base Styles */
 
 * {
@@ -51,7 +50,7 @@ body {
     border-radius: 2px;
 }
 
-.info-icon {
+.info-icon, .details-icon, .summary-icon {
     background: none;
     border: none;
     font-size: 1.2rem;
@@ -62,7 +61,7 @@ body {
     transition: opacity 0.2s;
 }
 
-.info-icon:hover {
+.info-icon:hover, .details-icon:hover, .summary-icon:hover {
     opacity: 1;
 }
 
@@ -910,7 +909,6 @@ button {
     cursor: pointer;
     min-width: 80px;
     max-width: 120px;
-    flex: 1;
 }
 
 .action-button:hover {
@@ -1272,27 +1270,6 @@ history-actions.away-scored .tag-win {
     
     .team-name {
         font-size: 1rem;
-
-.player-stats-section {
-    flex-direction: column;
-}
-
-.player-team-section {
-    min-width: 100%;
-}
-
-.stats-row {
-    grid-template-columns: minmax(60px, 1fr) minmax(90px, auto) minmax(60px, 1fr);
-    padding: 3px 0;
-    gap: 6px;
-    min-height: 22px;
-    font-size: 0.8rem;
-}
-
-.stats-label, .stats-value {
-    font-size: 0.75rem;
-}
-    
         height: 20px;
         font-size: 0.8rem;
     }
