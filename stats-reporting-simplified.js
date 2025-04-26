@@ -311,12 +311,12 @@ function generateSummaryStats() {
     if (categoryStats.team.reception) {
         for (const action in categoryStats.team.reception) {
             const stats = categoryStats.team.reception[action];
-            
-            // Count total receptions
+              // Count total receptions
             summaryStats.team.a.reception.total += stats.a || 0;
             summaryStats.team.b.reception.total += stats.b || 0;
             
-            if (action.includes('Error')) {
+            // Check for reception errors - looking for RE1 or RE2 actions
+            if (action === 'RE1' || action === 'RE2') {
                 summaryStats.team.a.reception.errors += stats.a || 0;
                 summaryStats.team.b.reception.errors += stats.b || 0;
             }
@@ -379,10 +379,9 @@ function processPlayerStats(category, playerCategoryStats, team, summaryStats) {
             } else if (category === 'block' && action.includes('Block') && !action.includes('Error')) {
                 summaryStats.player[playerKey].block.blocks += count;
             } else if (category === 'dig' && !action.includes('Error')) {
-                summaryStats.player[playerKey].dig.digs += count;
-            } else if (category === 'reception') {
+                summaryStats.player[playerKey].dig.digs += count;            } else if (category === 'reception') {
                 summaryStats.player[playerKey].reception.total += count;
-                if (action.includes('Error')) {
+                if (action === 'RE1' || action === 'RE2') {
                     summaryStats.player[playerKey].reception.errors += count;
                 }
             }
