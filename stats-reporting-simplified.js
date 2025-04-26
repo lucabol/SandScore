@@ -489,11 +489,10 @@ function calculateRallyBasedStats(summaryStats) {
 }
 
 // Show summary statistics dialog
-function showSummaryStats() {
-    const stats = generateSummaryStats();
+function showSummaryStats() {    const stats = generateSummaryStats();
     const teamNames = {
-        a: appState.teamAName || 'Team A',
-        b: appState.teamBName || 'Team B'
+        a: appState.teams.a.name || 'Team A',
+        b: appState.teams.b.name || 'Team B'
     };
     
     // Create modal container
@@ -768,12 +767,11 @@ function showSummaryStats() {
 }
 
 // Generate HTML for player statistics tables
-function generatePlayerStatsHTML(stats, teamNames) {
-    const playerNames = {
-        a1: appState.playerA1Name || 'Player A1',
-        a2: appState.playerA2Name || 'Player A2',
-        b1: appState.playerB1Name || 'Player B1',
-        b2: appState.playerB2Name || 'Player B2'
+function generatePlayerStatsHTML(stats, teamNames) {    const playerNames = {
+        a1: appState.teams.a.players[0] || 'Player A1',
+        a2: appState.teams.a.players[1] || 'Player A2',
+        b1: appState.teams.b.players[0] || 'Player B1',
+        b2: appState.teams.b.players[1] || 'Player B2'
     };
     
     let html = '';
