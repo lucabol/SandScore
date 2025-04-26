@@ -229,8 +229,8 @@ function generateSummaryStats() {
         for (const action in categoryStats.team.attack) {
             const stats = categoryStats.team.attack[action];
             
-            // Determine if this is a kill action
-            if (action.includes('Kill') || action.includes('Winner')) {
+            // Determine if this is a kill action - including Win/Win1/Win2 used in both modes
+            if (action.includes('Win')) {
                 summaryStats.team.a.attack.kills += stats.a || 0;
                 summaryStats.team.b.attack.kills += stats.b || 0;
             }
@@ -363,7 +363,7 @@ function processPlayerStats(category, playerCategoryStats, team, summaryStats) {
             if (category === 'attack') {
                 summaryStats.player[playerKey].attack.totalAttempts += count;
                 
-                if (action.includes('Kill') || action.includes('Winner')) {
+                if (action.includes('Win')) {
                     summaryStats.player[playerKey].attack.kills += count;
                 } else if (action.includes('Error')) {
                     summaryStats.player[playerKey].attack.errors += count;
