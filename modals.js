@@ -178,22 +178,7 @@ function generateCategoryPlayerStatsRows(playerStats, categoryKey, playerNames) 
     </div>`;
     
     return html;
-}
-    
-function getActionHelpText(action) {
-    const currentStateMachine = appState.gameMode === 'beginner' ? beginnerStateMachine : advancedStateMachine;
-    for (const stateName in currentStateMachine) {
-         if (stateName.startsWith('__')) continue;
-         const transitions = currentStateMachine[stateName]?.transitions || [];
-         const transition = transitions.find(t => t.action === action);
-         if (transition?.help) {
-             return transition.help;
-         }
-     }
-     return action; // Return action itself if no help text found
-}
-
-function showAllStatsModal() {
+}function showAllStatsModal() {
     if (!allStatsContainer || !allStatsModal) {
          console.error("All Stats modal elements not found."); 
          return;
