@@ -254,18 +254,17 @@ function generateSummaryStats() {
     if (categoryStats.team.serve) {
         for (const action in categoryStats.team.serve) {
             const stats = categoryStats.team.serve[action];
-            
-            // Count total serves
+              // Count total serves
             summaryStats.team.a.serve.totalServes += stats.a || 0;
             summaryStats.team.b.serve.totalServes += stats.b || 0;
             
             // Check for aces
-            if (action.includes('Ace')) {
+            if (action === 'Ace') {
                 summaryStats.team.a.serve.aces += stats.a || 0;
                 summaryStats.team.b.serve.aces += stats.b || 0;
             }
-            // Check for errors
-            else if (action.includes('Error')) {
+            // Check for errors - look for SErr which is the service error action
+            else if (action === 'SErr') {
                 summaryStats.team.a.serve.errors += stats.a || 0;
                 summaryStats.team.b.serve.errors += stats.b || 0;
             }
