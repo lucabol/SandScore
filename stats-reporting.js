@@ -226,8 +226,7 @@ function generateSummaryStats() {
     };
 
     // Process attack statistics including errors
-    if (categoryStats.team.attack || categoryStats.team['atk Result']) {
-        // Process beginner mode stats (category: 'attack')
+    if (categoryStats.team.attack || categoryStats.team['atk Result']) {        // Process beginner mode stats (category: 'attack')
         if (categoryStats.team.attack) {
             for (const action in categoryStats.team.attack) {
                 const stats = categoryStats.team.attack[action];
@@ -238,9 +237,7 @@ function generateSummaryStats() {
                 } else if (action.includes('Err')) {
                     summaryStats.team.a.attack.errors += stats.a || 0;
                     summaryStats.team.b.attack.errors += stats.b || 0;
-                }
-                
-                // All attack actions count toward total attempts
+                }                // Count all attack actions toward total attempts, including blocks
                 summaryStats.team.a.attack.totalAttempts += stats.a || 0;
                 summaryStats.team.b.attack.totalAttempts += stats.b || 0;
             }
@@ -257,9 +254,7 @@ function generateSummaryStats() {
                 } else if (action === 'Err') {
                     summaryStats.team.a.attack.errors += stats.a || 0;
                     summaryStats.team.b.attack.errors += stats.b || 0;
-                }
-                
-                // All attack result actions count toward total attempts
+                }                // Count all attack actions toward total attempts, including blocks
                 summaryStats.team.a.attack.totalAttempts += stats.a || 0;
                 summaryStats.team.b.attack.totalAttempts += stats.b || 0;
             }
@@ -336,8 +331,8 @@ function generateSummaryStats() {
                 }
             }
         }
-        
-        // Process player block stats
+          // Process player block stats - make sure to process these before other categories
+        // so that both blocks and total attacks are counted properly
         processPlayerStats('block', categoryStats.playerA, 'a', summaryStats);
         processPlayerStats('atk Result', categoryStats.playerA, 'a', summaryStats);
         processPlayerStats('attack', categoryStats.playerA, 'a', summaryStats);
@@ -408,14 +403,11 @@ function processPlayerStats(category, playerCategoryStats, team, summaryStats) {
     if (!playerCategoryStats[category]) return;
     
     for (const action in playerCategoryStats[category]) {
-        const stats = playerCategoryStats[category][action];
-        
-        for (let player = 1; player <= 2; player++) {
+        const stats = playerCategoryStats[category][action];        for (let player = 1; player <= 2; player++) {
             const playerKey = `${team}${player}`;
-            const count = stats[player] || 0;
-            
-            // Add to total attempts/serves/etc.
-            if (category === 'attack' || category === 'atk Result') {
+            const count = stats[player] || 0;              // Add to total attempts/serves/etc.
+            if (category === 'attack' || category === 'atk Result') {                
+                // Count all actions toward total attempts, including blocks
                 summaryStats.player[playerKey].attack.totalAttempts += count;
                 
                 if (action.includes('Win') || action === 'Win') {
@@ -430,12 +422,12 @@ function processPlayerStats(category, playerCategoryStats, team, summaryStats) {
                     summaryStats.player[playerKey].serve.aces += count;
                 } else if (action.includes('Error') || action === 'SErr') {
                     summaryStats.player[playerKey].serve.errors += count;
-                }            } else if (category === 'block' && action.includes('Blk') && !action.includes('Error')) {
+                }            } else if (category === 'block' && action.includes('Blk')) {
                 summaryStats.player[playerKey].block.blocks += count;
-            } else if (category === 'atk Result' && action.includes('Blk') && !action.includes('Error')) {
+            } else if (category === 'atk Result' && action.includes('Blk')) {
                 // Handle blocks in advanced mode (category: 'atk Result')
                 summaryStats.player[playerKey].block.blocks += count;
-            } else if (category === 'attack' && action.includes('Blk') && !action.includes('Error')) {
+            } else if (category === 'attack' && action.includes('Blk')) {
                 // Handle blocks in beginner mode (category: 'attack')
                 summaryStats.player[playerKey].block.blocks += count;
             } else if (category === 'dig' && !action.includes('Error')) {
