@@ -224,30 +224,51 @@ function generateSummaryStats() {
         }
     };
 
-    // Process attack statistics
-    if (categoryStats.team.attack) {
-        for (const action in categoryStats.team.attack) {
-            const stats = categoryStats.team.attack[action];
-            
-            // Determine if this is a kill action - including Win/Win1/Win2 used in both modes
-            if (action.includes('Win')) {
-                summaryStats.team.a.attack.kills += stats.a || 0;
-                summaryStats.team.b.attack.kills += stats.b || 0;
+    // Process attack statistics including errors
+    if (categoryStats.team.attack || categoryStats.team['atk Result']) {
+        // Process beginner mode stats (category: 'attack')
+        if (categoryStats.team.attack) {
+            for (const action in categoryStats.team.attack) {
+                const stats = categoryStats.team.attack[action];
+                
+                if (action.includes('Win')) {
+                    summaryStats.team.a.attack.kills += stats.a || 0;
+                    summaryStats.team.b.attack.kills += stats.b || 0;
+                } else if (action.includes('Err')) {
+                    summaryStats.team.a.attack.errors += stats.a || 0;
+                    summaryStats.team.b.attack.errors += stats.b || 0;
+                }
+                
+                // All attack actions count toward total attempts
+                summaryStats.team.a.attack.totalAttempts += stats.a || 0;
+                summaryStats.team.b.attack.totalAttempts += stats.b || 0;
             }
-            // Determine if this is an error action
-            else if (action.includes('Error')) {
-                summaryStats.team.a.attack.errors += stats.a || 0;
-                summaryStats.team.b.attack.errors += stats.b || 0;
+        }
+        
+        // Process advanced mode stats (category: 'atk Result')
+        if (categoryStats.team['atk Result']) {
+            for (const action in categoryStats.team['atk Result']) {
+                const stats = categoryStats.team['atk Result'][action];
+                
+                if (action === 'Win') {
+                    summaryStats.team.a.attack.kills += stats.a || 0;
+                    summaryStats.team.b.attack.kills += stats.b || 0;
+                } else if (action === 'Err') {
+                    summaryStats.team.a.attack.errors += stats.a || 0;
+                    summaryStats.team.b.attack.errors += stats.b || 0;
+                }
+                
+                // All attack result actions count toward total attempts
+                summaryStats.team.a.attack.totalAttempts += stats.a || 0;
+                summaryStats.team.b.attack.totalAttempts += stats.b || 0;
             }
-            
-            // All attack actions count toward total attempts
-            summaryStats.team.a.attack.totalAttempts += stats.a || 0;
-            summaryStats.team.b.attack.totalAttempts += stats.b || 0;
         }
         
         // Process player attack stats
         processPlayerStats('attack', categoryStats.playerA, 'a', summaryStats);
+        processPlayerStats('atk Result', categoryStats.playerA, 'a', summaryStats);
         processPlayerStats('attack', categoryStats.playerB, 'b', summaryStats);
+        processPlayerStats('atk Result', categoryStats.playerB, 'b', summaryStats);
     }
     
     // Process serving statistics
@@ -360,12 +381,12 @@ function processPlayerStats(category, playerCategoryStats, team, summaryStats) {
             const count = stats[player] || 0;
             
             // Add to total attempts/serves/etc.
-            if (category === 'attack') {
+            if (category === 'attack' || category === 'atk Result') {
                 summaryStats.player[playerKey].attack.totalAttempts += count;
                 
-                if (action.includes('Win')) {
+                if (action.includes('Win') || action === 'Win') {
                     summaryStats.player[playerKey].attack.kills += count;
-                } else if (action.includes('Error')) {
+                } else if (action.includes('Err') || action === 'Err') {
                     summaryStats.player[playerKey].attack.errors += count;
                 }
             } else if (category === 'serve') {
@@ -373,13 +394,17 @@ function processPlayerStats(category, playerCategoryStats, team, summaryStats) {
                 
                 if (action.includes('Ace')) {
                     summaryStats.player[playerKey].serve.aces += count;
-                } else if (action.includes('Error')) {
+                } else if (action.includes('Error') || action === 'SErr') {
                     summaryStats.player[playerKey].serve.errors += count;
                 }
-            } else if (category === 'block' && action.includes('Block') && !action.includes('Error')) {
+            } else if (category === 'block' && action.includes('Blk') && !action.includes('Error')) {
+                summaryStats.player[playerKey].block.blocks += count;
+            } else if (category === 'atk Result' && action.includes('Blk') && !action.includes('Error')) {
+                // Handle blocks in advanced mode (category: 'atk Result')
                 summaryStats.player[playerKey].block.blocks += count;
             } else if (category === 'dig' && !action.includes('Error')) {
-                summaryStats.player[playerKey].dig.digs += count;            } else if (category === 'reception') {
+                summaryStats.player[playerKey].dig.digs += count;
+            } else if (category === 'reception') {
                 summaryStats.player[playerKey].reception.total += count;
                 if (action === 'RE1' || action === 'RE2') {
                     summaryStats.player[playerKey].reception.errors += count;
