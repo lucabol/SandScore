@@ -133,11 +133,12 @@ function generateCategoryStats() {
                             lastPlayer = { team: actingTeam, num: targetPlayerNum };
                         }
                     }
-                }
  
-                // Update lastPlayer if the current action specifies a player directly
-                if ((statPlayerRef === '1' || statPlayerRef === '2') && typeof actingTeam !== 'undefined' && actingTeam) {
-                    lastPlayer = { team: actingTeam, num: parseInt(statPlayerRef) };
+                    // Update lastPlayer if the current action specifies a player directly
+                    if ((statPlayerRef === '1' || statPlayerRef === '2') && typeof actingTeam !== 'undefined' && actingTeam) {
+                        lastPlayer = { team: actingTeam, num: parseInt(statPlayerRef) };
+                    }
+ 
                 }
  
                 // Advance to the next state for the next action
@@ -295,21 +296,54 @@ function generateSummaryStats() {
         processPlayerStats('serve', categoryStats.playerA, 'a', summaryStats);
         processPlayerStats('serve', categoryStats.playerB, 'b', summaryStats);
     }
-    
-    // Process blocking statistics
-    if (categoryStats.team.block) {
-        for (const action in categoryStats.team.block) {
-            const stats = categoryStats.team.block[action];
-            
-            if (action.includes('Block') && !action.includes('Error')) {
-                summaryStats.team.a.block.blocks += stats.a || 0;
-                summaryStats.team.b.block.blocks += stats.b || 0;
+      // Process blocking statistics from both beginner and advanced modes
+    // In beginner mode, blocks are in the 'attack' category
+    // In advanced mode, blocks are in the 'atk Result' category
+    // Both modes use Blk1 and Blk2 actions
+    if (categoryStats.team.block || categoryStats.team['atk Result'] || categoryStats.team.attack) {
+        // Process blocks from 'block' category (though not used in current state machines)
+        if (categoryStats.team.block) {
+            for (const action in categoryStats.team.block) {
+                const stats = categoryStats.team.block[action];
+                
+                if (action.includes('Blk') && !action.includes('Error')) {
+                    summaryStats.team.a.block.blocks += stats.a || 0;
+                    summaryStats.team.b.block.blocks += stats.b || 0;
+                }
+            }
+        }
+        
+        // Process advanced mode blocks (atk Result category)
+        if (categoryStats.team['atk Result']) {
+            for (const action in categoryStats.team['atk Result']) {
+                const stats = categoryStats.team['atk Result'][action];
+                
+                if (action.includes('Blk') && !action.includes('Error')) {
+                    summaryStats.team.a.block.blocks += stats.a || 0;
+                    summaryStats.team.b.block.blocks += stats.b || 0;
+                }
+            }
+        }
+        
+        // Process beginner mode blocks (attack category)
+        if (categoryStats.team.attack) {
+            for (const action in categoryStats.team.attack) {
+                const stats = categoryStats.team.attack[action];
+                
+                if (action.includes('Blk') && !action.includes('Error')) {
+                    summaryStats.team.a.block.blocks += stats.a || 0;
+                    summaryStats.team.b.block.blocks += stats.b || 0;
+                }
             }
         }
         
         // Process player block stats
         processPlayerStats('block', categoryStats.playerA, 'a', summaryStats);
+        processPlayerStats('atk Result', categoryStats.playerA, 'a', summaryStats);
+        processPlayerStats('attack', categoryStats.playerA, 'a', summaryStats);
         processPlayerStats('block', categoryStats.playerB, 'b', summaryStats);
+        processPlayerStats('atk Result', categoryStats.playerB, 'b', summaryStats);
+        processPlayerStats('attack', categoryStats.playerB, 'b', summaryStats);
     }
     
     // Process digging statistics
@@ -396,11 +430,13 @@ function processPlayerStats(category, playerCategoryStats, team, summaryStats) {
                     summaryStats.player[playerKey].serve.aces += count;
                 } else if (action.includes('Error') || action === 'SErr') {
                     summaryStats.player[playerKey].serve.errors += count;
-                }
-            } else if (category === 'block' && action.includes('Blk') && !action.includes('Error')) {
+                }            } else if (category === 'block' && action.includes('Blk') && !action.includes('Error')) {
                 summaryStats.player[playerKey].block.blocks += count;
             } else if (category === 'atk Result' && action.includes('Blk') && !action.includes('Error')) {
                 // Handle blocks in advanced mode (category: 'atk Result')
+                summaryStats.player[playerKey].block.blocks += count;
+            } else if (category === 'attack' && action.includes('Blk') && !action.includes('Error')) {
+                // Handle blocks in beginner mode (category: 'attack')
                 summaryStats.player[playerKey].block.blocks += count;
             } else if (category === 'dig' && !action.includes('Error')) {
                 summaryStats.player[playerKey].dig.digs += count;
